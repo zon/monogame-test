@@ -42,7 +42,7 @@ namespace MonoGameTest.Common {
 		public Neighbors GetEnumerator() => new Neighbors(X, Y, Grid, Characters, Check);
 
 		public bool MoveNext() {
-			while (Step < 8) {
+			while (Step < 4) {
 				switch (Step++) {
 					case 0:
 						Left = CheckNode(X - 1, Y);

@@ -60,7 +60,8 @@ namespace MonoGameTest.Client {
 			Rendering = new SequentialSystem<float>(
 				new CharacterViewSystem(World, TiledMap),
 				new TilemapDrawSystem(Graphics, TiledMap),
-				new SpriteDrawSystem(Batch, CharacterSprites.Texture, World)
+				new SpriteDrawSystem(Batch, CharacterSprites.Texture, World),
+				new MovementDebugSystem(Batch, TiledMap, World)
 			);
 
 			ClientEntity.CreatePlayer(World, new Coord(7, 7), Sprite.Create(CharacterSprites, 1));

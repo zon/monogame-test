@@ -32,7 +32,11 @@ namespace MonoGameTest.Common {
 			Console.WriteLine("Move: {0}", node);
 
 			// reset if something is in the path
-			if (Positions.ContainsKey(node.Position)) {
+			Entity other;
+			if (
+				Positions.TryGetEntity(node.Position, out other) &&
+				other != entity
+			) {
 				movement.Path = movement.Path.Clear();
 				return;
 			}
