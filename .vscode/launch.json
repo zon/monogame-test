@@ -13,9 +13,9 @@
             "request": "launch",
             "preLaunchTask": "build client",
             "OS-COMMENT4": "If you have changed target frameworks, make sure to update the program path.",
-            "program": "${workspaceFolder}/Client/bin/Debug/netcoreapp3.1/MonoGameTest.dll",
+            "program": "${workspaceFolder}/MonoGameTest.Client/bin/Debug/netcoreapp3.1/MonoGameTest.Client.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Client",
+            "cwd": "${workspaceFolder}/MonoGameTest.Client",
             "OS-COMMENT5": "For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console",
             "console": "internalConsole",
             "stopAtEntry": false

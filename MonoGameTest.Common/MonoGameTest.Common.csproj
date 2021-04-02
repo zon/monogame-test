@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DefaultEcs" Version="0.15.1" />
+    <PackageReference Include="MonoGame.Extended" Version="3.8.0" />
+    <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="3.8.0" />
+    <PackageReference Include="OptimizedPriorityQueue" Version="5.1.0" />
+    <PackageReference Include="RoyT.AStar" Version="3.0.2" />
+  </ItemGroup>
+
+</Project>

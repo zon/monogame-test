@@ -24,6 +24,7 @@
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DefaultEcs" Version="0.15.1" />
     <PackageReference Include="MonoGame.Aseprite" Version="2.0.4.1" />
     <PackageReference Include="MonoGame.Extended" Version="3.8.0" />
     <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="3.8.0" />
@@ -31,5 +32,8 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
     <PackageReference Include="RogueSharp" Version="5.0.0-pre4" />
     <PackageReference Include="RoyT.AStar" Version="3.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonoGameTest.Common\MonoGameTest.Common.csproj" />
   </ItemGroup>
 </Project>
