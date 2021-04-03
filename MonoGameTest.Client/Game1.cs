@@ -6,6 +6,8 @@ using MonoGame.Aseprite.Documents;
 using DefaultEcs;
 using DefaultEcs.System;
 using MonoGameTest.Common;
+using MonoGame.Extended;
+using MonoGame.Extended.ViewportAdapters;
 
 namespace MonoGameTest.Client {
 
@@ -15,6 +17,7 @@ namespace MonoGameTest.Client {
 		readonly AsepriteDocument CharacterSprites;
 		readonly GraphicsDeviceManager Graphics;
 		readonly SpriteBatch Batch;
+		readonly OrthographicCamera Camera;
 		readonly World World;
 		readonly ISystem<float> Behavior;
 		readonly ISystem<float> Rendering;
@@ -47,6 +50,14 @@ namespace MonoGameTest.Client {
 
 			Batch = new SpriteBatch(GraphicsDevice);
 
+			var viewport = new BoxingViewportAdapter(
+				Window,
+				GraphicsDevice,
+				TiledMap.WidthInPixels,
+				TiledMap.HeightInPixels
+			);
+			Camera = new OrthographicCamera(viewport);
+
 			World = new World();
 			var characters = World.GetEntities().AsMap<Character>();
 			var players = World.GetEntities().AsMap<Player>();
@@ -59,7 +70,7 @@ namespace MonoGameTest.Client {
 			);
 			Rendering = new SequentialSystem<float>(
 				new CharacterViewSystem(World, TiledMap),
-				new TilemapDrawSystem(Graphics, TiledMap),
+				new TilemapDrawSystem(GraphicsDevice, TiledMap, Camera),
 				new SpriteDrawSystem(Batch, CharacterSprites.Texture, World),
 				new MovementDebugSystem(Batch, TiledMap, World)
 			);

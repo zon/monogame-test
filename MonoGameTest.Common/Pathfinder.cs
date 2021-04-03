@@ -15,7 +15,8 @@ namespace MonoGameTest.Common {
 			Grid grid,
 			EntityMap<Position> characters,
 			Node start,
-			Node goal
+			Node goal,
+			Action<SimplePriorityQueue<Node>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
 		) {
 			if (goal.Solid) return Empty;
 			return Query(
@@ -24,7 +25,8 @@ namespace MonoGameTest.Common {
 				start,
 				(n, e) => !n.Solid && e.HasValue,
 				n => n.Coord == goal.Coord,
-				n => Coord.ManhattanDistance(n.Coord, goal.Coord) * Movement.COST
+				n => Coord.ManhattanDistance(n.Coord, goal.Coord) * Movement.COST,
+				debug
 			);
 		}
 
@@ -32,7 +34,8 @@ namespace MonoGameTest.Common {
 			Grid grid,
 			EntityMap<Position> characters,
 			Node start,
-			Node goal
+			Node goal,
+			Action<SimplePriorityQueue<Node>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
 		) {
 			if (goal.Solid) return Empty;
 			return Query(
@@ -41,19 +44,21 @@ namespace MonoGameTest.Common {
 				start,
 				(n, _) => !n.Solid,
 				n => n.Coord == goal.Coord,
-				n => Coord.ManhattanDistance(n.Coord, goal.Coord) * Movement.COST
+				n => Coord.ManhattanDistance(n.Coord, goal.Coord) * Movement.COST,
+				debug
 			);
 		}
 		
 		public static ImmutableStack<Node> OptimalPathfind(
 			Grid grid, EntityMap<Position> characters,
 			Coord start,
-			Coord goal
+			Coord goal,
+			Action<SimplePriorityQueue<Node>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
 		) {
 			var a = grid.Get(start);
 			var b = grid.Get(goal);
 			if (a == null || b == null) return Empty;
-			return OptimalPathfind(grid, characters, a, b);
+			return OptimalPathfind(grid, characters, a, b, debug);
 		}
 
 		static ImmutableStack<Node> Query(
@@ -62,7 +67,8 @@ namespace MonoGameTest.Common {
 			Node start,
 			Func<Node, Nullable<Entity>, bool> check,
 			Func<Node, bool> isGoal,
-			Func<Node, float> heuristic
+			Func<Node, float> heuristic,
+			Action<SimplePriorityQueue<Node>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
 		) {
 			var frontier = new SimplePriorityQueue<Node>();
 			var origins = new Dictionary<int, Node>();
@@ -79,6 +85,9 @@ namespace MonoGameTest.Common {
 				}
 				
 				if (isGoal(current)) {
+					if (debug != null) {
+						debug(frontier, origins, costs);
+					}
 					return CreatePath(grid, origins, current);
 				}
 
@@ -108,7 +117,7 @@ namespace MonoGameTest.Common {
 				}
 			}
 
-			return CreatePath(grid, origins, current);
+			return Empty;
 		}
 
 		static ImmutableStack<Node> CreatePath(Grid grid, Dictionary<int, Node> origins, Node last) {
