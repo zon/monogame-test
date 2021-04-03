@@ -15,6 +15,13 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin default.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:default.spritefont
+
 #begin entities.aseprite
 /importer:AsepriteDocumentImporter
 /processor:AsepriteDocumentProcessor

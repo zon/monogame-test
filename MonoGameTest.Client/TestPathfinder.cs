@@ -11,9 +11,10 @@ using MonoGame.Extended;
 namespace MonoGameTest.Client {
 
 	public class TestPathfinder : Game {
+		GraphicsDeviceManager Graphics;
+		SpriteFont Font;
 		TiledMap TiledMap;
 		Grid Grid;
-		GraphicsDeviceManager Graphics;
 		OrthographicCamera Camera;
 		SpriteBatch Batch;
 		World World;
@@ -33,6 +34,8 @@ namespace MonoGameTest.Client {
 			Graphics.PreferredBackBufferHeight = 1024;
 			Graphics.ApplyChanges();
 
+			Font = Content.Load<SpriteFont>("default");
+
 			TiledMap = Tiled.LoadMap(Content, "first");
 			Grid = Tiled.LoadGrid(TiledMap);
 
@@ -51,11 +54,12 @@ namespace MonoGameTest.Client {
 
 			Systems = new SequentialSystem<float>(
 				new TilemapDrawSystem(GraphicsDevice, TiledMap, Camera),
-				new PathfinderDebugSystem(TiledMap, Grid, positions, Batch, Camera)
+				new PathfinderDebugSystem(TiledMap, Grid, positions, Batch, Font, Camera)
 			);
 		}
 
 		protected override void Update(GameTime gameTime) {
+			GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 			GraphicsDevice.Clear(Color.Black);
 			Systems.Update((float) gameTime.ElapsedGameTime.TotalSeconds);
 		}

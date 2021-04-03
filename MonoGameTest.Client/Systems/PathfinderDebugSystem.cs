@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MonoGameTest.Common;
-using Priority_Queue;
 
 namespace MonoGameTest.Client {
 
@@ -17,11 +16,12 @@ namespace MonoGameTest.Client {
 		readonly Grid Grid;
 		readonly EntityMap<Position> Positions;
 		readonly SpriteBatch Batch;
+		readonly SpriteFont Font;
 		readonly OrthographicCamera Camera;
 		Node Start;
 		Node End;
 		ImmutableStack<Node> Path;
-		SimplePriorityQueue<Node> Frontier;
+		Dictionary<int, float> Heuristics;
 		Dictionary<int, Node> Origins;
 		Dictionary<int, int> Costs;
 
@@ -32,14 +32,20 @@ namespace MonoGameTest.Client {
 			Grid grid,
 			EntityMap<Position> positions,
 			SpriteBatch batch,
+			SpriteFont font,
 			OrthographicCamera camera
 		) {
 			TiledMap = tiledMap;
 			Grid = grid;
 			Positions = positions;
 			Batch = batch;
+			Font = font;
 			Camera = camera;
 			IsEnabled = true;
+
+			Start = Grid.Get(14, 14);
+			End = Grid.Get(11, 9);
+			Path = Pathfinder.OptimalPathfind(Grid, Positions, Start, End, Debug);
 		}
 
 		public void Update(float dt) {
@@ -61,23 +67,39 @@ namespace MonoGameTest.Client {
 
 			Batch.Begin(transformMatrix: Camera.GetViewMatrix());
 
+			foreach (var (index, cost) in Costs) {
+				var node = Grid.Nodes[index];
+				var p = Tiled.CoordToVector(TiledMap, node.Coord);
+				Batch.DrawString(Font, cost.ToString(), p, Color.White);
+			}
+
+			var h = Tiled.Half(TiledMap);
+			foreach (var (index, heuristic) in Heuristics) {
+				var node = Grid.Nodes[index];
+				var p = Tiled.CoordToVector(TiledMap, node.Coord);
+				Batch.DrawString(Font, heuristic.ToString(), p + h, Color.Yellow);
+			}
+
+			Batch.DrawString(Font, Start.ToString(), Vector2.Zero, Color.Lime);
+			Batch.DrawString(Font, End.ToString(), new Vector2(0, h.Y), Color.Lime);
+
 			DrawPath(Batch, TiledMap, Path);
 
 			Batch.End();
 		}
 
 		void Debug(
-			SimplePriorityQueue<Node> frontier,
+			Dictionary<int, float> heuristics,
 			Dictionary<int, Node> origins,
 			Dictionary<int, int> costs
 		) {
-			Frontier = frontier;
+			Heuristics = heuristics;
 			Origins = origins;
 			Costs = costs;
 		}
 
 		public static void DrawPath(SpriteBatch batch, TiledMap map, ImmutableStack<Node> path) {
-			var h = new Vector2(map.TileWidth, map.TileHeight) / 2;
+			var h = Tiled.Half(map);
 			Node a = null;
 			foreach (var node in path) {
 				if (a == null) {

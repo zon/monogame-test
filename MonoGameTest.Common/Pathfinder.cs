@@ -16,7 +16,7 @@ namespace MonoGameTest.Common {
 			EntityMap<Position> characters,
 			Node start,
 			Node goal,
-			Action<SimplePriorityQueue<Node>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
+			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
 		) {
 			if (goal.Solid) return Empty;
 			return Query(
@@ -35,7 +35,7 @@ namespace MonoGameTest.Common {
 			EntityMap<Position> characters,
 			Node start,
 			Node goal,
-			Action<SimplePriorityQueue<Node>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
+			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
 		) {
 			if (goal.Solid) return Empty;
 			return Query(
@@ -53,7 +53,7 @@ namespace MonoGameTest.Common {
 			Grid grid, EntityMap<Position> characters,
 			Coord start,
 			Coord goal,
-			Action<SimplePriorityQueue<Node>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
+			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
 		) {
 			var a = grid.Get(start);
 			var b = grid.Get(goal);
@@ -68,25 +68,28 @@ namespace MonoGameTest.Common {
 			Func<Node, Nullable<Entity>, bool> check,
 			Func<Node, bool> isGoal,
 			Func<Node, float> heuristic,
-			Action<SimplePriorityQueue<Node>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
+			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
 		) {
 			var frontier = new SimplePriorityQueue<Node>();
 			var origins = new Dictionary<int, Node>();
 			var costs = new Dictionary<int, int>();
+			Dictionary<int, float> heuristics = null;
+			if (debug != null) {
+				heuristics = new Dictionary<int, float>();
+			}
 
 			frontier.Enqueue(start, heuristic(start));
 			costs[grid.Index(start)] = 0;
 
 			Node current = null;
 			for (var _ = 0; _ < 1000; _++) {
-				current = frontier.Dequeue();
-				if (current == null) {
+				if (!frontier.TryDequeue(out current)) {
 					return Empty;
 				}
 				
 				if (isGoal(current)) {
 					if (debug != null) {
-						debug(frontier, origins, costs);
+						debug(heuristics, origins, costs);
 					}
 					return CreatePath(grid, origins, current);
 				}
@@ -105,14 +108,14 @@ namespace MonoGameTest.Common {
 					var prevCost = 0;
 					var hasPrevCost = costs.TryGetValue(grid.Index(next), out prevCost);
 					if (!hasPrevCost || nextCost < prevCost) {
-						var h = nextCost + heuristic(next);
-						if (hasPrevCost) {
-							frontier.UpdatePriority(next, h);
-						} else {
-							frontier.Enqueue(next, h);
+						var h = heuristic(next);
+						frontier.EnqueueWithoutDuplicates(next, h);
+						var i = grid.Index(next);
+						origins[i] = current;
+						costs[i] = nextCost;
+						if (debug != null) {
+							heuristics[i] = h;
 						}
-						origins[grid.Index(next)] = current;
-						costs[grid.Index(next)] = nextCost;
 					}
 				}
 			}

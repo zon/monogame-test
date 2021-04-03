@@ -6,11 +6,11 @@ using DefaultEcs;
 namespace MonoGameTest.Common {
 
 	public struct Neighbors : IEnumerator<Node> {
-		int X;
-		int Y;
-		Grid Grid;
-		EntityMap<Position> Characters;
-		Func<Node, Nullable<Entity>, bool> Check;
+		readonly int X;
+		readonly int Y;
+		readonly Grid Grid;
+		readonly EntityMap<Position> Positions;
+		readonly Func<Node, Nullable<Entity>, bool> Check;
 		int Step;
 		bool Left;
 		bool Right;
@@ -23,13 +23,13 @@ namespace MonoGameTest.Common {
 			int x,
 			int y,
 			Grid grid,
-			EntityMap<Position> characters,
+			EntityMap<Position> positions,
 			Func<Node, Nullable<Entity>, bool> check
 		) {
 			X = x;
 			Y = y;
 			Grid = grid;
-			Characters = characters;
+			Positions = positions;
 			Check = check;
 			Step = 0;
 			Left = false;
@@ -39,10 +39,10 @@ namespace MonoGameTest.Common {
 			Current = default;
 		}
 		
-		public Neighbors GetEnumerator() => new Neighbors(X, Y, Grid, Characters, Check);
+		public Neighbors GetEnumerator() => new Neighbors(X, Y, Grid, Positions, Check);
 
 		public bool MoveNext() {
-			while (Step < 4) {
+			while (Step < 8) {
 				switch (Step++) {
 					case 0:
 						Left = CheckNode(X - 1, Y);
@@ -61,16 +61,16 @@ namespace MonoGameTest.Common {
 						if (Down) return true;
 						break;
 					case 4:
-						if (Left && Up && CheckNode(X - 1, X - 1)) return true;
+						if (Left && Up && CheckNode(X - 1, Y - 1)) return true;
 						break;
 					case 5:
-						if (Right && Up && CheckNode(X + 1, X - 1)) return true;
+						if (Right && Up && CheckNode(X + 1, Y - 1)) return true;
 						break;
 					case 6:
-						if (Right && Down && CheckNode(X + 1, X + 1)) return true;
+						if (Right && Down && CheckNode(X + 1, Y + 1)) return true;
 						break;
 					case 7:
-						if (Left && Down && CheckNode(X - 1, X + 1)) return true;
+						if (Left && Down && CheckNode(X - 1, Y + 1)) return true;
 						break;
 				}
 			}
@@ -88,7 +88,7 @@ namespace MonoGameTest.Common {
 			if (node == null) return false;
 			Entity entity;
 			var okay = false;
-			if (Characters.TryGetEntity(node.Position, out entity)) {
+			if (Positions.TryGetEntity(node.Position, out entity)) {
 				okay = Check(node, entity);
 			} else {
 				okay = Check(node, null);

@@ -51,6 +51,10 @@ namespace MonoGameTest.Client {
 			return CoordToVector(map, coord.X, coord.Y);
 		}
 
+		public static Vector2 Half(TiledMap map) {
+			return new Vector2(map.TileWidth, map.TileHeight) / 2;
+		}
+
 		public static Node GetNode(TiledMap map, Grid grid, OrthographicCamera camera, float x, float y) {
 			var p = camera.ScreenToWorld(x, y);
 			return grid.Get(VectorToCoord(map, p));
