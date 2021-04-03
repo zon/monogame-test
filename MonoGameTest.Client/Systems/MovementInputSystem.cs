@@ -2,6 +2,7 @@ using System;
 using DefaultEcs;
 using DefaultEcs.System;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
 using MonoGameTest.Common;
 
@@ -11,12 +12,14 @@ namespace MonoGameTest.Client {
 		readonly Grid Grid;
 		readonly TiledMap TiledMap;
 		readonly EntityMap<Position> Positions;
+		readonly OrthographicCamera Camera;
 
 		public MovementInputSystem(
 			World world,
 			Grid grid,
 			TiledMap tiledMap,
-			EntityMap<Position> positions
+			EntityMap<Position> positions,
+			OrthographicCamera camera
 		) : base(world
 			.GetEntities()
 			.With<Movement>()
@@ -26,6 +29,7 @@ namespace MonoGameTest.Client {
 			Grid = grid;
 			TiledMap = tiledMap;
 			Positions = positions;
+			Camera = camera;
 		}
 
 		protected override void Update(float dt, in Entity entity) {
@@ -38,8 +42,10 @@ namespace MonoGameTest.Client {
 				mouse.RightButton != ButtonState.Pressed
 			) return;
 
-			var goal = Tiled.VectorToCoord(TiledMap, mouse.X, mouse.Y);
-			movement.Path = Pathfinder.OptimalPathfind(Grid, Positions, position.Coord, goal);
+			var goal = Tiled.GetNode(TiledMap, Grid, Camera, mouse.X, mouse.Y);
+			if (goal == null) return;
+
+			movement.Path = Pathfinder.OptimalPathfind(Grid, Positions, position.Coord, goal.Coord);
 		}
 
 	}

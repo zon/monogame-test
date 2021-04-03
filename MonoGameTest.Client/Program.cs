@@ -7,7 +7,7 @@ namespace MonoGameTest.Client
         [STAThread]
         static void Main()
         {
-            using (var game = new TestPathfinder())
+            using (var game = new Game1())
                 game.Run();
         }
     }

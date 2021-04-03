@@ -109,7 +109,9 @@ namespace MonoGameTest.Common {
 					var hasPrevCost = costs.TryGetValue(grid.Index(next), out prevCost);
 					if (!hasPrevCost || nextCost < prevCost) {
 						var h = heuristic(next);
-						frontier.EnqueueWithoutDuplicates(next, h);
+						if (!frontier.EnqueueWithoutDuplicates(next, h)) {
+							frontier.UpdatePriority(next, h);
+						}
 						var i = grid.Index(next);
 						origins[i] = current;
 						costs[i] = nextCost;

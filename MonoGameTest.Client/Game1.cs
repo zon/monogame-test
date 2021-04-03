@@ -12,23 +12,29 @@ using MonoGame.Extended.ViewportAdapters;
 namespace MonoGameTest.Client {
 
 	public class Game1 : Game {
-		readonly TiledMap TiledMap;
-		readonly Grid Grid;
-		readonly AsepriteDocument CharacterSprites;
-		readonly GraphicsDeviceManager Graphics;
-		readonly SpriteBatch Batch;
-		readonly OrthographicCamera Camera;
-		readonly World World;
-		readonly ISystem<float> Behavior;
-		readonly ISystem<float> Rendering;
+		TiledMap TiledMap;
+		Grid Grid;
+		AsepriteDocument CharacterSprites;
+		GraphicsDeviceManager Graphics;
+		SpriteBatch Batch;
+		OrthographicCamera Camera;
+		World World;
+		ISystem<float> Behavior;
+		ISystem<float> Rendering;
 
 		public Game1() {
 			Content.RootDirectory = "Content";
 			IsMouseVisible = true;
 
 			Graphics = new GraphicsDeviceManager(this);
-			Graphics.PreferredBackBufferWidth = 800;
-			Graphics.PreferredBackBufferHeight = 600;
+		}
+
+		protected override void Initialize() {
+			base.Initialize();
+
+			var d = 16 * 16 * 2;
+			Graphics.PreferredBackBufferWidth = d;
+			Graphics.PreferredBackBufferHeight = d;
 			Graphics.ApplyChanges();
 
 			TiledMap = Content.Load<TiledMap>("first");
@@ -66,13 +72,13 @@ namespace MonoGameTest.Client {
 			Behavior = new SequentialSystem<float>(
 				new CooldownSystem(World),
 				new MovementSystem(World, Grid, positions),
-				new MovementInputSystem(World, Grid, TiledMap, positions)
+				new MovementInputSystem(World, Grid, TiledMap, positions, Camera)
 			);
 			Rendering = new SequentialSystem<float>(
 				new CharacterViewSystem(World, TiledMap),
 				new TilemapDrawSystem(GraphicsDevice, TiledMap, Camera),
-				new SpriteDrawSystem(Batch, CharacterSprites.Texture, World),
-				new MovementDebugSystem(Batch, TiledMap, World)
+				new SpriteDrawSystem(Batch, Camera, CharacterSprites.Texture, World),
+				new MovementDebugSystem(Batch, TiledMap, Camera, World)
 			);
 
 			ClientEntity.CreatePlayer(World, new Coord(7, 7), Sprite.Create(CharacterSprites, 1));

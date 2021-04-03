@@ -1,7 +1,5 @@
-using System.Collections.Immutable;
 using DefaultEcs;
 using DefaultEcs.System;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
@@ -11,15 +9,17 @@ namespace MonoGameTest.Client {
 
 	public class MovementDebugSystem : AComponentSystem<float, Movement> {
 		readonly TiledMap TiledMap;
+		readonly OrthographicCamera Camera;
 		readonly SpriteBatch Batch;
 
-		public MovementDebugSystem(SpriteBatch batch, TiledMap tiledMap,  World world) : base(world) {
+		public MovementDebugSystem(SpriteBatch batch, TiledMap tiledMap, OrthographicCamera camera, World world) : base(world) {
 			TiledMap = tiledMap;
+			Camera = camera;
 			Batch = batch;
 		}
 
 		protected override void PreUpdate(float dt) {
-			Batch.Begin();
+			Batch.Begin(transformMatrix: Camera.GetViewMatrix());
 		}
 
 		protected override void Update(float dt, ref Movement movement) {
