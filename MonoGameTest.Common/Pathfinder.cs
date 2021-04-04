@@ -16,7 +16,7 @@ namespace MonoGameTest.Common {
 			EntityMap<Position> characters,
 			Node start,
 			Node goal,
-			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
+			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, float>> debug = null
 		) {
 			if (goal.Solid) return Empty;
 			return Query(
@@ -25,7 +25,7 @@ namespace MonoGameTest.Common {
 				start,
 				(n, e) => !n.Solid && e.HasValue,
 				n => n.Coord == goal.Coord,
-				n => Coord.ManhattanDistance(n.Coord, goal.Coord) * Movement.COST,
+				n => Coord.ChebyshevDistance(n.Coord, goal.Coord),
 				debug
 			);
 		}
@@ -35,7 +35,7 @@ namespace MonoGameTest.Common {
 			EntityMap<Position> characters,
 			Node start,
 			Node goal,
-			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
+			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, float>> debug = null
 		) {
 			if (goal.Solid) return Empty;
 			return Query(
@@ -44,7 +44,7 @@ namespace MonoGameTest.Common {
 				start,
 				(n, _) => !n.Solid,
 				n => n.Coord == goal.Coord,
-				n => Coord.ManhattanDistance(n.Coord, goal.Coord) * Movement.COST,
+				n => Coord.ChebyshevDistance(n.Coord, goal.Coord),
 				debug
 			);
 		}
@@ -53,7 +53,7 @@ namespace MonoGameTest.Common {
 			Grid grid, EntityMap<Position> characters,
 			Coord start,
 			Coord goal,
-			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
+			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, float>> debug = null
 		) {
 			var a = grid.Get(start);
 			var b = grid.Get(goal);
@@ -68,11 +68,11 @@ namespace MonoGameTest.Common {
 			Func<Node, Nullable<Entity>, bool> check,
 			Func<Node, bool> isGoal,
 			Func<Node, float> heuristic,
-			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, int>> debug = null
+			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, float>> debug = null
 		) {
-			var frontier = new SimplePriorityQueue<Node>();
+			var frontier = new SimplePriorityQueue<Node, float>();
 			var origins = new Dictionary<int, Node>();
-			var costs = new Dictionary<int, int>();
+			var costs = new Dictionary<int, float>();
 			Dictionary<int, float> heuristics = null;
 			if (debug != null) {
 				heuristics = new Dictionary<int, float>();
@@ -99,24 +99,24 @@ namespace MonoGameTest.Common {
 				var neighbors = new Neighbors(x, y, grid, characters, check);
 				var baseCost = costs[grid.Index(current)];
 				foreach (var next in neighbors) {
+					var i = grid.Index(next);
 					var dx = next.X - x;
 					var dy = next.Y - y;
 					var nextCost = baseCost + Movement.COST;
 					if (dx != 0 && dy != 0) {
-						nextCost += Movement.EXTRA_DIAGONAL_COST;
+						nextCost = baseCost + Movement.DIAGONAL_COST;
 					}
-					var prevCost = 0;
-					var hasPrevCost = costs.TryGetValue(grid.Index(next), out prevCost);
+					var prevCost = 0f;
+					var hasPrevCost = costs.TryGetValue(i, out prevCost);
 					if (!hasPrevCost || nextCost < prevCost) {
-						var h = heuristic(next);
-						if (!frontier.EnqueueWithoutDuplicates(next, h)) {
-							frontier.UpdatePriority(next, h);
+						var p = nextCost + heuristic(next);
+						if (!frontier.EnqueueWithoutDuplicates(next, p)) {
+							frontier.UpdatePriority(next, p);
 						}
-						var i = grid.Index(next);
 						origins[i] = current;
 						costs[i] = nextCost;
 						if (debug != null) {
-							heuristics[i] = h;
+							heuristics[i] = p;
 						}
 					}
 				}

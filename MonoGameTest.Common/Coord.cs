@@ -23,8 +23,20 @@ namespace MonoGameTest.Common {
 
 		public static bool operator !=(Coord left, Coord right) => !left.Equals(right);
 
-		public static int ManhattanDistance(Coord a, Coord b) {
-			return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
+		public static float ManhattanDistance(Coord a, Coord b) {
+			return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) * Movement.COST;
+		}
+
+		public static float ChebyshevDistance(Coord a, Coord b) {
+			var dx = Math.Abs(a.X - b.X);
+			var dy = Math.Abs(a.Y - b.Y);
+			var c = Movement.COST;
+			var g = Movement.DIAGONAL_COST;
+			if (dx > dy) {
+				return (dx - dy) * c + dy * g;
+			} else {
+				return (dy - dx) * c + dx * g;
+			}
 		}
 
 	}

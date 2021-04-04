@@ -5,8 +5,8 @@ namespace MonoGameTest.Common {
 	public struct Movement {
 		public ImmutableStack<Node> Path;
 
-		public const int COST = 10;
-		public const int EXTRA_DIAGONAL_COST = 4;
+		public const float COST = 1;
+		public const float DIAGONAL_COST = 1.41f;
 
 		public const float ACTION_DURATION = 0.25f;
 		public const float PAUSE_DURATION = 1;

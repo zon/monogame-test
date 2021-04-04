@@ -23,7 +23,7 @@ namespace MonoGameTest.Client {
 		ImmutableStack<Node> Path;
 		Dictionary<int, float> Heuristics;
 		Dictionary<int, Node> Origins;
-		Dictionary<int, int> Costs;
+		Dictionary<int, float> Costs;
 
 		public bool IsEnabled { get; set; }
 
@@ -43,7 +43,7 @@ namespace MonoGameTest.Client {
 			Camera = camera;
 			IsEnabled = true;
 
-			Start = Grid.Get(14, 14);
+			Start = Grid.Get(2, 9);
 			End = Grid.Get(11, 9);
 			Path = Pathfinder.OptimalPathfind(Grid, Positions, Start, End, Debug);
 		}
@@ -70,18 +70,18 @@ namespace MonoGameTest.Client {
 			foreach (var (index, cost) in Costs) {
 				var node = Grid.Nodes[index];
 				var p = Tiled.CoordToVector(TiledMap, node.Coord);
-				Batch.DrawString(Font, cost.ToString(), p, Color.White);
+				Batch.DrawString(Font, $"{cost:F1}", p, Color.White);
 			}
 
 			var h = Tiled.Half(TiledMap);
 			foreach (var (index, heuristic) in Heuristics) {
 				var node = Grid.Nodes[index];
 				var p = Tiled.CoordToVector(TiledMap, node.Coord);
-				Batch.DrawString(Font, heuristic.ToString(), p + h, Color.Yellow);
+				Batch.DrawString(Font, $"{heuristic:F1}", p + h, Color.Yellow);
 			}
 
-			Batch.DrawString(Font, Start.ToString(), Vector2.Zero, Color.Lime);
-			Batch.DrawString(Font, End.ToString(), new Vector2(0, h.Y), Color.Lime);
+			Batch.DrawString(Font, $"{Start}", Vector2.Zero, Color.Lime);
+			Batch.DrawString(Font, $"{End}", new Vector2(0, h.Y), Color.Lime);
 
 			DrawPath(Batch, TiledMap, Path);
 
@@ -91,7 +91,7 @@ namespace MonoGameTest.Client {
 		void Debug(
 			Dictionary<int, float> heuristics,
 			Dictionary<int, Node> origins,
-			Dictionary<int, int> costs
+			Dictionary<int, float> costs
 		) {
 			Heuristics = heuristics;
 			Origins = origins;
