@@ -8,7 +8,7 @@
             "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
             "OS-COMMENT2": "Use hover for the description of the existing attributes",
             "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
-            "name": ".NET Core Launch (console)",
+            "name": "Launch Client",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build client",
@@ -17,6 +17,17 @@
             "args": [],
             "cwd": "${workspaceFolder}/MonoGameTest.Client",
             "OS-COMMENT5": "For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch Server",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build server",
+            "program": "${workspaceFolder}/MonoGameTest.Server/bin/Debug/net5.0/MonoGameTest.Server.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/MonoGameTest.Server",
             "console": "internalConsole",
             "stopAtEntry": false
         },
