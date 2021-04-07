@@ -43,17 +43,14 @@ namespace MonoGameTest.Client {
 			Context = new Context(GraphicsDevice, Resources, World, Client);
 
 			Behavior = new SequentialSystem<float>(
-				new CooldownSystem(World),
-				new MovementSystem(World, Context),
-				new MovementInputSystem(World, Context),
+				new LocalPlayerSystem(Context),
 				new ClientNetworkSystem(Context)
 			);
 			
 			Rendering = new SequentialSystem<float>(
-				new CharacterViewSystem(World, Context),
+				new CharacterViewSystem(Context),
 				new TilemapDrawSystem(Context),
-				new SpriteDrawSystem(World, Batch, Context),
-				new MovementDebugSystem(World, Batch, Context)
+				new SpriteDrawSystem(Context, Batch)
 			);
 			
 			Client.Connect();
@@ -66,6 +63,7 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void Draw(GameTime gameTime) {
+			GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 			GraphicsDevice.Clear(Color.Black);
 			if (Rendering == null) return;
 			Rendering.Update((float) gameTime.ElapsedGameTime.TotalSeconds);

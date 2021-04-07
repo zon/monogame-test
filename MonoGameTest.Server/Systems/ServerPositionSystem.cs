@@ -1,3 +1,4 @@
+using System;
 using DefaultEcs;
 using DefaultEcs.System;
 using MonoGameTest.Common;
@@ -7,63 +8,58 @@ namespace MonoGameTest.Server {
 	public class ServerPositionSystem : ISystem<float> {
 		readonly World World;
 		readonly Server Server;
-		readonly EntitySet Added;
-		readonly EntitySet Changed;
-		readonly EntitySet Removed;
+		readonly IDisposable AddedListener;
+		readonly IDisposable ChangedListener;
+		readonly IDisposable RemoveListener;
 
 		public bool IsEnabled { get; set; }
 
-		public ServerPositionSystem(World world, Server server) {
-			World = world;
-			Server = server;
-			Added = world.GetEntities().With<Character>().WhenAdded<Position>().AsSet();
-			Changed = world.GetEntities().With<Character>().WhenChanged<Position>().AsSet();
-			Removed = world.GetEntities().With<Character>().WhenRemoved<Position>().AsSet();
+		public ServerPositionSystem(Context context) {
+			World = context.World;
+			Server = context.Server;
+			AddedListener = World.SubscribeComponentAdded<Position>(OnAddPosition);
+			ChangedListener = World.SubscribeComponentChanged<Position>(OnChangePosition);
+			RemoveListener = World.SubscribeComponentRemoved<Position>(OnRemovePosition);
 		}
 
-		public void Update(float dt) {
-			foreach (var entity in Added.GetEntities()) {
-				ref var character = ref entity.Get<Character>();
-				ref var position = ref entity.Get<Position>();
-
-				var peerId = -1;
-				if (entity.Has<Player>()) {
-					peerId = entity.Get<Player>().PeerId;
-				}
-
-				Server.SendToAll(new AddCharacterPacket {
-					Id = character.Id,
-					PeerId = peerId,
-					X = position.Coord.X,
-					Y = position.Coord.Y
-				});
-			}
-			Added.Complete();
-
-			foreach (var entity in Changed.GetEntities()) {
-				ref var character = ref entity.Get<Character>();
-				ref var position = ref entity.Get<Position>();
-				Server.SendToAll(new MoveCharacterPacket {
-					Id = character.Id,
-					X = position.Coord.X,
-					Y = position.Coord.Y
-				});
-			}
-			Changed.Complete();
-
-			foreach (var entity in Removed.GetEntities()) {
-				ref var character = ref entity.Get<Character>();
-				Server.SendToAll(new RemoveCharacterPacket {
-					Id = character.Id
-				});
-			}
-			Removed.Complete();
-		}
+		public void Update(float dt) {}
 
 		public void Dispose() {
-			Added.Dispose();
-			Changed.Dispose();
-			Removed.Dispose();
+			AddedListener.Dispose();
+			ChangedListener.Dispose();
+			RemoveListener.Dispose();
+		}
+
+		void OnAddPosition(in Entity entity, in Position position) {
+			ref var character = ref entity.Get<Character>();
+
+			var peerId = -1;
+			if (entity.Has<Player>()) {
+				peerId = entity.Get<Player>().PeerId;
+			}
+
+			Server.SendToAll(new AddCharacterPacket {
+				Id = character.Id,
+				PeerId = peerId,
+				X = position.Coord.X,
+				Y = position.Coord.Y
+			});
+		}
+
+		void OnChangePosition(in Entity entity, in Position oldPosition, in Position newPosition) {
+			ref var character = ref entity.Get<Character>();
+			Server.SendToAll(new MoveCharacterPacket {
+				Id = character.Id,
+				X = newPosition.Coord.X,
+				Y = newPosition.Coord.Y
+			});
+		}
+
+		void OnRemovePosition(in Entity entity, in Position position) {
+			ref var character = ref entity.Get<Character>();
+			Server.SendToAll(new RemoveCharacterPacket {
+				Id = character.Id
+			});
 		}
 
 	}

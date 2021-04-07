@@ -8,11 +8,13 @@ namespace MonoGameTest.Server {
 	public class Context : IContext {
 		const string CONTENT_PATH = "../MonoGameTest.Client/Content";
 		
+		public readonly Server Server;
 		public World World { get; private set; }
 		public Grid Grid { get; private set; }
 		public bool IsReady { get; private set; }
 
-		public Context(World world) {
+		public Context(Server server, World world) {
+			Server = server;
 			World = world;
 		}
 

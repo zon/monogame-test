@@ -13,11 +13,9 @@ namespace MonoGameTest.Client {
 				entity.Set(new Player(packet.PeerId));
 			}
 			entity.Set(new Position { Coord = new Coord(packet.X, packet.Y) });
-			entity.Set(new Movement());
-			entity.Set(new Cooldown());
 			entity.Set(sprite);
 			if (packet.PeerId == context.Client.PeerId) {
-				entity.Set(new MovementInput());
+				entity.Set(new LocalPlayer());
 			}
 			return entity;
 		}

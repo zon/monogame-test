@@ -1,20 +1,15 @@
-using DefaultEcs;
 using DefaultEcs.System;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoGameTest.Client {
 
 	public class SpriteDrawSystem : AComponentSystem<float, Sprite> {
-		readonly SpriteBatch Batch;
 		readonly Context Context;
+		readonly SpriteBatch Batch;
 
-		public SpriteDrawSystem(
-			World world,
-			SpriteBatch batch,
-			Context context
-		) : base(world) {
-			Batch = batch;
+		public SpriteDrawSystem(Context context, SpriteBatch batch) : base(context.World) {
 			Context = context;
+			Batch = batch;
 		}
 
 		protected override void PreUpdate(float dt) {

@@ -8,7 +8,7 @@ namespace MonoGameTest.Common {
 		readonly EntityMap<Position> Positions;
 		readonly IContext Context;
 
-		public MovementSystem(World world, IContext context) : base(world
+		public MovementSystem(IContext context) : base(context.World
 			.GetEntities()
 			.With<Movement>()
 			.With<Cooldown>()
@@ -42,6 +42,8 @@ namespace MonoGameTest.Common {
 			position.Coord = node.Coord;
 			cooldown.action = Movement.ACTION_DURATION;
 			cooldown.pause = Movement.PAUSE_DURATION;
+
+			entity.NotifyChanged<Position>();
 		}
 
 		public override void Dispose() {

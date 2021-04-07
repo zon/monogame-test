@@ -57,6 +57,10 @@ namespace MonoGameTest.Client {
 			Manager.PollEvents();
 		}
 
+		public void Send<T>(T packet, DeliveryMethod method = DeliveryMethod.ReliableOrdered) where T : class, new() {
+			Peer.Send(Processor.Write(packet), method);
+		}
+
 		public void OnConnectionRequest(ConnectionRequest request) {
 			Console.WriteLine("Connect Request: {0}", request.RemoteEndPoint);
 		}

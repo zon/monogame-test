@@ -7,7 +7,7 @@ namespace MonoGameTest.Client {
 	public class CharacterViewSystem : AEntitySetSystem<float> {
 		readonly Context Context;
 
-		public CharacterViewSystem(World world, Context context) : base(world
+		public CharacterViewSystem(Context context) : base(context.World
 			.GetEntities()
 			.With<Position>()
 			.With<Sprite>()

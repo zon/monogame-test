@@ -13,8 +13,10 @@ namespace MonoGameTest.Server {
 
 		public delegate void OnPeerConnected(NetPeer peer);
 		public delegate void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo);
+		public delegate void OnMoveCommand(NetPeer peer, MoveCommand command);
 		public event OnPeerConnected PeerConnectedEvent;
 		public event OnPeerDisconnected PeerDisconnectedEvent;
+		public event OnMoveCommand MoveCommandEvent;
 
 		readonly Dictionary<int, NetPeer> Peers = new Dictionary<int, NetPeer>();
 		readonly NetManager Manager;

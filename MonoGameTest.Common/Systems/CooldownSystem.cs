@@ -6,7 +6,7 @@ namespace MonoGameTest.Common {
 
 	public class CooldownSystem : AEntitySetSystem<float> {
 
-		public CooldownSystem(World world) : base(world
+		public CooldownSystem(IContext context) : base(context.World
 			.GetEntities()
 			.With<Cooldown>()
 			.AsSet()

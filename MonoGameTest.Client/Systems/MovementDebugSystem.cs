@@ -6,12 +6,12 @@ using MonoGameTest.Common;
 namespace MonoGameTest.Client {
 
 	public class MovementDebugSystem : AComponentSystem<float, Movement> {
-		readonly SpriteBatch Batch;
 		readonly Context Context;
+		readonly SpriteBatch Batch;
 
-		public MovementDebugSystem(World world, SpriteBatch batch, Context context) : base(world) {
-			Batch = batch;
+		public MovementDebugSystem(Context context, SpriteBatch batch) : base(context.World) {
 			Context = context;
+			Batch = batch;
 		}
 
 		protected override void PreUpdate(float dt) {

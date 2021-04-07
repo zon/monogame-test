@@ -31,15 +31,16 @@ namespace MonoGameTest.Server {
 
 			World = new World();
 
-			Context = new Context(World);
+			Context = new Context(Server, World);
 			Context.Load(TileMapName);
 
 			Characters = World.GetEntities().With<Character>().AsSet();
 			Players = World.GetEntities().With<Character>().AsMap<Player>();
 			Systems = new SequentialSystem<float>(
-				new CooldownSystem(World),
-				new MovementSystem(World, Context),
-				new ServerPositionSystem(World, Server)
+				new CooldownSystem(Context),
+				new MovementSystem(Context),
+				new ServerPositionSystem(Context),
+				new ServerNetworkSystem(Context)
 			);
 		}
 
@@ -47,14 +48,14 @@ namespace MonoGameTest.Server {
 			Server.Start();
 
 			Timer = Stopwatch.StartNew();
-			long previous = 0;
+			double previous = 0;
 
 			IsActive = true;
 			while(IsActive) {
-				var elapsed = Timer.ElapsedMilliseconds;
+				var elapsed = Timer.Elapsed.TotalSeconds;
 				var dt = elapsed - previous;
 				previous = elapsed;
-				Systems.Update(dt);
+				Systems.Update((float) dt);
 				Server.Poll();
 				Thread.Sleep(SLEEP);
 			}
