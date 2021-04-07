@@ -5,16 +5,21 @@ namespace MonoGameTest.Client {
 
 	public static class ClientEntity {
 
-		public static Entity CreatePlayer(World world, Coord coord, Sprite sprite) {
-			var player = world.CreateEntity();
-			player.Set(Character.Create());
-			player.Set(Player.Create());
-			player.Set(new Position { Coord = coord });
-			player.Set(new Movement());
-			player.Set(new Cooldown());
-			player.Set(sprite);
-			player.Set(new MovementInput());
-			return player;
+		public static Entity Create(Context context, AddCharacterPacket packet) {
+			var sprite = Sprite.Create(context.Resources.Characters, 4);
+			var entity = context.World.CreateEntity();
+			entity.Set(new Character(packet.Id));
+			if (packet.PeerId >= 0) {
+				entity.Set(new Player(packet.PeerId));
+			}
+			entity.Set(new Position { Coord = new Coord(packet.X, packet.Y) });
+			entity.Set(new Movement());
+			entity.Set(new Cooldown());
+			entity.Set(sprite);
+			if (packet.PeerId == context.Client.PeerId) {
+				entity.Set(new MovementInput());
+			}
+			return entity;
 		}
 
 	}

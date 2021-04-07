@@ -1,33 +1,36 @@
 using DefaultEcs.System;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
-using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Renderers;
 
 namespace MonoGameTest.Client {
 
 	public class TilemapDrawSystem : ISystem<float> {
-		readonly TiledMapRenderer Renderer;
-		readonly OrthographicCamera Camera;
+		readonly Context Context;
+
+		TiledMapRenderer Renderer;
 
 		public bool IsEnabled { get; set; }
 
-		public TilemapDrawSystem(
-			GraphicsDevice graphicsDevice,
-			TiledMap tiledMap,
-			OrthographicCamera camera
-		) {
-			Renderer = new TiledMapRenderer(graphicsDevice, tiledMap);
-			Camera = camera;
+		public TilemapDrawSystem(Context context) {
+			Context = context;
 			IsEnabled = true;
 		}
 
 		public void Update(float state) {
-			Renderer.Draw(Camera.GetViewMatrix());
+			if (!Context.IsReady) {
+				if (Renderer != null) {
+					Renderer.Dispose();
+					Renderer = null;
+				}
+				return;
+			}
+			if (Renderer == null) {
+				Renderer = new TiledMapRenderer(Context.GraphicsDevice, Context.TiledMap);
+			}
+			Renderer.Draw(Context.Camera.GetMatrix());
 		}
 
 		public void Dispose() {
-			Renderer.Dispose();
+			if (Renderer != null) Renderer.Dispose();
 		}
 
 	}

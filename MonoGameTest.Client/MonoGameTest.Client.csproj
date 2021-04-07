@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
@@ -25,13 +25,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DefaultEcs" Version="0.15.1" />
+    <PackageReference Include="LiteNetLib" Version="0.9.4" />
     <PackageReference Include="MonoGame.Aseprite" Version="2.0.4.1" />
     <PackageReference Include="MonoGame.Extended" Version="3.8.0" />
     <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="3.8.0" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
-    <PackageReference Include="RogueSharp" Version="5.0.0-pre4" />
-    <PackageReference Include="RoyT.AStar" Version="3.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoGameTest.Common\MonoGameTest.Common.csproj" />

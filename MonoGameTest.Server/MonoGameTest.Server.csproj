@@ -2,7 +2,9 @@
 
   <ItemGroup>
     <PackageReference Include="DefaultEcs" Version="0.15.1" />
+    <PackageReference Include="LiteNetLib" Version="0.9.4" />
     <PackageReference Include="OptimizedPriorityQueue" Version="5.1.0" />
+    <PackageReference Include="TiledCS" Version="2.0.0" />
     <ProjectReference Include="..\MonoGameTest.Common\MonoGameTest.Common.csproj" />
   </ItemGroup>
 

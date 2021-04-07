@@ -5,18 +5,18 @@ using DefaultEcs.System;
 namespace MonoGameTest.Common {
 
 	public class MovementSystem : AEntitySetSystem<float> {
-		Grid Grid;
-		EntityMap<Position> Positions;
+		readonly EntityMap<Position> Positions;
+		readonly IContext Context;
 
-		public MovementSystem(World world, Grid grid, EntityMap<Position> positions) : base(world
+		public MovementSystem(World world, IContext context) : base(world
 			.GetEntities()
 			.With<Movement>()
 			.With<Cooldown>()
 			.With<Position>()
 			.AsSet()
 		) {
-			Grid = grid;
-			Positions = positions;
+			Positions = World.GetEntities().With<Character>().AsMap<Position>();
+			Context = context;
 		}
 
 		protected override void Update(float dt, in Entity entity) {
@@ -28,8 +28,6 @@ namespace MonoGameTest.Common {
 
 			Node node = null;
 			movement.Path = movement.Path.Pop(out node);
-
-			Console.WriteLine("Move: {0}", node);
 
 			// reset if something is in the path
 			Entity other;
@@ -44,6 +42,11 @@ namespace MonoGameTest.Common {
 			position.Coord = node.Coord;
 			cooldown.action = Movement.ACTION_DURATION;
 			cooldown.pause = Movement.PAUSE_DURATION;
+		}
+
+		public override void Dispose() {
+			Positions.Dispose();
+			base.Dispose();
 		}
 
 	}

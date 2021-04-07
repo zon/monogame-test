@@ -12,12 +12,10 @@ using MonoGameTest.Common;
 namespace MonoGameTest.Client {
 
 	public class PathfinderDebugSystem : ISystem<float> {
-		readonly TiledMap TiledMap;
-		readonly Grid Grid;
 		readonly EntityMap<Position> Positions;
 		readonly SpriteBatch Batch;
 		readonly SpriteFont Font;
-		readonly OrthographicCamera Camera;
+		readonly Context Context;
 		Node Start;
 		Node End;
 		ImmutableStack<Node> Path;
@@ -28,62 +26,58 @@ namespace MonoGameTest.Client {
 		public bool IsEnabled { get; set; }
 
 		public PathfinderDebugSystem(
-			TiledMap tiledMap,
-			Grid grid,
 			EntityMap<Position> positions,
 			SpriteBatch batch,
 			SpriteFont font,
-			OrthographicCamera camera
+			Context context
 		) {
-			TiledMap = tiledMap;
-			Grid = grid;
 			Positions = positions;
 			Batch = batch;
 			Font = font;
-			Camera = camera;
+			Context = context;
 			IsEnabled = true;
 
-			Start = Grid.Get(2, 9);
-			End = Grid.Get(11, 9);
-			Path = Pathfinder.OptimalPathfind(Grid, Positions, Start, End, Debug);
+			Start = Context.Grid.Get(2, 9);
+			End = Context.Grid.Get(11, 9);
+			Path = Pathfinder.OptimalPathfind(Context.Grid, Positions, Start, End, Debug);
 		}
 
 		public void Update(float dt) {
 			var mouse = Mouse.GetState();
 			var dirty = false;
 			if (mouse.LeftButton == ButtonState.Pressed) {
-				Start = Tiled.GetNode(TiledMap, Grid, Camera, mouse.X, mouse.Y);
+				Start = Context.GetNode(mouse.X, mouse.Y);
 				dirty = true;
 			}
 			if (mouse.RightButton == ButtonState.Pressed) {
-				End = Tiled.GetNode(TiledMap, Grid, Camera, mouse.X, mouse.Y);
+				End = Context.GetNode(mouse.X, mouse.Y);
 				dirty = true;
 			}
 			if (Start == null || End == null) return;
 
 			if (dirty) {
-				Path = Pathfinder.OptimalPathfind(Grid, Positions, Start, End, Debug);
+				Path = Pathfinder.OptimalPathfind(Context.Grid, Positions, Start, End, Debug);
 			}
 
-			Batch.Begin(transformMatrix: Camera.GetViewMatrix());
+			Batch.Begin(transformMatrix: Context.Camera.GetMatrix());
 
 			foreach (var (index, cost) in Costs) {
-				var node = Grid.Nodes[index];
-				var p = Tiled.CoordToVector(TiledMap, node.Coord);
+				var node = Context.Grid.Nodes[index];
+				var p = Context.CoordToVector(node.Coord);
 				Batch.DrawString(Font, $"{cost:F1}", p, Color.White);
 			}
 
-			var h = Tiled.Half(TiledMap);
+			var h = Context.Half();
 			foreach (var (index, heuristic) in Heuristics) {
-				var node = Grid.Nodes[index];
-				var p = Tiled.CoordToVector(TiledMap, node.Coord);
+				var node = Context.Grid.Nodes[index];
+				var p = Context.CoordToVector(node.Coord);
 				Batch.DrawString(Font, $"{heuristic:F1}", p + h, Color.Yellow);
 			}
 
 			Batch.DrawString(Font, $"{Start}", Vector2.Zero, Color.Lime);
 			Batch.DrawString(Font, $"{End}", new Vector2(0, h.Y), Color.Lime);
 
-			DrawPath(Batch, TiledMap, Path);
+			DrawPath(Batch, Context, Path);
 
 			Batch.End();
 		}
@@ -98,8 +92,8 @@ namespace MonoGameTest.Client {
 			Costs = costs;
 		}
 
-		public static void DrawPath(SpriteBatch batch, TiledMap map, ImmutableStack<Node> path) {
-			var h = Tiled.Half(map);
+		public static void DrawPath(SpriteBatch batch, Context context, ImmutableStack<Node> path) {
+			var h = context.Half();
 			Node a = null;
 			foreach (var node in path) {
 				if (a == null) {
@@ -108,8 +102,8 @@ namespace MonoGameTest.Client {
 				}
 				var b = node;
 				batch.DrawLine(
-					Tiled.CoordToVector(map, a.Coord) + h,
-					Tiled.CoordToVector(map, b.Coord) + h,
+					context.CoordToVector(a.Coord) + h,
+					context.CoordToVector(b.Coord) + h,
 					Color.Blue
 				);
 				a = b;

@@ -1,35 +1,22 @@
-using System;
 using DefaultEcs;
 using DefaultEcs.System;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
-using MonoGame.Extended.Tiled;
 using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
 
 	public class MovementInputSystem : AEntitySetSystem<float> {
-		readonly Grid Grid;
-		readonly TiledMap TiledMap;
 		readonly EntityMap<Position> Positions;
-		readonly OrthographicCamera Camera;
+		readonly Context Context;
 
-		public MovementInputSystem(
-			World world,
-			Grid grid,
-			TiledMap tiledMap,
-			EntityMap<Position> positions,
-			OrthographicCamera camera
-		) : base(world
+		public MovementInputSystem(World world, Context context) : base(world
 			.GetEntities()
 			.With<Movement>()
 			.With<Position>()
 			.AsSet()
 		) {
-			Grid = grid;
-			TiledMap = tiledMap;
-			Positions = positions;
-			Camera = camera;
+			Positions = World.GetEntities().With<Character>().AsMap<Position>();
+			Context = context;
 		}
 
 		protected override void Update(float dt, in Entity entity) {
@@ -42,10 +29,15 @@ namespace MonoGameTest.Client {
 				mouse.RightButton != ButtonState.Pressed
 			) return;
 
-			var goal = Tiled.GetNode(TiledMap, Grid, Camera, mouse.X, mouse.Y);
+			var goal = Context.GetNode(mouse.X, mouse.Y);
 			if (goal == null) return;
 
-			movement.Path = Pathfinder.OptimalPathfind(Grid, Positions, position.Coord, goal.Coord);
+			movement.Path = Pathfinder.OptimalPathfind(Context.Grid, Positions, position.Coord, goal.Coord);
+		}
+
+		public override void Dispose() {
+			Positions.Dispose();
+			base.Dispose();
 		}
 
 	}

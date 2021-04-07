@@ -7,7 +7,7 @@ namespace MonoGameTest.Common {
 
 		static int AutoId = 0;
 
-		Character(int id) {
+		public Character(int id) {
 			Id = id;
 		}
 
