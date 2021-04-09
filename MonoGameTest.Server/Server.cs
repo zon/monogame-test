@@ -13,10 +13,8 @@ namespace MonoGameTest.Server {
 
 		public delegate void OnPeerConnected(NetPeer peer);
 		public delegate void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo);
-		public delegate void OnMoveCommand(NetPeer peer, MoveCommand command);
 		public event OnPeerConnected PeerConnectedEvent;
 		public event OnPeerDisconnected PeerDisconnectedEvent;
-		public event OnMoveCommand MoveCommandEvent;
 
 		readonly Dictionary<int, NetPeer> Peers = new Dictionary<int, NetPeer>();
 		readonly NetManager Manager;
@@ -64,9 +62,7 @@ namespace MonoGameTest.Server {
 			Console.WriteLine("Network Error: {0}, {1}", endPoint, socketError);
 		}
 
-		void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency) {
-			Console.WriteLine("Latency Update: {0}, {1}", peer, latency);
-		}
+		void INetEventListener.OnNetworkLatencyUpdate(NetPeer peer, int latency) {}
 
 		void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod) {
 			Processor.ReadAllPackets(reader, peer);

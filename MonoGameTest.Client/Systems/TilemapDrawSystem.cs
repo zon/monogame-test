@@ -1,4 +1,5 @@
 using DefaultEcs.System;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Tiled.Renderers;
 
 namespace MonoGameTest.Client {
@@ -26,6 +27,7 @@ namespace MonoGameTest.Client {
 			if (Renderer == null) {
 				Renderer = new TiledMapRenderer(Context.GraphicsDevice, Context.TiledMap);
 			}
+			Context.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 			Renderer.Draw(Context.Camera.GetMatrix());
 		}
 

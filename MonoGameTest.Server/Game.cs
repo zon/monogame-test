@@ -34,10 +34,13 @@ namespace MonoGameTest.Server {
 			Context = new Context(Server, World);
 			Context.Load(TileMapName);
 
+			ServerCharacter.SpawnMobs(Context.Grid, World);
+
 			Characters = World.GetEntities().With<Character>().AsSet();
 			Players = World.GetEntities().With<Character>().AsMap<Player>();
 			Systems = new SequentialSystem<float>(
 				new CooldownSystem(Context),
+				new MobTargetSystem(Context),
 				new MovementSystem(Context),
 				new ServerPositionSystem(Context),
 				new ServerNetworkSystem(Context)
@@ -62,7 +65,7 @@ namespace MonoGameTest.Server {
 		}
 
 		public void Exit() {
-			IsActive = false;
+			IsActive = false; 
 		}
 
 		public void Dispose() {
@@ -74,21 +77,16 @@ namespace MonoGameTest.Server {
 		}
 
 		void OnPeerConnected(NetPeer peer) {
-			Server.Send(peer, new TilemapPacket { Name = TileMapName });
+			Server.Send(peer, new SessionPacket { TileMapName = TileMapName, PeerId = peer.Id });
 
 			foreach (var entity in Characters.GetEntities()) {
 				ref var character = ref entity.Get<Character>();
+				ref var attributes = ref entity.Get<Attributes>();
 				ref var position = ref entity.Get<Position>();
-				Server.Send(peer, new AddCharacterPacket {
-					Id = character.Id,
-					PeerId = peer.Id,
-					X = position.Coord.X,
-					Y = position.Coord.Y
-				});
+				Server.Send(peer, new AddCharacterPacket(character, attributes, position, peer.Id));
 			}
 
-			var e = ServerEntity.CreatePlayer(World, peer.Id, new Coord(7, 7));
-			var c = e.Get<Character>();
+			ServerCharacter.SpawnPlayer(Context, peer.Id);
 		}
 
 		void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo) {

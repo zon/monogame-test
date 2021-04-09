@@ -32,18 +32,14 @@ namespace MonoGameTest.Server {
 
 		void OnAddPosition(in Entity entity, in Position position) {
 			ref var character = ref entity.Get<Character>();
+			ref var attributes = ref entity.Get<Attributes>();
 
-			var peerId = -1;
+			var peerId = 0;
 			if (entity.Has<Player>()) {
 				peerId = entity.Get<Player>().PeerId;
 			}
 
-			Server.SendToAll(new AddCharacterPacket {
-				Id = character.Id,
-				PeerId = peerId,
-				X = position.Coord.X,
-				Y = position.Coord.Y
-			});
+			Server.SendToAll(new AddCharacterPacket(character, attributes, position, peerId));
 		}
 
 		void OnChangePosition(in Entity entity, in Position oldPosition, in Position newPosition) {

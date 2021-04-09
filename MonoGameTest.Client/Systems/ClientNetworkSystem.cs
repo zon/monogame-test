@@ -13,9 +13,9 @@ namespace MonoGameTest.Client {
 		public ClientNetworkSystem(Context context) {
 			Context = context;
 			Characters = Context.World.GetEntities().With<Position>().AsMap<Character>();
-			Context.Client.AddCharacterEvent += OnAddCharacter;
-			Context.Client.MoveCharacterEvent += OnMoveCharacter;
-			Context.Client.RemoveCharacterEvent += OnRemoveCharacter;
+			Context.Client.Processor.SubscribeReusable<AddCharacterPacket>(OnAddCharacter);
+			Context.Client.Processor.SubscribeReusable<MoveCharacterPacket>(OnMoveCharacter);
+			Context.Client.Processor.SubscribeReusable<RemoveCharacterPacket>(OnRemoveCharacter);
 		}
 
 		public void Update(float dt) {}
@@ -25,7 +25,7 @@ namespace MonoGameTest.Client {
 		}
 
 		void OnAddCharacter(AddCharacterPacket packet) {
-			ClientEntity.Create(Context, packet);
+			ClientCharacter.Create(Context, packet);
 		}
 
 		void OnMoveCharacter(MoveCharacterPacket packet) {

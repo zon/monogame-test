@@ -1,5 +1,6 @@
 using DefaultEcs;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Tiled;
 using MonoGameTest.Common;
@@ -11,6 +12,7 @@ namespace MonoGameTest.Client {
 		public readonly Resources Resources;
 		public readonly Client Client;
 		public World World { get; private set; }
+		public int PeerId { get; private set; }
 		public TiledMap TiledMap { get; private set; }
 		public Grid Grid { get; private set; }
 		public Camera Camera { get; private set; }
@@ -23,10 +25,23 @@ namespace MonoGameTest.Client {
 			Client = client;
 		}
 
-		public void Load(Game game, string name) {
-			TiledMap = Tiled.LoadMap(game.Content, name);
+		public void Load(
+			ContentManager content,
+			GameWindow window,
+			SessionPacket session
+		) {
+			PeerId = session.PeerId;
+			Load(content, window, session.TileMapName);
+		}
+
+		public void Load(
+			ContentManager content,
+			GameWindow window,
+			string tileMapName
+		) {
+			TiledMap = Tiled.LoadMap(content, tileMapName);
 			Grid = Tiled.LoadGrid(TiledMap);
-			Camera = new Camera(game.Window, game.GraphicsDevice, TiledMap);
+			Camera = new Camera(window, GraphicsDevice, TiledMap);
 			IsReady = true;
 		}
 
@@ -62,6 +77,7 @@ namespace MonoGameTest.Client {
 		}
 
 		public void Unload() {
+			PeerId = 0;
 			TiledMap = null;
 			Grid = null;
 			Camera = null;

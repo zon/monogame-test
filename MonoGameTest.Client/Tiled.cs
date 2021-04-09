@@ -9,7 +9,7 @@ namespace MonoGameTest.Client {
 
 		public static TiledMap LoadMap(ContentManager content, string name) {
 			var map = content.Load<TiledMap>("first");
-			map.GetLayer("zones").IsVisible = false;
+			map.GetLayer("characters").IsVisible = false;
 			return map;
 		}
 

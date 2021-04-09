@@ -13,7 +13,7 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void PreUpdate(float dt) {
-			Batch.Begin(transformMatrix: Context.Camera.GetMatrix());
+			Batch.Begin(transformMatrix: Context.Camera.GetMatrix(), samplerState: SamplerState.PointClamp);
 		}
 
 		protected override void Update(float dt, ref Sprite sprite) {

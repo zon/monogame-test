@@ -35,8 +35,8 @@ namespace MonoGameTest.Client {
 			base.Initialize();
 
 			Client = new Client();
-			Client.PeerDisconnectedEvent += OnDisconnected;
-			Client.TilemapEvent += OnTilemap;
+			Client.DisconnectedEvent += OnDisconnected;
+			Client.Processor.SubscribeReusable<SessionPacket>(OnSession);
 			
 			World = new World();
 
@@ -57,28 +57,25 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void Update(GameTime gameTime) {
-			if (Behavior != null) Behavior
-				.Update((float) gameTime.ElapsedGameTime.TotalSeconds);
+			var dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
+			if (Context.IsReady) Behavior.Update(dt);
 			Client.Poll();
 		}
 
 		protected override void Draw(GameTime gameTime) {
 			GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 			GraphicsDevice.Clear(Color.Black);
-			if (Rendering == null) return;
-			Rendering.Update((float) gameTime.ElapsedGameTime.TotalSeconds);
+			if (!Context.IsReady) return;
+			var dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
+			Rendering.Update(dt);
 		}
 		
-		void OnDisconnected(NetPeer peer, DisconnectInfo disconnectInfo) {
+		void OnDisconnected(DisconnectInfo disconnectInfo) {
 			ClearLevel();
 		}
 
-		void OnTilemap(TilemapPacket packet) {
-			LoadLevel(packet.Name);
-		}
-
-		void LoadLevel(string name) {
-			Context.Load(this, name);
+		void OnSession(SessionPacket session) {
+			Context.Load(Content, Window, session);
 			Context.Camera.SetWindowSize(Graphics);
 		}
 

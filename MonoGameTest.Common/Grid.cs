@@ -1,14 +1,18 @@
+using DefaultEcs;
+
 namespace MonoGameTest.Common {
 
 	public class Grid {
 		public readonly int Width;
 		public readonly int Height;
 		public readonly Node[] Nodes;
+		public readonly Spawn[] Spawns;
 
-		public Grid(int width, int height, Node[] nodes) {
-			this.Width = width;
-			this.Height = height;
-			this.Nodes = nodes;
+		public Grid(int width, int height, Node[] nodes, Spawn[] spawns = null) {
+			Width = width;
+			Height = height;
+			Nodes = nodes;
+			Spawns = (spawns != null) ? spawns : new Spawn[0];
 		}
 
 		public bool InBounds(int x, int y) {
@@ -30,7 +34,7 @@ namespace MonoGameTest.Common {
 		}
 
 		// https://stackoverflow.com/a/3706260
-		public Node GetOpenNearby(int x, int y) {
+		public Node GetOpenNearby(EntityMap<Position> positions, int x, int y) {
 			var vx = 1;
 			var vy = 0;
 			var len = 1;
@@ -40,7 +44,9 @@ namespace MonoGameTest.Common {
 			for (var _ = 0; _ < 64; _++) {
 
 				var node = Get(x + ox, y + oy);
-				if (node != null && !node.Solid) return node;
+				if (node != null && !node.Solid) {
+					if (!positions.ContainsKey(node.Position)) return node;
+				}
 
 				ox += vx;
 				oy += vy;
@@ -56,6 +62,10 @@ namespace MonoGameTest.Common {
 				}
 			}
 			return null;
+		}
+
+		public Node GetOpenNearby(EntityMap<Position> positions, Coord coord) {
+			return GetOpenNearby(positions, coord.X, coord.Y);
 		}
 
 		public int Index(int x, int y) {

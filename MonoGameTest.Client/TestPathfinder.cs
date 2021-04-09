@@ -38,7 +38,7 @@ namespace MonoGameTest.Client {
 			World = new World();
 
 			Context = new Context(GraphicsDevice, Resources, World, null);
-			Context.Load(this, "first");
+			Context.Load(Content, Window, "first");
 
 			var positions = World.GetEntities().With<Character>().AsMap<Position>();
 
