@@ -1,3 +1,4 @@
+* One step pathfinding
 * Move animation
 * Sprite facing
 * Move sound

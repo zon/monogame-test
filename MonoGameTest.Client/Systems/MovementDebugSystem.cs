@@ -19,8 +19,8 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void Update(float dt, ref Movement movement) {
-			if (movement.Path == null) return;
-			PathfinderDebugSystem.DrawPath(Batch, Context, movement.Path);
+			// if (movement.Path == null) return;
+			// PathfinderDebugSystem.DrawPath(Batch, Context, movement.Path);
 		}
 
 		protected override void PostUpdate(float dt) {

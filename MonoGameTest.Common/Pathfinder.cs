@@ -23,11 +23,23 @@ namespace MonoGameTest.Common {
 				grid,
 				characters,
 				start,
-				(n, e) => !n.Solid && e.HasValue,
+				(n, e) => !n.Solid && !e.HasValue,
 				n => n.Coord == goal.Coord,
 				n => Coord.ChebyshevDistance(n.Coord, goal.Coord),
 				debug
 			);
+		}
+		
+		public static ImmutableStack<Node> Pathfind(
+			Grid grid, EntityMap<Position> characters,
+			Coord start,
+			Coord goal,
+			Action<Dictionary<int, float>, Dictionary<int, Node>, Dictionary<int, float>> debug = null
+		) {
+			var a = grid.Get(start);
+			var b = grid.Get(goal);
+			if (a == null || b == null) return Empty;
+			return Pathfind(grid, characters, a, b, debug);
 		}
 
 		public static ImmutableStack<Node> OptimalPathfind(

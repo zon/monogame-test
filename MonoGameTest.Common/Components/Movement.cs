@@ -1,9 +1,9 @@
-using System.Collections.Immutable;
+using System;
 
 namespace MonoGameTest.Common {
 
 	public struct Movement {
-		public ImmutableStack<Node> Path;
+		public Nullable<Coord> Goal;
 
 		public const float COST = 1;
 		public const float DIAGONAL_COST = 1.41f;
@@ -12,7 +12,7 @@ namespace MonoGameTest.Common {
 		public const float PAUSE_DURATION = 1;
 
 		public bool IsIdle() {
-			return Path == null || Path.IsEmpty;
+			return Goal == null;
 		}
 
 	}

@@ -39,7 +39,7 @@ namespace MonoGameTest.Server {
 			var goal = Context.Grid.Get(command.X, command.Y);
 			if (goal == null) return;
 
-			movement.Path = Pathfinder.OptimalPathfind(Context.Grid, Positions, start, goal);
+			movement.Goal = goal.Coord;
 		}
 
 	}

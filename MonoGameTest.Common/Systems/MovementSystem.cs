@@ -26,20 +26,29 @@ namespace MonoGameTest.Common {
 
 			if (!cooldown.IsCool() || movement.IsIdle()) return;
 
-			Node node = null;
-			movement.Path = movement.Path.Pop(out node);
-
-			// reset if something is in the path
-			Entity other;
-			if (
-				Positions.TryGetEntity(node.Position, out other) &&
-				other != entity
-			) {
-				movement.Path = movement.Path.Clear();
+			var path = Pathfinder.Pathfind(
+				Context.Grid,
+				Positions,
+				position.Coord,
+				movement.Goal.Value
+			);
+			
+			// reset if path isn't possible
+			if (path.IsEmpty) {
+				movement.Goal = null;
 				return;
 			}
 
+			// move to first step in path
+			Node node = null;
+			path.Pop(out node);
 			position.Coord = node.Coord;
+
+			// clear at goal
+			if (node.Coord == movement.Goal) {
+				movement.Goal = null;
+			}
+
 			cooldown.action = Movement.ACTION_DURATION;
 			cooldown.pause = Movement.PAUSE_DURATION;
 
