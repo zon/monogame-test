@@ -15,6 +15,7 @@ namespace MonoGameTest.Client {
 			}
 			entity.Set(new Position { Coord = new Coord(packet.X, packet.Y) });
 			entity.Set(sprite);
+			entity.Set(CharacterView.Create());
 			if (packet.PeerId == context.PeerId) {
 				entity.Set(new LocalPlayer());
 			}

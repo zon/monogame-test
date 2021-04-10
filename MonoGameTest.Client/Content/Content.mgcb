@@ -15,6 +15,54 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin bump-strike-0.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bump-strike-0.wav
+
+#begin bump-strike-1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bump-strike-1.wav
+
+#begin bump-strike-2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bump-strike-2.wav
+
+#begin bump-strike-3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bump-strike-3.wav
+
+#begin bump-strike-4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bump-strike-4.wav
+
+#begin bump-strike-5.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bump-strike-5.wav
+
+#begin bump-strike-6.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bump-strike-6.wav
+
+#begin bump-strike-7.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bump-strike-7.wav
+
 #begin default.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -38,6 +86,11 @@
 /importer:TiledMapImporter
 /processor:TiledMapProcessor
 /build:first.tmx
+
+#begin munro.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:munro.fnt
 
 #begin walls.tsx
 /importer:TiledMapTilesetImporter
