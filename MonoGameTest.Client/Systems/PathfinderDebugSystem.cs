@@ -6,40 +6,37 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-using MonoGame.Extended.Tiled;
 using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
 
 	public class PathfinderDebugSystem : ISystem<float> {
-		readonly EntityMap<Position> Positions;
 		readonly SpriteBatch Batch;
 		readonly SpriteFont Font;
 		readonly Context Context;
+		readonly EntityMap<Position> Positions;
+		readonly Pathfinder Pathfinder;
 		Node Start;
 		Node End;
 		ImmutableStack<Node> Path;
-		Dictionary<int, float> Heuristics;
-		Dictionary<int, Node> Origins;
-		Dictionary<int, float> Costs;
 
 		public bool IsEnabled { get; set; }
 
 		public PathfinderDebugSystem(
-			EntityMap<Position> positions,
 			SpriteBatch batch,
 			SpriteFont font,
 			Context context
 		) {
-			Positions = positions;
 			Batch = batch;
 			Font = font;
 			Context = context;
+			Positions = Context.World.GetEntities().With<Position>().AsMap<Position>();
+			Pathfinder = new Pathfinder(Context.Grid, Positions, true);
 			IsEnabled = true;
 
 			Start = Context.Grid.Get(2, 9);
 			End = Context.Grid.Get(11, 9);
-			Path = Pathfinder.OptimalPathfind(Context.Grid, Positions, Start, End, Debug);
+			Path = Pathfinder.MoveTo(Start, End);
 		}
 
 		public void Update(float dt) {
@@ -56,19 +53,19 @@ namespace MonoGameTest.Client {
 			if (Start == null || End == null) return;
 
 			if (dirty) {
-				Path = Pathfinder.OptimalPathfind(Context.Grid, Positions, Start, End, Debug);
+				Path = Pathfinder.MoveTo(Start, End);
 			}
 
 			Batch.Begin(transformMatrix: Context.Camera.GetMatrix());
 
-			foreach (var (index, cost) in Costs) {
+			foreach (var (index, cost) in Pathfinder.Costs) {
 				var node = Context.Grid.Nodes[index];
 				var p = Context.CoordToVector(node.Coord);
 				Batch.DrawString(Font, $"{cost:F1}", p, Color.White);
 			}
 
 			var h = Context.Half();
-			foreach (var (index, heuristic) in Heuristics) {
+			foreach (var (index, heuristic) in Pathfinder.Heuristics) {
 				var node = Context.Grid.Nodes[index];
 				var p = Context.CoordToVector(node.Coord);
 				Batch.DrawString(Font, $"{heuristic:F1}", p + h, Color.Yellow);
@@ -80,16 +77,6 @@ namespace MonoGameTest.Client {
 			DrawPath(Batch, Context, Path);
 
 			Batch.End();
-		}
-
-		void Debug(
-			Dictionary<int, float> heuristics,
-			Dictionary<int, Node> origins,
-			Dictionary<int, float> costs
-		) {
-			Heuristics = heuristics;
-			Origins = origins;
-			Costs = costs;
 		}
 
 		public static void DrawPath(SpriteBatch batch, Context context, ImmutableStack<Node> path) {
@@ -110,7 +97,9 @@ namespace MonoGameTest.Client {
 			}
 		}
 
-		public void Dispose() {}
+		public void Dispose() {
+			Positions.Dispose();
+		}
 
 	}
 

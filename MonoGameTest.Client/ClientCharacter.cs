@@ -9,7 +9,7 @@ namespace MonoGameTest.Client {
 			var sprite = Sprite.Create(context.Resources.Characters, packet.Sprite);
 			var entity = context.World.CreateEntity();
 			entity.Set(new Character(packet.Id));
-			entity.Set(new Attributes((Group) packet.Group, packet.Sprite));
+			entity.Set((Group) packet.Group);
 			if (packet.PeerId > 0) {
 				entity.Set(new Player(packet.PeerId));
 			}

@@ -1,3 +1,5 @@
+using DefaultEcs;
+
 namespace MonoGameTest.Common {
 
 	public class AddCharacterPacket {
@@ -10,14 +12,17 @@ namespace MonoGameTest.Common {
 
 		public AddCharacterPacket() {}
 
-		public AddCharacterPacket(
-			Character character,
-			Attributes attributes,
-			Position position,
-			int peerId = 0
-		) {
+		public AddCharacterPacket(Entity entity) {
+			ref var character = ref entity.Get<Character>();
+			ref var group = ref entity.Get<Group>();
+			ref var attributes = ref entity.Get<Attributes>();
+			var peerId = 0;
+			if (entity.Has<Player>()) {
+				peerId = entity.Get<Player>().PeerId;
+			}
+			ref var position = ref entity.Get<Position>();
 			Id = character.Id;
-			Group = (int) attributes.Group;
+			Group = (int) group;
 			Sprite = attributes.Sprite;
 			PeerId = peerId;
 			X = position.Coord.X;

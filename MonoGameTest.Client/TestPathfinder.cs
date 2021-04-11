@@ -40,11 +40,9 @@ namespace MonoGameTest.Client {
 			Context = new Context(GraphicsDevice, Resources, World, null);
 			Context.Load(Content, Window, "first");
 
-			var positions = World.GetEntities().With<Character>().AsMap<Position>();
-
 			Systems = new SequentialSystem<float>(
 				new TilemapDrawSystem(Context),
-				new PathfinderDebugSystem(positions, Batch, Font, Context)
+				new PathfinderDebugSystem(Batch, Font, Context)
 			);
 		}
 

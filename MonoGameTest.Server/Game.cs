@@ -13,6 +13,8 @@ namespace MonoGameTest.Server {
 		Context Context;
 		Server Server;
 		World World;
+		CommandListener CommandListener;
+		PositionListener PositionListener;
 		EntitySet Characters;
 		EntityMap<Player> Players;
 		ISystem<float> Systems;
@@ -34,6 +36,9 @@ namespace MonoGameTest.Server {
 			Context = new Context(Server, World);
 			Context.Load(TileMapName);
 
+			CommandListener = new CommandListener(Context);
+			PositionListener = new PositionListener(Context);
+
 			ServerCharacter.SpawnMobs(Context.Grid, World);
 
 			Characters = World.GetEntities().With<Character>().AsSet();
@@ -41,9 +46,7 @@ namespace MonoGameTest.Server {
 			Systems = new SequentialSystem<float>(
 				new CooldownSystem(Context),
 				new MobTargetSystem(Context),
-				new MovementSystem(Context),
-				new ServerPositionSystem(Context),
-				new ServerNetworkSystem(Context)
+				new MovementSystem(Context)
 			);
 		}
 
@@ -71,6 +74,8 @@ namespace MonoGameTest.Server {
 		public void Dispose() {
 			Exit();
 			Server.Stop();
+			CommandListener.Dispose();
+			PositionListener.Dispose();
 			Players.Dispose();
 			Systems.Dispose();
 			World.Dispose();
@@ -80,10 +85,7 @@ namespace MonoGameTest.Server {
 			Server.Send(peer, new SessionPacket { TileMapName = TileMapName, PeerId = peer.Id });
 
 			foreach (var entity in Characters.GetEntities()) {
-				ref var character = ref entity.Get<Character>();
-				ref var attributes = ref entity.Get<Attributes>();
-				ref var position = ref entity.Get<Position>();
-				Server.Send(peer, new AddCharacterPacket(character, attributes, position, peer.Id));
+				Server.Send(peer, new AddCharacterPacket(entity));
 			}
 
 			ServerCharacter.SpawnPlayer(Context, peer.Id);

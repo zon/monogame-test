@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using DefaultEcs;
 using DefaultEcs.System;
 
@@ -26,31 +27,42 @@ namespace MonoGameTest.Common {
 
 			if (!cooldown.IsCool() || movement.IsIdle()) return;
 
-			var path = Pathfinder.Pathfind(
-				Context.Grid,
-				Positions,
-				position.Coord,
-				movement.Goal.Value
-			);
+			ImmutableStack<Node> path;
+			if (movement.Path == null) {
+				var pathfinder = new Pathfinder(Context.Grid, Positions);
+				path = pathfinder.MoveTo(
+					position.Coord,
+					movement.Goal.Value
+				);
+
+			// use preloaded movement path
+			} else {
+				path = movement.Path;
+				movement.Path = null;
+			} 
 			
-			// reset if path isn't possible
+			// reset if path is empty
 			if (path.IsEmpty) {
 				movement.Goal = null;
 				return;
 			}
 
-			// move to first step in path
+			// get first step
 			Node node = null;
 			path.Pop(out node);
+
+			// only move if position is empty
+			if (Positions.ContainsKey(node.Position)) return;
+
+			// move
 			position.Coord = node.Coord;
+			cooldown.action = Movement.ACTION_DURATION;
+			cooldown.pause = Movement.PAUSE_DURATION;
 
 			// clear at goal
 			if (node.Coord == movement.Goal) {
 				movement.Goal = null;
 			}
-
-			cooldown.action = Movement.ACTION_DURATION;
-			cooldown.pause = Movement.PAUSE_DURATION;
 
 			entity.NotifyChanged<Position>();
 		}

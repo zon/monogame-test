@@ -1,28 +1,22 @@
 using System;
 using DefaultEcs;
-using DefaultEcs.System;
 using MonoGameTest.Common;
 
 namespace MonoGameTest.Server {
 
-	public class ServerPositionSystem : ISystem<float> {
-		readonly World World;
+	public class PositionListener : IDisposable {
 		readonly Server Server;
 		readonly IDisposable AddedListener;
 		readonly IDisposable ChangedListener;
 		readonly IDisposable RemoveListener;
 
-		public bool IsEnabled { get; set; }
-
-		public ServerPositionSystem(Context context) {
-			World = context.World;
+		public PositionListener(Context context) {
 			Server = context.Server;
-			AddedListener = World.SubscribeComponentAdded<Position>(OnAddPosition);
-			ChangedListener = World.SubscribeComponentChanged<Position>(OnChangePosition);
-			RemoveListener = World.SubscribeComponentRemoved<Position>(OnRemovePosition);
+			var world = context.World;
+			AddedListener = world.SubscribeComponentAdded<Position>(OnAddPosition);
+			ChangedListener = world.SubscribeComponentChanged<Position>(OnChangePosition);
+			RemoveListener = world.SubscribeComponentRemoved<Position>(OnRemovePosition);
 		}
-
-		public void Update(float dt) {}
 
 		public void Dispose() {
 			AddedListener.Dispose();
@@ -31,15 +25,7 @@ namespace MonoGameTest.Server {
 		}
 
 		void OnAddPosition(in Entity entity, in Position position) {
-			ref var character = ref entity.Get<Character>();
-			ref var attributes = ref entity.Get<Attributes>();
-
-			var peerId = 0;
-			if (entity.Has<Player>()) {
-				peerId = entity.Get<Player>().PeerId;
-			}
-
-			Server.SendToAll(new AddCharacterPacket(character, attributes, position, peerId));
+			Server.SendToAll(new AddCharacterPacket(entity));
 		}
 
 		void OnChangePosition(in Entity entity, in Position oldPosition, in Position newPosition) {

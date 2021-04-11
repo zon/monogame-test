@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Immutable;
 
 namespace MonoGameTest.Common {
 
 	public struct Movement {
 		public Nullable<Coord> Goal;
+		public ImmutableStack<Node> Path;
 
 		public const float COST = 1;
 		public const float DIAGONAL_COST = 1.41f;
