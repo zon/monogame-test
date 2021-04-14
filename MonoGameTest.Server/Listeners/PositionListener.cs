@@ -31,16 +31,17 @@ namespace MonoGameTest.Server {
 		void OnChangePosition(in Entity entity, in Position oldPosition, in Position newPosition) {
 			ref var character = ref entity.Get<Character>();
 			Server.SendToAll(new MoveCharacterPacket {
-				Id = character.Id,
+				CharacterId = character.Id,
 				X = newPosition.Coord.X,
-				Y = newPosition.Coord.Y
+				Y = newPosition.Coord.Y,
+				Duration = Movement.ACTION_DURATION
 			});
 		}
 
 		void OnRemovePosition(in Entity entity, in Position position) {
 			ref var character = ref entity.Get<Character>();
 			Server.SendToAll(new RemoveCharacterPacket {
-				Id = character.Id
+				CharacterId = character.Id
 			});
 		}
 

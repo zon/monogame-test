@@ -13,8 +13,9 @@ namespace MonoGameTest.Server {
 		Context Context;
 		Server Server;
 		World World;
-		CommandListener CommandListener;
+		PacketListener PacketListener;
 		PositionListener PositionListener;
+		HealthListener HealthListener;
 		EntitySet Characters;
 		EntityMap<Player> Players;
 		ISystem<float> Systems;
@@ -36,8 +37,9 @@ namespace MonoGameTest.Server {
 			Context = new Context(Server, World);
 			Context.Load(TileMapName);
 
-			CommandListener = new CommandListener(Context);
+			PacketListener = new PacketListener(Context);
 			PositionListener = new PositionListener(Context);
+			HealthListener = new HealthListener(Context);
 
 			ServerCharacter.SpawnMobs(Context.Grid, World);
 
@@ -46,7 +48,9 @@ namespace MonoGameTest.Server {
 			Systems = new SequentialSystem<float>(
 				new CooldownSystem(Context),
 				new MobTargetSystem(Context),
-				new MovementSystem(Context)
+				new AttackSystem(Context),
+				new MovementSystem(Context),
+				new DeathSystem(Context)
 			);
 		}
 
@@ -62,6 +66,7 @@ namespace MonoGameTest.Server {
 				var dt = elapsed - previous;
 				previous = elapsed;
 				Systems.Update((float) dt);
+				Context.Recorder.Execute();
 				Server.Poll();
 				Thread.Sleep(SLEEP);
 			}
@@ -74,7 +79,7 @@ namespace MonoGameTest.Server {
 		public void Dispose() {
 			Exit();
 			Server.Stop();
-			CommandListener.Dispose();
+			PacketListener.Dispose();
 			PositionListener.Dispose();
 			Players.Dispose();
 			Systems.Dispose();

@@ -12,6 +12,7 @@ namespace MonoGameTest.Client {
 		Context Context;
 		Client Client;
 		World World;
+		PacketListener PacketListener;
 		ISystem<float> Behavior;
 		ISystem<float> Rendering;
 		Resources Resources;
@@ -25,8 +26,6 @@ namespace MonoGameTest.Client {
 		protected override void LoadContent() {
 			Content.RootDirectory = "Content";
 			Resources = Resources.Load(Content);
-
-			Batch = new SpriteBatch(GraphicsDevice);
 
 			IsMouseVisible = true;
 		}
@@ -42,15 +41,17 @@ namespace MonoGameTest.Client {
 
 			Context = new Context(GraphicsDevice, Resources, World, Client);
 
+			PacketListener = new PacketListener(Context);
+
 			Behavior = new SequentialSystem<float>(
-				new LocalPlayerSystem(Context),
-				new ClientNetworkSystem(Context)
+				new LocalPlayerSystem(Context)
 			);
 			
 			Rendering = new SequentialSystem<float>(
-				new CharacterViewSystem(Context),
 				new TilemapDrawSystem(Context),
-				new SpriteDrawSystem(Context, Batch)
+				new MovementAnimationSystem(Context),
+				new SpriteDrawSystem(Context),
+				new AttackAnimationSystem(Context)
 			);
 			
 			Client.Connect();

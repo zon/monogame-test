@@ -35,16 +35,14 @@ namespace MonoGameTest.Server {
 			foreach (var other in closest) {
 				var otherPosition = other.Get<Position>();
 				var res = pathfinder.MoveAdjacent(position.Coord, otherPosition.Coord);
-
-				if (!res.IsEmpty) {
-					ref var target = ref entity.Get<Target>();
-					ref var movement = ref entity.Get<Movement>();
-					target.Entity = other;
-					movement.Goal = res.Node.Coord;
-					movement.Path = res.Path;
-					found = true;
-					break;
-				}
+				if (res.IsNotFound) continue;
+				ref var target = ref entity.Get<Target>();
+				ref var movement = ref entity.Get<Movement>();
+				target.Entity = other;
+				movement.Goal = res.Node.Coord;
+				movement.Path = res.Path;
+				found = true;
+				break;
 			}
 			
 			if (!found) {

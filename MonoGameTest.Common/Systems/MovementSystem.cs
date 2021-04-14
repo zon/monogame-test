@@ -12,8 +12,6 @@ namespace MonoGameTest.Common {
 		public MovementSystem(IContext context) : base(context.World
 			.GetEntities()
 			.With<Movement>()
-			.With<Cooldown>()
-			.With<Position>()
 			.AsSet()
 		) {
 			Positions = World.GetEntities().With<Character>().AsMap<Position>();
@@ -25,7 +23,7 @@ namespace MonoGameTest.Common {
 			ref var cooldown = ref entity.Get<Cooldown>();
 			ref var position = ref entity.Get<Position>();
 
-			if (!cooldown.IsCool() || movement.IsIdle()) return;
+			if (!cooldown.IsCool() || movement.IsIdle) return;
 
 			ImmutableStack<Node> path;
 			if (movement.Path == null) {
@@ -33,7 +31,7 @@ namespace MonoGameTest.Common {
 				path = pathfinder.MoveTo(
 					position.Coord,
 					movement.Goal.Value
-				);
+				).Path;
 
 			// use preloaded movement path
 			} else {

@@ -5,13 +5,13 @@ using MonoGameTest.Common;
 
 namespace MonoGameTest.Server {
 
-	public class CommandListener : IDisposable {
+	public class PacketListener : IDisposable {
 		readonly Server Server;
 		readonly Grid Grid;
 		readonly EntityMap<Player> Players;
 		readonly EntityMap<Position> Positions;
 
-		public CommandListener(Context context) {
+		public PacketListener(Context context) {
 			Server = context.Server;
 			Grid = context.Grid;
 			var world = context.World;

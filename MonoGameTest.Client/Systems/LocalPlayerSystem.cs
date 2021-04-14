@@ -9,7 +9,7 @@ namespace MonoGameTest.Client {
 		readonly Context Context;
 
 		public LocalPlayerSystem(Context context) : base(context.World
-			.GetEntities()
+			.GetEntities() 
 			.With<LocalPlayer>()
 			.AsSet()
 		) {

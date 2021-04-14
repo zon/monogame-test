@@ -6,6 +6,12 @@ namespace MonoGameTest.Common {
 		public readonly int X;
 		public readonly int Y;
 
+		public readonly static Coord Zero = new Coord(0, 0);
+		public readonly static Coord Left = new Coord(-1, 0);
+		public readonly static Coord Right = new Coord(1, 0);
+		public readonly static Coord Up = new Coord(0, -1);
+		public readonly static Coord Down = new Coord(0, 1);
+
 		public Coord(int x, int y) {
 			this.X = x;
 			this.Y = y;
@@ -23,6 +29,9 @@ namespace MonoGameTest.Common {
 
 		public static bool operator !=(Coord left, Coord right) => !left.Equals(right);
 
+		public static Coord operator +(Coord left, Coord right) => new Coord(left.X + right.X, left.Y + right.Y);
+		public static Coord operator -(Coord left, Coord right) => new Coord(left.X - right.X, left.Y - right.Y);
+
 		public static float ManhattanDistance(Coord a, Coord b) {
 			return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) * Movement.COST;
 		}
@@ -36,6 +45,17 @@ namespace MonoGameTest.Common {
 				return (dx - dy) * c + dy * g;
 			} else {
 				return (dy - dx) * c + dx * g;
+			}
+		}
+
+		public static Coord Facing(Coord from, Coord to) {
+			var d = to - from;
+			var x = Math.Abs(d.X);
+			var y = Math.Abs(d.Y);
+			if (y > x) {
+				return new Coord(0, d.Y / y);
+			} else {
+				return new Coord(d.X / x, 0);
 			}
 		}
 

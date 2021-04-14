@@ -36,7 +36,7 @@ namespace MonoGameTest.Client {
 
 			Start = Context.Grid.Get(2, 9);
 			End = Context.Grid.Get(11, 9);
-			Path = Pathfinder.MoveTo(Start, End);
+			Path = Pathfinder.MoveTo(Start, End).Path;
 		}
 
 		public void Update(float dt) {
@@ -53,7 +53,7 @@ namespace MonoGameTest.Client {
 			if (Start == null || End == null) return;
 
 			if (dirty) {
-				Path = Pathfinder.MoveTo(Start, End);
+				Path = Pathfinder.MoveTo(Start, End).Path;
 			}
 
 			Batch.Begin(transformMatrix: Context.Camera.GetMatrix());

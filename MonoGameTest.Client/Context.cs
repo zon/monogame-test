@@ -15,6 +15,7 @@ namespace MonoGameTest.Client {
 		public int PeerId { get; private set; }
 		public TiledMap TiledMap { get; private set; }
 		public Grid Grid { get; private set; }
+		public SpriteBatch Batch { get; private set; }
 		public Camera Camera { get; private set; }
 		public bool IsReady { get; private set; }
 
@@ -23,6 +24,7 @@ namespace MonoGameTest.Client {
 			Resources = resources;
 			World = world;
 			Client = client;
+			Batch = new SpriteBatch(GraphicsDevice);
 		}
 
 		public void Load(

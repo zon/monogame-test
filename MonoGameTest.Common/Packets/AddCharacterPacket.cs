@@ -7,6 +7,8 @@ namespace MonoGameTest.Common {
 		public int Group { get; set; }
 		public int Sprite { get; set; }
 		public int PeerId { get; set; }
+		public int HealthMaximum { get; set; }
+		public int HealthAmount { get; set; }
 		public int X { get; set; }
 		public int Y { get; set; }
 
@@ -20,6 +22,9 @@ namespace MonoGameTest.Common {
 			if (entity.Has<Player>()) {
 				peerId = entity.Get<Player>().PeerId;
 			}
+			ref var health = ref entity.Get<Health>();
+			HealthMaximum = health.Maximum;
+			HealthAmount = health.Amount;
 			ref var position = ref entity.Get<Position>();
 			Id = character.Id;
 			Group = (int) group;

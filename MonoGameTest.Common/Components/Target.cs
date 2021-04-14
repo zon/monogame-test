@@ -9,6 +9,8 @@ namespace MonoGameTest.Common {
 		public Nullable<Entity> Entity;
 		public ImmutableStack<Node> Path;
 
+		public bool HasEntity => Entity.HasValue;
+
 	}
 
 }

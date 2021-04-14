@@ -16,8 +16,6 @@ namespace MonoGameTest.Common {
 		public readonly Dictionary<int, float> Heuristics;
 
 		public const int LOOP_MAX = 1000;
- 
-		static Result Empty = new Result(null, ImmutableStack.Create<Node>());
 
 		public Pathfinder(Grid grid, EntityMap<Position> positions, bool debug = false) {
 			Grid = grid;
@@ -28,20 +26,20 @@ namespace MonoGameTest.Common {
 			Heuristics = debug ? new Dictionary<int, float>() : null;
 		}
 
-		public ImmutableStack<Node> MoveTo(Node start, Node goal) {
-			if (goal.Solid) return Empty.Path;
+		public Result MoveTo(Node start, Node goal) {
+			if (goal.Solid) return Result.NotFound;
 			return Query(
 				start,
 				(n, e) => !n.Solid && !e.HasValue,
 				n => n.Coord == goal.Coord,
 				n => Coord.ChebyshevDistance(n.Coord, goal.Coord)
-			).Path;
+			);
 		}
 		
-		public ImmutableStack<Node> MoveTo(Coord start, Coord goal) {
+		public Result MoveTo(Coord start, Coord goal) {
 			var a = Grid.Get(start);
 			var b = Grid.Get(goal);
-			if (a == null || b == null) return Empty.Path;
+			if (a == null || b == null) return Result.NotFound;
 			return MoveTo(a, b);
 		}
 
@@ -57,7 +55,7 @@ namespace MonoGameTest.Common {
 		public Result MoveAdjacent(Coord start, Coord goal) {
 			var a = Grid.Get(start);
 			var b = Grid.Get(goal);
-			if (a == null || b == null) return Empty;
+			if (a == null || b == null) return Result.NotFound;
 			return MoveAdjacent(a, b);
 		}
 
@@ -67,6 +65,10 @@ namespace MonoGameTest.Common {
 			Func<Node, bool> isGoal,
 			Func<Node, float> heuristic
 		) {
+			if (isGoal(start)) {
+				return Result.Arrived(start);
+			}
+
 			Frontier.Clear();
 			Origins.Clear();
 			Costs.Clear();
@@ -79,7 +81,7 @@ namespace MonoGameTest.Common {
 			Node current = null;
 			for (var _ = 0; _ < LOOP_MAX; _++) {
 				if (!Frontier.TryDequeue(out current)) {
-					return Empty;
+					return Result.NotFound;
 				}
 				
 				if (isGoal(current)) {
@@ -112,7 +114,7 @@ namespace MonoGameTest.Common {
 				}
 			}
 
-			return Empty;
+			return Result.NotFound;
 		}
 
 		Result CreatePath(Node last) {
@@ -132,12 +134,19 @@ namespace MonoGameTest.Common {
 			public readonly Node Node;
 			public readonly ImmutableStack<Node> Path;
 
-			public bool IsEmpty => Path.IsEmpty;
+			public bool IsNotFound => Node == null;
+			public bool IsArrived => Node != null && Path.IsEmpty;
 
 			public Result(Node node, ImmutableStack<Node> path) {
 				Node = node;
 				Path = path;
 			}
+
+			public static Result Arrived(Node node) {
+				return new Result(node, NotFound.Path);
+			}
+
+			public static Result NotFound = new Result(null, ImmutableStack.Create<Node>());
 
 		}
 

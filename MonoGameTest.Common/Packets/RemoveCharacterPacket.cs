@@ -1,7 +1,7 @@
 namespace MonoGameTest.Common {
 
-	public class RemoveCharacterPacket {
-		public int Id { get; set; }
+	public class RemoveCharacterPacket : ICharacterPacket {
+		public int CharacterId { get; set; }
 	}
 
 }

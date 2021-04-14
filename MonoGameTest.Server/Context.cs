@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DefaultEcs;
+using DefaultEcs.Command;
 using MonoGameTest.Common;
 using TiledCS;
 
@@ -12,6 +13,7 @@ namespace MonoGameTest.Server {
 		
 		public readonly Server Server;
 		public World World { get; private set; }
+		public readonly EntityCommandRecorder Recorder;
 		public EntityMap<Position> Positions { get; private set; }
 		public Grid Grid { get; private set; }
 		public bool IsReady { get; private set; }
@@ -19,6 +21,7 @@ namespace MonoGameTest.Server {
 		public Context(Server server, World world) {
 			Server = server;
 			World = world;
+			Recorder = new EntityCommandRecorder();
 			Positions = World.GetEntities().AsMap<Position>();
 		}
 
