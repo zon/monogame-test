@@ -1,31 +1,59 @@
+using System;
+using DefaultEcs;
 using DefaultEcs.System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
 
-	public class AttackAnimationSystem : AComponentSystem<float, AttackAnimation> {
+	public class AttackAnimationSystem : AEntitySetSystem<float> {
 		readonly Context Context;
 		
-		SpriteBatch Batch => Context.Batch;
+		SpriteBatch Batch => Context.Foreground;
 		Camera Camera => Context.Camera;
 
-		public AttackAnimationSystem(Context context) : base(context.World) {
+		public AttackAnimationSystem(Context context) : base(context.World
+			.GetEntities()
+			.With<AttackAnimation>()
+			.AsSet()
+		) {
 			Context = context;
 		}
 
-		protected override void PreUpdate(float dt) {
-			Batch.Begin(transformMatrix: Camera.GetMatrix(), samplerState: SamplerState.PointClamp);
-		}
+		protected override void Update(float dt, in Entity entity) {
+			ref var attack = ref entity.Get<AttackAnimation>();
+			if (!attack.IsActive) return;
+			attack.Update(dt);
+			if (!attack.IsActive) return;
 
-		protected override void Update(float dt, ref AttackAnimation attack) {
-			if (!attack.Sprite.Animating) return;
-			attack.Sprite.Update(dt);
-			if (!attack.Sprite.Animating) return;
+			ref var characterSprite = ref entity.Get<Sprite>();
+			var width = new Vector2(characterSprite.Rectangle.Width, 0);
+			var height = new Vector2(0, characterSprite.Rectangle.Height);
+			var halfWidth = new Vector2(characterSprite.Rectangle.Width / 2, 0);
+			var halfHeight = new Vector2(0, characterSprite.Rectangle.Height / 2);
+			var depth = Depths.Attack;
+			if (attack.Facing.X == 0) {
+				if (attack.Facing.Y < 0) {
+					attack.Sprite.Position = characterSprite.Position + halfWidth;
+					attack.Sprite.SpriteEffect = SpriteEffects.FlipVertically;
+					depth = -Depths.Attack;
+				} else {
+					attack.Sprite.Position = characterSprite.Position + height + halfWidth;
+					attack.Sprite.SpriteEffect = SpriteEffects.None;
+				}
+			} else {
+				if (attack.Facing.X < 0) {
+					attack.Sprite.Position = characterSprite.Position + halfHeight;
+					attack.Sprite.SpriteEffect = SpriteEffects.FlipHorizontally;
+				} else {
+					attack.Sprite.Position = characterSprite.Position + width + halfHeight;
+					attack.Sprite.SpriteEffect = SpriteEffects.None;
+				}
+				characterSprite.Effects = attack.Sprite.SpriteEffect;
+			}
+			attack.Sprite.LayerDepth = Context.Camera.Depth(characterSprite.Position, depth);
 			attack.Sprite.Render(Batch);
-		}
-
-		protected override void PostUpdate(float dt) {
-			Batch.End();
 		}
 
 	}

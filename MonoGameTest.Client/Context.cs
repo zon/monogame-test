@@ -15,16 +15,22 @@ namespace MonoGameTest.Client {
 		public int PeerId { get; private set; }
 		public TiledMap TiledMap { get; private set; }
 		public Grid Grid { get; private set; }
-		public SpriteBatch Batch { get; private set; }
+		public SpriteBatch Foreground { get; private set; }
 		public Camera Camera { get; private set; }
 		public bool IsReady { get; private set; }
 
-		public Context(GraphicsDevice graphicsDevice, Resources resources, World world, Client client) {
+		public Context(
+			GraphicsDevice graphicsDevice,
+			Resources resources,
+			World world,
+			Client client,
+			SpriteBatch foreground
+		) {
 			GraphicsDevice = graphicsDevice;
 			Resources = resources;
 			World = world;
 			Client = client;
-			Batch = new SpriteBatch(GraphicsDevice);
+			Foreground = foreground;
 		}
 
 		public void Load(

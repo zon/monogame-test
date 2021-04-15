@@ -2,7 +2,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using DefaultEcs;
 using DefaultEcs.System;
-using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
 
@@ -37,7 +36,7 @@ namespace MonoGameTest.Client {
 
 			World = new World();
 
-			Context = new Context(GraphicsDevice, Resources, World, null);
+			Context = new Context(GraphicsDevice, Resources, World, null, Batch);
 			Context.Load(Content, Window, "first");
 
 			Systems = new SequentialSystem<float>(

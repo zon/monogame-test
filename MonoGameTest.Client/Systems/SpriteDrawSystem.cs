@@ -1,3 +1,4 @@
+using System;
 using DefaultEcs.System;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,15 +7,11 @@ namespace MonoGameTest.Client {
 	public class SpriteDrawSystem : AComponentSystem<float, Sprite> {
 		readonly Context Context;
 
-		SpriteBatch Batch => Context.Batch;
+		SpriteBatch Batch => Context.Foreground;
 		Camera Camera => Context.Camera;
 
 		public SpriteDrawSystem(Context context) : base(context.World) {
 			Context = context;
-		}
-
-		protected override void PreUpdate(float dt) {
-			Batch.Begin(transformMatrix: Camera.GetMatrix(), samplerState: SamplerState.PointClamp);
 		}
 
 		protected override void Update(float dt, ref Sprite sprite) {
@@ -27,12 +24,8 @@ namespace MonoGameTest.Client {
 				origin: sprite.Origin,
 				scale: sprite.Scale,
 				effects: sprite.Effects,
-				layerDepth: 0
+				layerDepth: Camera.Depth(sprite.Position)
 			);
-		}
-
-		protected override void PostUpdate(float dt) {
-			Batch.End();
 		}
 
 	}

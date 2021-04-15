@@ -14,10 +14,11 @@ namespace MonoGameTest.Client {
 		World World;
 		PacketListener PacketListener;
 		ISystem<float> Behavior;
-		ISystem<float> Rendering;
+		ISystem<float> BackgroundRendering;
+		ISystem<float> ForegroundRendering;
 		Resources Resources;
 		GraphicsDeviceManager Graphics;
-		SpriteBatch Batch;
+		SpriteBatch Foreground;
 
 		public Game() {
 			Graphics = new GraphicsDeviceManager(this);
@@ -39,16 +40,18 @@ namespace MonoGameTest.Client {
 			
 			World = new World();
 
-			Context = new Context(GraphicsDevice, Resources, World, Client);
+			Foreground = new SpriteBatch(GraphicsDevice);
+
+			Context = new Context(GraphicsDevice, Resources, World, Client, Foreground);
 
 			PacketListener = new PacketListener(Context);
 
 			Behavior = new SequentialSystem<float>(
 				new LocalPlayerSystem(Context)
 			);
-			
-			Rendering = new SequentialSystem<float>(
-				new TilemapDrawSystem(Context),
+
+			BackgroundRendering = new TilemapDrawSystem(Context);
+			ForegroundRendering = new SequentialSystem<float>(
 				new MovementAnimationSystem(Context),
 				new SpriteDrawSystem(Context),
 				new AttackAnimationSystem(Context)
@@ -67,8 +70,16 @@ namespace MonoGameTest.Client {
 			GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 			GraphicsDevice.Clear(Color.Black);
 			if (!Context.IsReady) return;
+
 			var dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
-			Rendering.Update(dt);
+			BackgroundRendering.Update(dt);
+			Foreground.Begin(
+				transformMatrix: Context.Camera.GetMatrix(),
+				samplerState: SamplerState.PointClamp,
+				sortMode: SpriteSortMode.FrontToBack
+			);
+			ForegroundRendering.Update(dt);
+			Foreground.End();
 		}
 		
 		void OnDisconnected(DisconnectInfo disconnectInfo) {

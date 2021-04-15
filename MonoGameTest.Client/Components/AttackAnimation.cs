@@ -1,6 +1,5 @@
 using DefaultEcs;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Aseprite.Documents;
 using MonoGame.Aseprite.Graphics;
 using MonoGameTest.Common;
@@ -9,12 +8,20 @@ namespace MonoGameTest.Client {
 
 	public struct AttackAnimation {
 		public AnimatedSprite Sprite;
+		public Coord Facing;
+		public float Amount;
+		public float Duration;
+
+		public bool IsActive => Sprite.Animating;
 
 		public AttackAnimation(AsepriteDocument document) {
 			Sprite = new AnimatedSprite(document);
+			Facing = Coord.Zero;
+			Amount = 0;
+			Duration = 0;
 			Sprite.Origin = new Vector2(Sprite.Width, Sprite.Height) / 2;
-			Sprite.OnAnimationLoop = OnEnd;
 			Sprite.Stop();
+			Sprite.OnAnimationLoop = OnEnd;
 		}
 		
 		public void Start(
@@ -24,35 +31,20 @@ namespace MonoGameTest.Client {
 			string animationName
 		) {
 			ref var position = ref entity.Get<Position>();
-			ref var characterSprite = ref entity.Get<Sprite>();
-			Sprite.Position = context.CoordToVector(position.Coord);
-			Sprite.LayerDepth = Depths.Attack;
-			var facing = Coord.Facing(position.Coord, target);
-			var width = new Vector2(characterSprite.Rectangle.Width, 0);
-			var height = new Vector2(0, characterSprite.Rectangle.Height);
-			var halfWidth = new Vector2(characterSprite.Rectangle.Width / 2, 0);
-			var halfHeight = new Vector2(0, characterSprite.Rectangle.Height / 2);
-			if (facing.X == 0) {
-				if (facing.Y < 0) {
-					Sprite.Position = characterSprite.Position + halfWidth;
-					Sprite.SpriteEffect = SpriteEffects.FlipVertically;
-				} else {
-					Sprite.Position = characterSprite.Position + height + halfWidth;
-					Sprite.SpriteEffect = SpriteEffects.None;
-				}
+			Facing = Coord.Facing(position.Coord, target);
+			if (Facing.X == 0) {
 				Sprite.Play($"{animationName}-down");
 			} else {
-				if (facing.X < 0) {
-					Sprite.Position = characterSprite.Position + halfHeight;
-					Sprite.SpriteEffect = SpriteEffects.FlipHorizontally;
-				} else {
-					Sprite.Position = characterSprite.Position + width + halfHeight;
-					Sprite.SpriteEffect = SpriteEffects.None;
-				}
 				Sprite.Play($"{animationName}-right");
 			}
-			characterSprite.Effects = Sprite.SpriteEffect;
+			Amount = 0;
+			Duration = Sprite.GetCurrentDuration();
 			context.Resources.HitSound.Play();
+		}
+
+		public void Update(float dt) {
+			Amount = MathHelper.Clamp(Amount + dt / Duration, 0, 1);
+			Sprite.Update(dt);
 		}
 
 		void OnEnd() {
