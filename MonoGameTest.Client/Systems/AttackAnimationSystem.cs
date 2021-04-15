@@ -9,6 +9,8 @@ namespace MonoGameTest.Client {
 
 	public class AttackAnimationSystem : AEntitySetSystem<float> {
 		readonly Context Context;
+
+		const float FORWARD_STEP = 4;
 		
 		SpriteBatch Batch => Context.Foreground;
 		Camera Camera => Context.Camera;
@@ -24,10 +26,19 @@ namespace MonoGameTest.Client {
 		protected override void Update(float dt, in Entity entity) {
 			ref var attack = ref entity.Get<AttackAnimation>();
 			if (!attack.IsActive) return;
-			attack.Update(dt);
-			if (!attack.IsActive) return;
 
 			ref var characterSprite = ref entity.Get<Sprite>();
+			var offset = Vector2.Zero;
+			var a = Vector2.Zero;
+			var b = new Vector2(attack.Facing.X, attack.Facing.Y) * FORWARD_STEP;
+			var half = 0.5f;
+			if (attack.Progress < half) {
+				offset = Vector2.Lerp(a, b, attack.Progress / half);
+			} else {
+				offset = Vector2.Lerp(b, a, (attack.Progress - half) / half);
+			}
+			characterSprite.Position += offset;
+
 			var width = new Vector2(characterSprite.Rectangle.Width, 0);
 			var height = new Vector2(0, characterSprite.Rectangle.Height);
 			var halfWidth = new Vector2(characterSprite.Rectangle.Width / 2, 0);
@@ -54,6 +65,8 @@ namespace MonoGameTest.Client {
 			}
 			attack.Sprite.LayerDepth = Context.Camera.Depth(characterSprite.Position, depth);
 			attack.Sprite.Render(Batch);
+
+			attack.Update(dt);
 		}
 
 	}

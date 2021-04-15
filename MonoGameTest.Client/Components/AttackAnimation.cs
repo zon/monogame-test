@@ -9,7 +9,7 @@ namespace MonoGameTest.Client {
 	public struct AttackAnimation {
 		public AnimatedSprite Sprite;
 		public Coord Facing;
-		public float Amount;
+		public float Progress;
 		public float Duration;
 
 		public bool IsActive => Sprite.Animating;
@@ -17,7 +17,7 @@ namespace MonoGameTest.Client {
 		public AttackAnimation(AsepriteDocument document) {
 			Sprite = new AnimatedSprite(document);
 			Facing = Coord.Zero;
-			Amount = 0;
+			Progress = 0;
 			Duration = 0;
 			Sprite.Origin = new Vector2(Sprite.Width, Sprite.Height) / 2;
 			Sprite.Stop();
@@ -37,13 +37,13 @@ namespace MonoGameTest.Client {
 			} else {
 				Sprite.Play($"{animationName}-right");
 			}
-			Amount = 0;
+			Progress = 0;
 			Duration = Sprite.GetCurrentDuration();
 			context.Resources.HitSound.Play();
 		}
 
 		public void Update(float dt) {
-			Amount = MathHelper.Clamp(Amount + dt / Duration, 0, 1);
+			Progress = MathHelper.Clamp(Progress + dt / Duration, 0, 1);
 			Sprite.Update(dt);
 		}
 
