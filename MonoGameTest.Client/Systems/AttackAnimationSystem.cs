@@ -26,6 +26,8 @@ namespace MonoGameTest.Client {
 		protected override void Update(float dt, in Entity entity) {
 			ref var attack = ref entity.Get<AttackAnimation>();
 			if (!attack.IsActive) return;
+			attack.Update(dt);
+			if (!attack.IsActive) return;
 
 			ref var characterSprite = ref entity.Get<Sprite>();
 			var offset = Vector2.Zero;
@@ -65,8 +67,6 @@ namespace MonoGameTest.Client {
 			}
 			attack.Sprite.LayerDepth = Context.Camera.Depth(characterSprite.Position, depth);
 			attack.Sprite.Render(Batch);
-
-			attack.Update(dt);
 		}
 
 	}

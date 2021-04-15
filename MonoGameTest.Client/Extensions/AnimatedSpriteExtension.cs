@@ -6,7 +6,7 @@ namespace MonoGameTest.Client {
 
 		public static float GetDuration(this AnimatedSprite sprite, MonoGame.Aseprite.Graphics.Animation animation) {
 			var total = 0f;
-			for (var f = animation.From = 0; f <= animation.To; f++) {
+			for (var f = animation.From; f <= animation.To; f++) {
 				total += sprite.Frames[f].Duration;
 			}
 			return total;
