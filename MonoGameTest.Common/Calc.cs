@@ -11,6 +11,10 @@ namespace MonoGameTest.Common {
 		public static int Floor(float v) {
 			return Convert.ToInt32(Math.Floor(v));
 		}
+
+		public static float Progress(float progress, float duration, float dt) {
+			return Math.Clamp(progress + dt / duration, 0, 1);
+		}
 		
 	}
 

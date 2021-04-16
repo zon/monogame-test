@@ -26,7 +26,7 @@ namespace MonoGameTest.Client {
 				return;
 			}
 
-			movement.Progress = MathHelper.Clamp(movement.Progress + dt / movement.Duration, 0, 1);
+			movement.Update(dt);
 			sprite.Position = Vector2.Lerp(
 				Context.CoordToVector(movement.Previous),
 				Context.CoordToVector(position.Coord),

@@ -15,6 +15,10 @@ namespace MonoGameTest.Client {
 			Duration = duration;
 		}
 
+		public void Update(float dt) {
+			Progress = Calc.Progress(Progress, Duration, dt);
+		}
+
 	}
 
 }

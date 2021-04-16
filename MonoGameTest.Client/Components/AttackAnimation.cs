@@ -43,7 +43,7 @@ namespace MonoGameTest.Client {
 		}
 
 		public void Update(float dt) {
-			Progress = MathHelper.Clamp(Progress + dt / Duration, 0, 1);
+			Progress = Calc.Progress(Progress, Duration, dt);
 			Sprite.Update(dt);
 		}
 

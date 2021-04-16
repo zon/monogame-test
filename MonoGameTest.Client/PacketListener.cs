@@ -62,8 +62,10 @@ namespace MonoGameTest.Client {
 			ref var character = ref entity.Get<Character>();
 			ref var health = ref entity.Get<Health>();
 			ref var hit = ref entity.Get<HitAnimation>();
+			ref var bang = ref entity.Get<Bang>();
 			health.Amount = packet.Amount;
 			hit.Start();
+			bang.Start(packet.Delta);
 		}
 
 		bool GetEntity(int characterId, out Entity entity) {
