@@ -4,6 +4,10 @@ namespace MonoGameTest.Common {
 		public int Maximum;
 		public int Amount;
 
+		public float Percentage => (float) Amount / Maximum;
+		public bool IsFull => Amount >= Maximum;
+		public bool IsEmpty => Amount <= 0;
+
 		public Health(int maximum, int amount) {
 			Maximum = maximum;
 			Amount = amount;

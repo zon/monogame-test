@@ -53,6 +53,7 @@ namespace MonoGameTest.Client {
 			BackgroundRendering = new TilemapDrawSystem(Context);
 			ForegroundRendering = new SequentialSystem<float>(
 				new MovementAnimationSystem(Context),
+				new HealthBarSystem(Context),
 				new AttackAnimationSystem(Context),
 				new HitAnimationSystem(Context),
 				new SpriteDrawSystem(Context)
