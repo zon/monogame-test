@@ -60,6 +60,8 @@ namespace MonoGameTest.Client {
 			Entity entity;
 			if (!GetEntity(packet.CharacterId, out entity)) return;
 			ref var character = ref entity.Get<Character>();
+			ref var hit = ref entity.Get<HitAnimation>();
+			hit.Start();
 			Console.WriteLine("Damage {0}: {1}", packet.CharacterId, packet.Amount);
 		}
 

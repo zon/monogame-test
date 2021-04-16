@@ -43,7 +43,7 @@ namespace MonoGameTest.Server {
 				Duration = Attack.ACTION_DURATION
 			});
 
-			entity.NotifyChanged<Health>();
+			targetEntity.NotifyChanged<Health>();
 		}
 
 	}

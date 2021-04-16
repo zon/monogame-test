@@ -65,7 +65,7 @@ namespace MonoGameTest.Client {
 				}
 				characterSprite.Effects = attack.Sprite.SpriteEffect;
 			}
-			attack.Sprite.LayerDepth = Context.Camera.Depth(characterSprite.Position, depth);
+			attack.Sprite.LayerDepth = Camera.Depth(characterSprite.Position, depth);
 			attack.Sprite.Render(Batch);
 		}
 

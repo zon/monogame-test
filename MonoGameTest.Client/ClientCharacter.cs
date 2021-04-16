@@ -22,6 +22,7 @@ namespace MonoGameTest.Client {
 			));
 			entity.Set(new MovementAnimation());
 			entity.Set(new AttackAnimation(context.Resources.Attacks));
+			entity.Set(new HitAnimation(context.Resources.Hits));
 			if (packet.PeerId == context.PeerId) {
 				entity.Set(new LocalPlayer());
 			}

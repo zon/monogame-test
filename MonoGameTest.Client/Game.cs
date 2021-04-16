@@ -54,6 +54,7 @@ namespace MonoGameTest.Client {
 			ForegroundRendering = new SequentialSystem<float>(
 				new MovementAnimationSystem(Context),
 				new AttackAnimationSystem(Context),
+				new HitAnimationSystem(Context),
 				new SpriteDrawSystem(Context)
 			);
 			
