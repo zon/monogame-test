@@ -1,4 +1,5 @@
-* Damage feedback
+## Features
+
 * Move command feedback
 * Target feedback
 * Agro feedback
@@ -6,3 +7,10 @@
 * Healing
 * Stats
 * Character classes
+* Skills
+* DoTs(HoTs)
+* Debuffs(Buffs)
+* Shields
+* Slows
+* Stuns
+* AoE

@@ -6,19 +6,19 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using MonoGame.Extended.BitmapFonts;
 using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
 
 	public class PathfinderDebugSystem : ISystem<float> {
 		readonly SpriteBatch Batch;
-		readonly SpriteFont Font;
 		readonly Context Context;
 		readonly EntityMap<Position> Positions;
 		readonly Pathfinder Pathfinder;
 		Node Start;
 		Node End;
-		ImmutableStack<Node> Path;
+		Pathfinder.Result Result;
 
 		public bool IsEnabled { get; set; }
 
@@ -28,7 +28,6 @@ namespace MonoGameTest.Client {
 			Context context
 		) {
 			Batch = batch;
-			Font = font;
 			Context = context;
 			Positions = Context.World.GetEntities().With<Position>().AsMap<Position>();
 			Pathfinder = new Pathfinder(Context.Grid, Positions, true);
@@ -36,7 +35,7 @@ namespace MonoGameTest.Client {
 
 			Start = Context.Grid.Get(2, 9);
 			End = Context.Grid.Get(11, 9);
-			Path = Pathfinder.MoveTo(Start, End).Path;
+			Result = Pathfinder.MoveTo(Start, End);
 		}
 
 		public void Update(float dt) {
@@ -53,28 +52,27 @@ namespace MonoGameTest.Client {
 			if (Start == null || End == null) return;
 
 			if (dirty) {
-				Path = Pathfinder.MoveTo(Start, End).Path;
+				Result = Pathfinder.MoveTo(Start, End);
 			}
 
-			Batch.Begin(transformMatrix: Context.Camera.GetMatrix());
-
-			foreach (var (index, cost) in Pathfinder.Costs) {
-				var node = Context.Grid.Nodes[index];
-				var p = Context.CoordToVector(node.Coord);
-				Batch.DrawString(Font, $"{cost:F1}", p, Color.White);
-			}
+			var font = Context.Resources.Font;
+			Batch.Begin(
+				transformMatrix: Context.Camera.GetMatrix(),
+				samplerState: SamplerState.PointClamp
+			);
 
 			var h = Context.Half();
-			foreach (var (index, heuristic) in Pathfinder.Heuristics) {
+			foreach (var (index, note) in Pathfinder.Notes) {
 				var node = Context.Grid.Nodes[index];
 				var p = Context.CoordToVector(node.Coord);
-				Batch.DrawString(Font, $"{heuristic:F1}", p + h, Color.Yellow);
+				Batch.DrawString(font, $"{note.Cost:F1}", p, Color.White);
+				Batch.DrawString(font, $"{note.Heuristic:F1}", p + h, Color.Yellow);
 			}
 
-			Batch.DrawString(Font, $"{Start}", Vector2.Zero, Color.Lime);
-			Batch.DrawString(Font, $"{End}", new Vector2(0, h.Y), Color.Lime);
+			Batch.DrawString(font, $"{Start}", Vector2.Zero, Color.Lime);
+			Batch.DrawString(font, $"{End} ${Result.IsGoal}", new Vector2(0, h.Y), Color.Lime);
 
-			DrawPath(Batch, Context, Path);
+			DrawPath(Batch, Context, Result.Path);
 
 			Batch.End();
 		}

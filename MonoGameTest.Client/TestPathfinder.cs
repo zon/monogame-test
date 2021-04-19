@@ -5,7 +5,7 @@ using DefaultEcs.System;
 
 namespace MonoGameTest.Client {
 
-	public class TestPathfinder : Game {
+	public class TestPathfinder : Microsoft.Xna.Framework.Game {
 		GraphicsDeviceManager Graphics;
 		Resources Resources;
 		SpriteFont Font;

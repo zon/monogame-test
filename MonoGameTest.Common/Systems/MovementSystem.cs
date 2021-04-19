@@ -9,6 +9,8 @@ namespace MonoGameTest.Common {
 		readonly EntityMap<Position> Positions;
 		readonly IContext Context;
 
+		Grid Grid => Context.Grid;
+
 		public MovementSystem(IContext context) : base(context.World
 			.GetEntities()
 			.With<Movement>()
@@ -25,13 +27,20 @@ namespace MonoGameTest.Common {
 
 			if (!cooldown.IsCool() || movement.IsIdle) return;
 
+			// determine path
 			ImmutableStack<Node> path;
 			if (movement.Path == null) {
 				var pathfinder = new Pathfinder(Context.Grid, Positions);
-				path = pathfinder.MoveTo(
-					position.Coord,
-					movement.Goal.Value
-				).Path;
+				
+				// correct unreachable goals
+				var start = Grid.Get(position.Coord);
+				var goal = Grid.Get(movement.Goal.Value);
+				if (goal != null && goal.Solid) {
+					goal = pathfinder.OptimalMoveTo(start, goal).Node;
+					movement.Goal = goal?.Coord;
+				}
+
+				path = pathfinder.MoveTo(start, goal).Path;
 
 			// use preloaded movement path
 			} else {

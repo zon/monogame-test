@@ -11,9 +11,7 @@ namespace MonoGameTest.Common {
 		public readonly Grid Grid;
 		public readonly EntityMap<Position> Positions;
 		public readonly SimplePriorityQueue<Node, float> Frontier;
-		public readonly Dictionary<int, Node> Origins;
-		public readonly Dictionary<int, float> Costs;
-		public readonly Dictionary<int, float> Heuristics;
+		public readonly Dictionary<int, Note> Notes;
 
 		public const int LOOP_MAX = 1000;
 
@@ -21,18 +19,15 @@ namespace MonoGameTest.Common {
 			Grid = grid;
 			Positions = positions;
 			Frontier = new SimplePriorityQueue<Node, float>();
-			Origins = new Dictionary<int, Node>();
-			Costs = new Dictionary<int, float>();
-			Heuristics = debug ? new Dictionary<int, float>() : null;
+			Notes = new Dictionary<int, Note>();
 		}
 
 		public Result MoveTo(Node start, Node goal) {
-			if (goal.Solid) return Result.NotFound;
 			return Query(
 				start,
-				(n, e) => !n.Solid && !e.HasValue,
-				n => n.Coord == goal.Coord,
-				n => Coord.ChebyshevDistance(n.Coord, goal.Coord)
+				check: (n, e) => !n.Solid && !e.HasValue,
+				isGoal: n => n.Coord == goal.Coord,
+				heuristic: n => Coord.ChebyshevDistance(n.Coord, goal.Coord)
 			);
 		}
 		
@@ -43,12 +38,28 @@ namespace MonoGameTest.Common {
 			return MoveTo(a, b);
 		}
 
+		public Result OptimalMoveTo(Node start, Node goal) {
+			return Query(
+				start,
+				check: (n, e) => !n.Solid,
+				isGoal: n => n.Coord == goal.Coord,
+				heuristic: n => Coord.ChebyshevDistance(n.Coord, goal.Coord)
+			);
+		}
+		
+		public Result OptimalMoveTo(Coord start, Coord goal) {
+			var a = Grid.Get(start);
+			var b = Grid.Get(goal);
+			if (a == null || b == null) return Result.NotFound;
+			return OptimalMoveTo(a, b);
+		}
+
 		public Result MoveAdjacent(Node start, Node goal) {
 			return Query(
 				start,
-				(n, e) => !n.Solid && !e.HasValue,
-				n => Coord.ChebyshevDistance(n.Coord, goal.Coord) == 1,
-				n => Coord.ChebyshevDistance(n.Coord, goal.Coord)
+				check: (n, e) => !n.Solid && !e.HasValue,
+				isGoal: n => Coord.ChebyshevDistance(n.Coord, goal.Coord) == 1,
+				heuristic: n => Coord.ChebyshevDistance(n.Coord, goal.Coord)
 			);
 		}
 		
@@ -70,83 +81,107 @@ namespace MonoGameTest.Common {
 			}
 
 			Frontier.Clear();
-			Origins.Clear();
-			Costs.Clear();
-			Heuristics?.Clear();
+			Notes.Clear();
 
-			var cost = heuristic(start);
-			Frontier.Enqueue(start, cost);
-			Costs[Grid.Index(start)] = cost;
+			var h = heuristic(start);
+			Frontier.Enqueue(start, h);
+			var note = new Note {
+				Cost = 0,
+				Origin = null,
+				Heuristic = h
+			};
+			Notes[Grid.Index(start)] = note;
+
+			var best = start;
+			var bestNote = note;
 
 			Node current = null;
 			for (var _ = 0; _ < LOOP_MAX; _++) {
 				if (!Frontier.TryDequeue(out current)) {
-					return Result.NotFound;
+					return CreatePath(best, false);
 				}
 				
 				if (isGoal(current)) {
-					return CreatePath(current);
+					return CreatePath(current, true);
+				}
+
+				note = Notes[Grid.Index(current)];
+				h = heuristic(current);
+				if (h < bestNote.Heuristic) {
+					best = current;
+					bestNote = note;
 				}
 
 				var x = current.X;
 				var y = current.Y;
 				var neighbors = new Neighbors(x, y, Grid, Positions, check);
-				var baseCost = Costs[Grid.Index(current)];
 				foreach (var next in neighbors) {
 					var i = Grid.Index(next);
 					var dx = next.X - x;
 					var dy = next.Y - y;
-					var nextCost = baseCost + Movement.COST;
+					var nextCost = note.Cost + Movement.COST;
 					if (dx != 0 && dy != 0) {
-						nextCost = baseCost + Movement.DIAGONAL_COST;
+						nextCost = note.Cost + Movement.DIAGONAL_COST;
 					}
-					var prevCost = 0f;
-					var hasPrevCost = Costs.TryGetValue(i, out prevCost);
-					if (!hasPrevCost || nextCost < prevCost) {
-						var p = nextCost + heuristic(next);
+					Note prevNote;
+					var hasPrevCost = Notes.TryGetValue(i, out prevNote);
+					if (!hasPrevCost || nextCost < prevNote.Cost) {
+						h = heuristic(next);
+						var p = nextCost + h;
 						if (!Frontier.EnqueueWithoutDuplicates(next, p)) {
 							Frontier.UpdatePriority(next, p);
 						}
-						Origins[i] = current;
-						Costs[i] = nextCost;
-						Heuristics?.Add(i, p);
+						Notes[i] = new Note {
+							Origin = current,
+							Cost = nextCost,
+							Heuristic = h
+						};
 					}
 				}
 			}
 
-			return Result.NotFound;
+			return CreatePath(best, false);
 		}
 
-		Result CreatePath(Node last) {
+		Result CreatePath(Node last, bool isGoal) {
 			var path = new Stack<Node>();
 			path.Push(last);
 			var current = last;
 			while (current != null) {
-				if (Origins.TryGetValue(Grid.Index(current), out current)) {
-					path.Push(current);
+				Note note;
+				if (Notes.TryGetValue(Grid.Index(current), out note)) {
+					if (note.Origin != null) {
+						path.Push(note.Origin);
+					}
+					current = note.Origin;
 				}
 			}
 			path.Pop();
-			return new Result(last, ImmutableStack.Create(path.Reverse().ToArray()));
+			return new Result(last, ImmutableStack.Create(path.Reverse().ToArray()), isGoal);
+		}
+
+		public struct Note {
+			public Node Origin;
+			public float Cost;
+			public float Heuristic;
 		}
 
 		public struct Result {
 			public readonly Node Node;
 			public readonly ImmutableStack<Node> Path;
+			public readonly bool IsGoal;
 
-			public bool IsNotFound => Node == null;
-			public bool IsArrived => Node != null && Path.IsEmpty;
-
-			public Result(Node node, ImmutableStack<Node> path) {
+			public Result(Node node, ImmutableStack<Node> path, bool isGoal) {
 				Node = node;
 				Path = path;
+				IsGoal = isGoal;
 			}
 
 			public static Result Arrived(Node node) {
-				return new Result(node, NotFound.Path);
+				return new Result(node, NotFound.Path, true);
 			}
 
-			public static Result NotFound = new Result(null, ImmutableStack.Create<Node>());
+			public static Result NotFound = new Result(null, ImmutableStack.Create<Node>(), false);
 
 		}
 
