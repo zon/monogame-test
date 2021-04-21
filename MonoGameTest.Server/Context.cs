@@ -22,7 +22,7 @@ namespace MonoGameTest.Server {
 			Server = server;
 			World = world;
 			Recorder = new EntityCommandRecorder();
-			Positions = World.GetEntities().AsMap<Position>();
+			Positions = World.GetEntities().With<Character>().AsMap<Position>();
 		}
 
 		public void Load(string name) {

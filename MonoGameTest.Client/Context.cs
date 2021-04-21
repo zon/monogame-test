@@ -1,4 +1,5 @@
 using DefaultEcs;
+using DefaultEcs.Command;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,6 +13,7 @@ namespace MonoGameTest.Client {
 		public readonly Resources Resources;
 		public readonly Client Client;
 		public World World { get; private set; }
+		public readonly EntityCommandRecorder Recorder;
 		public int PeerId { get; private set; }
 		public TiledMap TiledMap { get; private set; }
 		public Grid Grid { get; private set; }
@@ -29,6 +31,7 @@ namespace MonoGameTest.Client {
 			GraphicsDevice = graphicsDevice;
 			Resources = resources;
 			World = world;
+			Recorder = new EntityCommandRecorder();
 			Client = client;
 			Foreground = foreground;
 		}
@@ -68,6 +71,17 @@ namespace MonoGameTest.Client {
 			return new Vector2(
 				x * TiledMap.TileWidth,
 				y * TiledMap.TileHeight
+			);
+		}
+
+		public Vector2 CoordToMidVector(Coord coord) {
+			return CoordToMidVector(coord.X, coord.Y);
+		}
+
+		public Vector2 CoordToMidVector(int x, int y) {
+			return new Vector2(
+				x * TiledMap.TileWidth + TiledMap.TileWidth / 2,
+				y * TiledMap.TileHeight + TiledMap.TileHeight / 2
 			);
 		}
 

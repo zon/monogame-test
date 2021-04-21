@@ -47,7 +47,7 @@ namespace MonoGameTest.Client {
 			PacketListener = new PacketListener(Context);
 
 			Behavior = new SequentialSystem<float>(
-				new LocalPlayerSystem(Context)
+				new LocalInputSystem(Context)
 			);
 
 			BackgroundRendering = new TilemapDrawSystem(Context);
@@ -57,7 +57,8 @@ namespace MonoGameTest.Client {
 				new BangSystem(Context),
 				new AttackAnimationSystem(Context),
 				new HitAnimationSystem(Context),
-				new SpriteDrawSystem(Context)
+				new SpriteDrawSystem(Context),
+				new EffectSystem(Context)
 			);
 			
 			Client.Connect();
@@ -66,6 +67,7 @@ namespace MonoGameTest.Client {
 		protected override void Update(GameTime gameTime) {
 			var dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
 			if (Context.IsReady) Behavior.Update(dt);
+			Context.Recorder.Execute();
 			Client.Poll();
 		}
 

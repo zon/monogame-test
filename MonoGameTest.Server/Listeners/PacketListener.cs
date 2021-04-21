@@ -15,8 +15,8 @@ namespace MonoGameTest.Server {
 			Server = context.Server;
 			Grid = context.Grid;
 			var world = context.World;
-			Positions = world.GetEntities().AsMap<Position>();
-			Players = world.GetEntities().With<Position>().With<Movement>().AsMap<Player>();
+			Positions = world.GetEntities().With<Character>().AsMap<Position>();
+			Players = world.GetEntities().AsMap<Player>();
 			Server.Processor.SubscribeReusable<MoveCommand, NetPeer>(OnMoveCommand);
 		}
 

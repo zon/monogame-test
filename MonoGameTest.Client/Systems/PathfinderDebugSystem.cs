@@ -29,7 +29,7 @@ namespace MonoGameTest.Client {
 		) {
 			Batch = batch;
 			Context = context;
-			Positions = Context.World.GetEntities().With<Position>().AsMap<Position>();
+			Positions = Context.World.GetEntities().With<Character>().AsMap<Position>();
 			Pathfinder = new Pathfinder(Context.Grid, Positions, true);
 			IsEnabled = true;
 
