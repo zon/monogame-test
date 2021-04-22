@@ -11,6 +11,7 @@ namespace MonoGameTest.Client {
 		public readonly AsepriteDocument Hits;
 		public readonly SoundEffect MoveSound;
 		public readonly SoundEffect HitSound;
+		public readonly SoundEffect MoveConfirmSound;
 		public readonly BitmapFont Font;
 
 		Resources(ContentManager content) {
@@ -19,6 +20,7 @@ namespace MonoGameTest.Client {
 			Hits = content.Load<AsepriteDocument>("hits");
 			MoveSound = content.Load<SoundEffect>("bump-strike-0");
 			HitSound = content.Load<SoundEffect>("bump-strike-1");
+			MoveConfirmSound = content.Load<SoundEffect>("bump-strike-8");
 			Font = content.Load<BitmapFont>("munro");
 		}
 

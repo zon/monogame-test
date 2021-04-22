@@ -75,6 +75,12 @@
 /processorParam:Quality=Best
 /build:bump-strike-7.wav
 
+#begin bump-strike-8.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bump-strike-8.wav
+
 #begin default.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
