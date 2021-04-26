@@ -18,7 +18,10 @@ namespace MonoGameTest.Client {
 		ISystem<float> ForegroundRendering;
 		Resources Resources;
 		GraphicsDeviceManager Graphics;
+		RenderTarget2D RenderTarget;
 		SpriteBatch Foreground;
+		Camera Camera;
+		SpriteBatch Target;
 
 		public Game() {
 			Graphics = new GraphicsDeviceManager(this);
@@ -40,9 +43,21 @@ namespace MonoGameTest.Client {
 			
 			World = new World();
 
-			Foreground = new SpriteBatch(GraphicsDevice);
+			RenderTarget = new RenderTarget2D(
+				graphicsDevice: GraphicsDevice,
+				width: View.WIDTH,
+				height: View.HEIGHT,
+				mipMap: false,
+				preferredFormat: GraphicsDevice.PresentationParameters.BackBufferFormat,
+				preferredDepthFormat: DepthFormat.Depth24
+			);
+			GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true }; 
 
-			Context = new Context(GraphicsDevice, Resources, World, Client, Foreground);
+			Foreground = new SpriteBatch(GraphicsDevice);
+			Camera = new Camera(Window, GraphicsDevice);
+			Target = new SpriteBatch(GraphicsDevice);
+
+			Context = new Context(GraphicsDevice, Resources, World, Client, Foreground, Camera);
 
 			PacketListener = new PacketListener(Context);
 
@@ -61,6 +76,8 @@ namespace MonoGameTest.Client {
 				new EffectSystem(Context)
 			);
 			
+			Context.Camera.SetWindowSize(Graphics);
+
 			Client.Connect();
 		}
 
@@ -72,11 +89,13 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void Draw(GameTime gameTime) {
-			GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 			GraphicsDevice.Clear(Color.Black);
 			if (!Context.IsReady) return;
 
 			var dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
+			GraphicsDevice.SetRenderTarget(RenderTarget);
+			GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+			GraphicsDevice.Clear(Color.Black);
 			BackgroundRendering.Update(dt);
 			Foreground.Begin(
 				transformMatrix: Context.Camera.GetMatrix(),
@@ -85,6 +104,21 @@ namespace MonoGameTest.Client {
 			);
 			ForegroundRendering.Update(dt);
 			Foreground.End();
+			GraphicsDevice.SetRenderTarget(null);
+
+			Target.Begin(samplerState: SamplerState.PointClamp);
+			Target.Draw(
+				texture: RenderTarget,
+				position: Vector2.Zero,
+				sourceRectangle: null,
+				color: Color.White,
+				rotation: 0,
+				origin: Vector2.Zero,
+				scale: Vector2.One * View.SCALE,
+				effects: SpriteEffects.None,
+				layerDepth: 0
+			);
+			Target.End();
 		}
 		
 		void OnDisconnected(DisconnectInfo disconnectInfo) {
@@ -93,7 +127,6 @@ namespace MonoGameTest.Client {
 
 		void OnSession(SessionPacket session) {
 			Context.Load(Content, Window, session);
-			Context.Camera.SetWindowSize(Graphics);
 		}
 
 		void ClearLevel() {

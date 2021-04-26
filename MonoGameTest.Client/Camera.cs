@@ -1,31 +1,29 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using MonoGame.Extended.Tiled;
 using MonoGame.Extended.ViewportAdapters;
 
 namespace MonoGameTest.Client {
 
 	public class Camera {
 		readonly GraphicsDevice GraphicsDevice;
-		readonly TiledMap TiledMap;
+		readonly BoxingViewportAdapter Viewport;
 		readonly OrthographicCamera Orthographic;
 
-		public Camera(GameWindow window, GraphicsDevice graphicsDevice, TiledMap tiledMap) {
+		public Camera(GameWindow window, GraphicsDevice graphicsDevice) {
 			GraphicsDevice = graphicsDevice;
-			TiledMap = tiledMap;
-			var viewport = new BoxingViewportAdapter(
+			Viewport = new BoxingViewportAdapter(
 				window,
 				graphicsDevice,
-				tiledMap.WidthInPixels,
-				tiledMap.HeightInPixels
+				View.WIDTH,
+				View.HEIGHT
 			);
-			Orthographic = new OrthographicCamera(viewport);
+			Orthographic = new OrthographicCamera(Viewport);
 		}
 
 		public void SetWindowSize(GraphicsDeviceManager graphics) {
-			graphics.PreferredBackBufferWidth = TiledMap.WidthInPixels * View.SCALE;
-			graphics.PreferredBackBufferHeight = TiledMap.HeightInPixels * View.SCALE;
+			graphics.PreferredBackBufferWidth = Viewport.VirtualWidth * View.SCALE;
+			graphics.PreferredBackBufferHeight = Viewport.VirtualHeight * View.SCALE;
 			graphics.ApplyChanges();
 		}
 

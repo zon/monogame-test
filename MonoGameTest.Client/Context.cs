@@ -17,8 +17,8 @@ namespace MonoGameTest.Client {
 		public int PeerId { get; private set; }
 		public TiledMap TiledMap { get; private set; }
 		public Grid Grid { get; private set; }
-		public SpriteBatch Foreground { get; private set; }
-		public Camera Camera { get; private set; }
+		public readonly SpriteBatch Foreground;
+		public readonly Camera Camera;
 		public bool IsReady { get; private set; }
 
 		public Context(
@@ -26,7 +26,8 @@ namespace MonoGameTest.Client {
 			Resources resources,
 			World world,
 			Client client,
-			SpriteBatch foreground
+			SpriteBatch foreground,
+			Camera camera
 		) {
 			GraphicsDevice = graphicsDevice;
 			Resources = resources;
@@ -34,6 +35,7 @@ namespace MonoGameTest.Client {
 			Recorder = new EntityCommandRecorder();
 			Client = client;
 			Foreground = foreground;
+			Camera = camera;
 		}
 
 		public void Load(
@@ -52,7 +54,6 @@ namespace MonoGameTest.Client {
 		) {
 			TiledMap = Tiled.LoadMap(content, tileMapName);
 			Grid = Tiled.LoadGrid(TiledMap);
-			Camera = new Camera(window, GraphicsDevice, TiledMap);
 			IsReady = true;
 		}
 
@@ -102,7 +103,6 @@ namespace MonoGameTest.Client {
 			PeerId = 0;
 			TiledMap = null;
 			Grid = null;
-			Camera = null;
 			IsReady = false;
 		}
 		
