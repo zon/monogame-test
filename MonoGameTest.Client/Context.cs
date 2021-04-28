@@ -13,9 +13,13 @@ namespace MonoGameTest.Client {
 		public readonly Resources Resources;
 		public readonly Client Client;
 		public World World { get; private set; }
+		public EntityMap<Character> Characters { get; private set; }
+		public EntityMap<Position> Positions { get; private set; }
 		public readonly EntityCommandRecorder Recorder;
 		public int PeerId { get; private set; }
 		public TiledMap TiledMap { get; private set; }
+		public Vector2 TileSize { get; private set; }
+		public Vector2 HalfTileSize { get; private set; }
 		public Grid Grid { get; private set; }
 		public readonly SpriteBatch Foreground;
 		public readonly Camera Camera;
@@ -32,6 +36,8 @@ namespace MonoGameTest.Client {
 			GraphicsDevice = graphicsDevice;
 			Resources = resources;
 			World = world;
+			Characters = world.GetEntities().AsMap<Character>();
+			Positions = world.GetEntities().With<Character>().AsMap<Position>();
 			Recorder = new EntityCommandRecorder();
 			Client = client;
 			Foreground = foreground;
@@ -53,6 +59,8 @@ namespace MonoGameTest.Client {
 			string tileMapName
 		) {
 			TiledMap = Tiled.LoadMap(content, tileMapName);
+			TileSize = new Vector2(TiledMap.TileWidth, TiledMap.TileHeight);
+			HalfTileSize = TileSize / 2;
 			Grid = Tiled.LoadGrid(TiledMap);
 			IsReady = true;
 		}
@@ -75,28 +83,42 @@ namespace MonoGameTest.Client {
 			);
 		}
 
+		public Vector2 CoordToMidVector(Position position) {
+			return CoordToMidVector(position.Coord);
+		}
+
 		public Vector2 CoordToMidVector(Coord coord) {
 			return CoordToMidVector(coord.X, coord.Y);
 		}
 
 		public Vector2 CoordToMidVector(int x, int y) {
-			return new Vector2(
-				x * TiledMap.TileWidth + TiledMap.TileWidth / 2,
-				y * TiledMap.TileHeight + TiledMap.TileHeight / 2
-			);
+			return CoordToVector(x, y) + HalfTileSize;
 		}
 
 		public Vector2 CoordToVector(Coord coord) {
 			return CoordToVector(coord.X, coord.Y);
 		}
 
-		public Vector2 Half() {
-			return new Vector2(TiledMap.TileWidth, TiledMap.TileHeight) / 2;
+		public Vector2 CoordToVector(Position position) {
+			return CoordToVector(position.Coord);
 		}
 
 		public Node GetNode(float x, float y) {
 			var p = Camera.ScreenToWorld(x, y);
 			return Grid.Get(VectorToCoord(p));
+		}
+
+		public bool GetEntityByCharacterId(int characterId, out Entity entity) {
+			var character = new Character(characterId);
+			return Characters.TryGetEntity(character, out entity);
+		}
+
+		public bool GetEntityByPosition(Position position, out Entity entity) {
+			return Positions.TryGetEntity(position, out entity);
+		}
+
+		public bool GetEntityByPosition(Coord coord, out Entity entity) {
+			return GetEntityByPosition(new Position { Coord = coord }, out entity);
 		}
 
 		public void Unload() {

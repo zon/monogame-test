@@ -6,17 +6,16 @@ using DefaultEcs.System;
 namespace MonoGameTest.Common {
 
 	public class MovementSystem : AEntitySetSystem<float> {
-		readonly EntityMap<Position> Positions;
 		readonly IContext Context;
 
 		Grid Grid => Context.Grid;
+		EntityMap<Position> Positions => Context.Positions;
 
 		public MovementSystem(IContext context) : base(context.World
 			.GetEntities()
 			.With<Movement>()
 			.AsSet()
 		) {
-			Positions = World.GetEntities().With<Character>().AsMap<Position>();
 			Context = context;
 		}
 
@@ -72,11 +71,6 @@ namespace MonoGameTest.Common {
 			}
 
 			entity.NotifyChanged<Position>();
-		}
-
-		public override void Dispose() {
-			Positions.Dispose();
-			base.Dispose();
 		}
 
 	}

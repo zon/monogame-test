@@ -49,12 +49,12 @@ namespace MonoGameTest.Common {
 						if (Left) return true;
 						break;
 					case 1:
-						Right = CheckNode(X + 1, Y);
-						if (Right) return true;
-						break;
-					case 2:
 						Up = CheckNode(X, Y - 1);
 						if (Up) return true;
+						break;
+					case 2:
+						Right = CheckNode(X + 1, Y);
+						if (Right) return true;
 						break;
 					case 3:
 						Down = CheckNode(X, Y + 1);

@@ -6,24 +6,21 @@ namespace MonoGameTest.Client {
 
 	public class PacketListener : IDisposable {
 		readonly Context Context;
-		readonly EntityMap<Character> Characters;
 
 		public bool IsEnabled { get; set; }
 
 		public PacketListener(Context context) {
 			Context = context;
-			Characters = context.World.GetEntities().AsMap<Character>();
 			var processor = context.Client.Processor;
 			processor.SubscribeReusable<AddCharacterPacket>(OnAddCharacter);
 			processor.SubscribeReusable<MoveCharacterPacket>(OnMoveCharacter);
 			processor.SubscribeReusable<RemoveCharacterPacket>(OnRemoveCharacter);
 			processor.SubscribeReusable<AttackPacket>(OnAttack);
 			processor.SubscribeReusable<HealthPacket>(OnHealth);
+			processor.SubscribeReusable<TargetPacket>(OnTarget);
 		}
 
-		public void Dispose() {
-			Characters.Dispose();
-		}
+		public void Dispose() {}
 
 		void OnAddCharacter(AddCharacterPacket packet) {
 			ClientCharacter.Create(Context, packet);
@@ -68,9 +65,20 @@ namespace MonoGameTest.Client {
 			bang.Start(packet.Delta);
 		}
 
+		void OnTarget(TargetPacket packet) {
+			Entity entity;
+			if (!GetEntity(packet.CharacterId, out entity)) return;
+			ref var target = ref entity.Get<Target>();
+			Entity other;
+			if (packet.TargetId != packet.CharacterId && GetEntity(packet.TargetId, out other)) {
+				target.Entity = other;
+			} else {
+				target.Entity = null;
+			}
+		}
+
 		bool GetEntity(int characterId, out Entity entity) {
-			var character = new Character(characterId);
-			return Characters.TryGetEntity(character, out entity);
+			return Context.GetEntityByCharacterId(characterId, out entity);
 		}
 
 	}

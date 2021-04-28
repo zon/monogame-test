@@ -15,10 +15,10 @@ namespace MonoGameTest.Server {
 			c.Set(Group.Player);
 			c.Set(new Attributes(5));
 			c.Set(new Health(100));
-			c.Set(new Position { Coord = node.Coord });
 			c.Set(new Cooldown());
 			c.Set(new Movement());
 			c.Set(new Target());
+			c.Set(new Position { Coord = node.Coord });
 			return c;
 		}
 
@@ -30,11 +30,11 @@ namespace MonoGameTest.Server {
 			c.Set(new Attributes(sprite));
 			c.Set(new Health(100));
 			c.Set(new Attack { Damage = 5 });
-			c.Set(new Position { Coord = coord });
 			c.Set(new Cooldown());
 			c.Set(new Movement());
 			c.Set(new Target());
 			c.Set(new Mob());
+			c.Set(new Position { Coord = coord });
 			return c;
 		}
 

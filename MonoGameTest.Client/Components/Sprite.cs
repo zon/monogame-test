@@ -14,6 +14,7 @@ namespace MonoGameTest.Client {
 		public Vector2 Origin;
 		public Vector2 Scale;
 		public SpriteEffects Effects;
+		public float Depth;
 
 		public void LookForward(Coord direction) {
 			if (direction.X < 0) {
@@ -27,7 +28,7 @@ namespace MonoGameTest.Client {
 			var f = document.Frames[frame];
 			return new Sprite {
 				Document = document,
-				Rectangle = new Rectangle(f.X, f.Y, f.Width, f.Height),
+				Rectangle = f.ToRectangle(),
 				Color = Color.White,
 				Position = position,
 				Scale = Vector2.One

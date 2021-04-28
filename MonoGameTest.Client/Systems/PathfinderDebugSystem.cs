@@ -14,13 +14,14 @@ namespace MonoGameTest.Client {
 	public class PathfinderDebugSystem : ISystem<float> {
 		readonly SpriteBatch Batch;
 		readonly Context Context;
-		readonly EntityMap<Position> Positions;
 		readonly Pathfinder Pathfinder;
 		Node Start;
 		Node End;
 		Pathfinder.Result Result;
 
 		public bool IsEnabled { get; set; }
+		
+		EntityMap<Position> Positions => Context.Positions;
 
 		public PathfinderDebugSystem(
 			SpriteBatch batch,
@@ -29,7 +30,6 @@ namespace MonoGameTest.Client {
 		) {
 			Batch = batch;
 			Context = context;
-			Positions = Context.World.GetEntities().With<Character>().AsMap<Position>();
 			Pathfinder = new Pathfinder(Context.Grid, Positions, true);
 			IsEnabled = true;
 
@@ -37,6 +37,8 @@ namespace MonoGameTest.Client {
 			End = Context.Grid.Get(11, 9);
 			Result = Pathfinder.MoveTo(Start, End);
 		}
+
+		public void Dispose() {}
 
 		public void Update(float dt) {
 			var mouse = Mouse.GetState();
@@ -61,7 +63,7 @@ namespace MonoGameTest.Client {
 				samplerState: SamplerState.PointClamp
 			);
 
-			var h = Context.Half();
+			var h = Context.HalfTileSize;
 			foreach (var (index, note) in Pathfinder.Notes) {
 				var node = Context.Grid.Nodes[index];
 				var p = Context.CoordToVector(node.Coord);
@@ -78,7 +80,7 @@ namespace MonoGameTest.Client {
 		}
 
 		public static void DrawPath(SpriteBatch batch, Context context, ImmutableStack<Node> path) {
-			var h = context.Half();
+			var h = context.HalfTileSize;
 			Node a = null;
 			foreach (var node in path) {
 				if (a == null) {
@@ -93,10 +95,6 @@ namespace MonoGameTest.Client {
 				);
 				a = b;
 			}
-		}
-
-		public void Dispose() {
-			Positions.Dispose();
 		}
 
 	}

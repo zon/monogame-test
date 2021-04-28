@@ -72,6 +72,7 @@ namespace MonoGameTest.Client {
 				new BangSystem(Context),
 				new AttackAnimationSystem(Context),
 				new HitAnimationSystem(Context),
+				new TargetDrawSystem(Context),
 				new SpriteDrawSystem(Context),
 				new EffectSystem(Context)
 			);

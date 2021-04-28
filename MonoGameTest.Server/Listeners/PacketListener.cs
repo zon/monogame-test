@@ -6,29 +6,27 @@ using MonoGameTest.Common;
 namespace MonoGameTest.Server {
 
 	public class PacketListener : IDisposable {
-		readonly Server Server;
-		readonly Grid Grid;
+		readonly Context Context;
 		readonly EntityMap<Player> Players;
-		readonly EntityMap<Position> Positions;
+
+		Server Server => Context.Server;
+		Grid Grid => Context.Grid;
 
 		public PacketListener(Context context) {
-			Server = context.Server;
-			Grid = context.Grid;
-			var world = context.World;
-			Positions = world.GetEntities().With<Character>().AsMap<Position>();
-			Players = world.GetEntities().AsMap<Player>();
+			Context = context;
+			Players = Context.World.GetEntities().AsMap<Player>();
 			Server.Processor.SubscribeReusable<MoveCommand, NetPeer>(OnMoveCommand);
+			Server.Processor.SubscribeReusable<TargetCommand, NetPeer>(OnTargetCommand);
 		}
 
 		public void Dispose() {
 			Server.Processor.RemoveSubscription<MoveCommand>();
 			Players.Dispose();
-			Positions.Dispose();
 		}
 
 		void OnMoveCommand(MoveCommand command, NetPeer peer) {
 			Entity entity;
-			if (!Players.TryGetEntity(new Player(peer.Id), out entity)) return;
+			if (!GetPlayerEntity(peer, out entity)) return;
 
 			ref var position = ref entity.Get<Position>();
 			ref var movement = ref entity.Get<Movement>();
@@ -38,6 +36,23 @@ namespace MonoGameTest.Server {
 			if (goal == null) return;
 
 			movement.Goal = goal.Coord;
+		}
+
+		void OnTargetCommand(TargetCommand command, NetPeer peer) {
+			Entity entity;
+			if (!GetPlayerEntity(peer, out entity)) return;
+
+			Entity other;
+			if (!Context.Characters.TryGetEntity(new Character(command.CharacterId), out other)) return;
+
+			ref var target = ref entity.Get<Target>();
+			target.Entity = other != entity ? other : null;
+			
+			entity.NotifyChanged<Target>();
+		}
+
+		bool GetPlayerEntity(NetPeer peer, out Entity entity) {
+			return Players.TryGetEntity(new Player(peer.Id), out entity);
 		}
 
 	}

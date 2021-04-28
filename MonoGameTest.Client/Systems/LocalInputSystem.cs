@@ -27,9 +27,15 @@ namespace MonoGameTest.Client {
 			var goal = Context.GetNode(mouse.X, mouse.Y);
 			if (goal == null) return;
 
-			Context.Client.Send(new MoveCommand { X = goal.X, Y = goal.Y });
+			Entity other;
+			if (Context.GetEntityByPosition(goal.Coord, out other)) {
+				var character = other.Get<Character>();
+				Context.Client.Send(new TargetCommand { CharacterId = character.Id });
 
-			Effect.CreateEntity(Context, "ping-small", goal.Coord);
+			} else {
+				Context.Client.Send(new MoveCommand { X = goal.X, Y = goal.Y });
+				Effect.CreateEntity(Context, "ping-small", goal.Coord);
+			}
 
 			Context.Resources.MoveConfirmSound.Play();
 		}
