@@ -1,12 +1,13 @@
 using System;
 using DefaultEcs;
 using DefaultEcs.System;
+using MonoGameTest.Common;
 
-namespace MonoGameTest.Common {
+namespace MonoGameTest.Server {
 
 	public class CooldownSystem : AEntitySetSystem<float> {
 
-		public CooldownSystem(IContext context) : base(context.World
+		public CooldownSystem(Context context) : base(context.World
 			.GetEntities()
 			.With<Cooldown>()
 			.AsSet()

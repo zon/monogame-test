@@ -50,8 +50,8 @@ namespace MonoGameTest.Server {
 			Systems = new SequentialSystem<float>(
 				new CooldownSystem(Context),
 				new MobTargetSystem(Context),
-				new AttackSystem(Context),
 				new MovementSystem(Context),
+				new AttackSystem(Context),
 				new DeathSystem(Context)
 			);
 		}

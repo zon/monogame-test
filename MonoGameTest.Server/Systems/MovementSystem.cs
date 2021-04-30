@@ -1,17 +1,17 @@
-using System;
 using System.Collections.Immutable;
 using DefaultEcs;
 using DefaultEcs.System;
+using MonoGameTest.Common;
 
-namespace MonoGameTest.Common {
+namespace MonoGameTest.Server {
 
 	public class MovementSystem : AEntitySetSystem<float> {
-		readonly IContext Context;
+		readonly Context Context;
 
 		Grid Grid => Context.Grid;
 		EntityMap<Position> Positions => Context.Positions;
 
-		public MovementSystem(IContext context) : base(context.World
+		public MovementSystem(Context context) : base(context.World
 			.GetEntities()
 			.With<Movement>()
 			.AsSet()
@@ -20,8 +20,8 @@ namespace MonoGameTest.Common {
 		}
 
 		protected override void Update(float dt, in Entity entity) {
-			ref var movement = ref entity.Get<Movement>();
 			ref var cooldown = ref entity.Get<Cooldown>();
+			ref var movement = ref entity.Get<Movement>();
 			ref var position = ref entity.Get<Position>();
 
 			if (!cooldown.IsCool() || movement.IsIdle) return;
