@@ -121,6 +121,10 @@ namespace MonoGameTest.Client {
 			return GetEntityByPosition(new Position { Coord = coord }, out entity);
 		}
 
+		public bool GetEntityByPosition(Node node, out Entity entity) {
+			return GetEntityByPosition(node.Coord, out entity);
+		}
+
 		public void Unload() {
 			PeerId = 0;
 			TiledMap = null;

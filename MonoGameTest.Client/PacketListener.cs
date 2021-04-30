@@ -36,7 +36,9 @@ namespace MonoGameTest.Client {
 			ref var movement = ref entity.Get<MovementAnimation>();
 
 			movement.Start(position.Coord, coord, Movement.ACTION_DURATION);
+			
 			position.Coord = coord;
+			entity.NotifyChanged<Position>();
 		}
 
 		void OnRemoveCharacter(RemoveCharacterPacket packet) {

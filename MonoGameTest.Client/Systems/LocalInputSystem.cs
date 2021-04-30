@@ -19,25 +19,26 @@ namespace MonoGameTest.Client {
 
 		protected override void Update(float dt, in Entity entity) {
 			var mouse = MouseExtended.GetState();
-			if (
-				!mouse.WasButtonJustDown(MouseButton.Left) &&
-				!mouse.WasButtonJustDown(MouseButton.Right)
-			) return;
+			var leftDown = mouse.WasButtonJustDown(MouseButton.Left);
+			var rightDown = mouse.WasButtonJustDown(MouseButton.Right);
+			if (!leftDown && !rightDown) return;
 
 			var goal = Context.GetNode(mouse.X, mouse.Y);
 			if (goal == null) return;
 
-			Entity other;
-			if (Context.GetEntityByPosition(goal.Coord, out other)) {
-				var character = other.Get<Character>();
-				Context.Client.Send(new TargetCommand { CharacterId = character.Id });
-
-			} else {
+			if (rightDown) {
 				Context.Client.Send(new MoveCommand { X = goal.X, Y = goal.Y });
 				Effect.CreateEntity(Context, "ping-small", goal.Coord);
+				Context.Resources.MoveConfirmSound.Play();
+				return;
 			}
 
-			Context.Resources.MoveConfirmSound.Play();
+			Entity other;
+			if (leftDown && Context.GetEntityByPosition(goal, out other)) {
+				var character = other.Get<Character>();
+				Context.Client.Send(new TargetCommand { CharacterId = character.Id });
+				Context.Resources.MoveConfirmSound.Play();
+			}
 		}
 
 	}
