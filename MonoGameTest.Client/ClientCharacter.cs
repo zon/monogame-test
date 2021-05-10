@@ -7,7 +7,7 @@ namespace MonoGameTest.Client {
 
 		public static Entity Create(Context context, AddCharacterPacket packet) {
 			var entity = context.World.CreateEntity();
-			entity.Set(new Character(packet.Id));
+			entity.Set(new CharacterId(packet.Id));
 			entity.Set((Group) packet.Group);
 			if (packet.PeerId > 0) {
 				entity.Set(new Player(packet.PeerId));
@@ -25,7 +25,7 @@ namespace MonoGameTest.Client {
 			Entity other;
 			if (
 				packet.TargetId != packet.Id &&
-				context.Characters.TryGetEntity(new Character(packet.TargetId), out other)
+				context.Characters.TryGetEntity(new CharacterId(packet.TargetId), out other)
 			) {
 				entity.Set(new Target { Entity = other });
 			} else {

@@ -35,7 +35,7 @@ namespace MonoGameTest.Client {
 
 			Entity other;
 			if (leftDown && Context.GetEntityByPosition(goal, out other)) {
-				var character = other.Get<Character>();
+				var character = other.Get<CharacterId>();
 				Context.Client.Send(new TargetCommand { CharacterId = character.Id });
 				Context.Resources.MoveConfirmSound.Play();
 			}

@@ -14,7 +14,7 @@ namespace MonoGameTest.Server {
 		public readonly Server Server;
 		public World World { get; private set; }
 		public readonly EntityCommandRecorder Recorder;
-		public EntityMap<Character> Characters { get; private set; }
+		public EntityMap<CharacterId> Characters { get; private set; }
 		public EntityMap<Position> Positions { get; private set; }
 		public Grid Grid { get; private set; }
 		public bool IsReady { get; private set; }
@@ -23,8 +23,8 @@ namespace MonoGameTest.Server {
 			Server = server;
 			World = world;
 			Recorder = new EntityCommandRecorder();
-			Characters = World.GetEntities().AsMap<Character>();
-			Positions = World.GetEntities().With<Character>().AsMap<Position>();
+			Characters = World.GetEntities().AsMap<CharacterId>();
+			Positions = World.GetEntities().With<CharacterId>().AsMap<Position>();
 		}
 
 		public void Load(string name) {

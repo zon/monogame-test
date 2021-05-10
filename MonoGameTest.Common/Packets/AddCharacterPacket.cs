@@ -16,7 +16,7 @@ namespace MonoGameTest.Common {
 		public AddCharacterPacket() {}
 
 		public AddCharacterPacket(Entity entity) {
-			ref var character = ref entity.Get<Character>();
+			ref var character = ref entity.Get<CharacterId>();
 			ref var group = ref entity.Get<Group>();
 			ref var attributes = ref entity.Get<Attributes>();
 			var peerId = 0;
@@ -33,7 +33,7 @@ namespace MonoGameTest.Common {
 			PeerId = peerId;
 			ref var target = ref entity.Get<Target>();
 			if (target.HasEntity) {
-				ref var other = ref target.Entity.Value.Get<Character>();
+				ref var other = ref target.Entity.Value.Get<CharacterId>();
 				TargetId = other.Id;
 			} else {
 				TargetId = Id;

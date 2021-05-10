@@ -19,10 +19,10 @@ namespace MonoGameTest.Server {
 
 		void OnChange(in Entity entity, in Target oldTarget, in Target newTarget) {
 			if (oldTarget.Entity == newTarget.Entity) return;
-			ref var character = ref entity.Get<Character>();
+			ref var character = ref entity.Get<CharacterId>();
 			var packet = new TargetPacket { CharacterId = character.Id };
 			if (newTarget.HasEntity) {
-				ref var other = ref newTarget.Entity.Value.Get<Character>();
+				ref var other = ref newTarget.Entity.Value.Get<CharacterId>();
 				packet.TargetId = other.Id;
 			} else {
 				packet.TargetId = character.Id;

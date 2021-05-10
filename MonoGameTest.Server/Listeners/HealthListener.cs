@@ -18,9 +18,9 @@ namespace MonoGameTest.Server {
 		}
 
 		void OnChange(in Entity entity, in Health oldHealth, in Health newHealth) {
-			ref var character = ref entity.Get<Character>();
+			ref var character = ref entity.Get<CharacterId>();
 			Server.SendToAll(new HealthPacket {
-				CharacterId = character.Id,
+				OriginCharacterId = character.Id,
 				Delta = newHealth.Amount - oldHealth.Amount,
 				Amount = newHealth.Amount
 			});

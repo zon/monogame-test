@@ -43,7 +43,7 @@ namespace MonoGameTest.Server {
 			if (!GetPlayerEntity(peer, out entity)) return;
 
 			Entity other;
-			if (!Context.Characters.TryGetEntity(new Character(command.CharacterId), out other)) return;
+			if (!Context.Characters.TryGetEntity(new CharacterId(command.CharacterId), out other)) return;
 
 			ref var target = ref entity.Get<Target>();
 			target.Entity = other != entity ? other : null;

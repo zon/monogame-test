@@ -48,6 +48,16 @@ namespace MonoGameTest.Common {
 			}
 		}
 
+		public static float Distance(Coord a, Coord b) {
+			return MathF.Sqrt(DistanceSquared(a, b));
+		}
+
+		public static float DistanceSquared(Coord a, Coord b) {
+			var x = a.X - b.X;
+			var y = a.Y - b.Y;
+			return x * x + y * y;
+		}
+
 		public static Coord Facing(Coord from, Coord to) {
 			var d = to - from;
 			var x = Math.Abs(d.X);

@@ -13,7 +13,7 @@ namespace MonoGameTest.Client {
 		public readonly Resources Resources;
 		public readonly Client Client;
 		public World World { get; private set; }
-		public EntityMap<Character> Characters { get; private set; }
+		public EntityMap<CharacterId> Characters { get; private set; }
 		public EntityMap<Position> Positions { get; private set; }
 		public readonly EntityCommandRecorder Recorder;
 		public int PeerId { get; private set; }
@@ -36,8 +36,8 @@ namespace MonoGameTest.Client {
 			GraphicsDevice = graphicsDevice;
 			Resources = resources;
 			World = world;
-			Characters = world.GetEntities().AsMap<Character>();
-			Positions = world.GetEntities().With<Character>().AsMap<Position>();
+			Characters = world.GetEntities().AsMap<CharacterId>();
+			Positions = world.GetEntities().With<CharacterId>().AsMap<Position>();
 			Recorder = new EntityCommandRecorder();
 			Client = client;
 			Foreground = foreground;
@@ -109,7 +109,7 @@ namespace MonoGameTest.Client {
 		}
 
 		public bool GetEntityByCharacterId(int characterId, out Entity entity) {
-			var character = new Character(characterId);
+			var character = new CharacterId(characterId);
 			return Characters.TryGetEntity(character, out entity);
 		}
 

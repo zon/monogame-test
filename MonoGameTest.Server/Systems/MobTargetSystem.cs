@@ -16,15 +16,16 @@ namespace MonoGameTest.Server {
 			.AsSet()
 		) {
 			Context = context;
-			Others = context.World.GetEntities().With<Character>().With<Position>().AsSet();
+			Others = context.World.GetEntities().With<CharacterId>().With<Position>().AsSet();
 		}
 
 		protected override void Update(float state, in Entity entity) {
-			ref var cooldown = ref entity.Get<Cooldown>();
-			if (!cooldown.IsCool()) return;
+			ref var character = ref entity.Get<Character>();
+			if (!character.IsIdle) return;
 
 			var position = entity.Get<Position>();
 			var group = entity.Get<Group>();
+			var attack = entity.Get<Attack>();
 
 			var found = false;
 			var closest = new Closest(position.Coord, Others, e => {
@@ -34,7 +35,7 @@ namespace MonoGameTest.Server {
 			var pathfinder = new Pathfinder(Context.Grid, Context.Positions);
 			foreach (var other in closest) {
 				var otherPosition = other.Get<Position>();
-				var res = pathfinder.MoveAdjacent(position.Coord, otherPosition.Coord);
+				var res = pathfinder.MoveToAttack(position.Coord, otherPosition.Coord, attack);
 				if (!res.IsGoal) continue;
 				ref var target = ref entity.Get<Target>();
 				ref var movement = ref entity.Get<Movement>();
@@ -46,7 +47,7 @@ namespace MonoGameTest.Server {
 			}
 			
 			if (!found) {
-				cooldown.pause = NOTHING_PAUSE;
+				character.StartCooldown(NOTHING_PAUSE);
 			}
 		}
 

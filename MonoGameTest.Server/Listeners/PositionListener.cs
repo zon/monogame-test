@@ -29,9 +29,9 @@ namespace MonoGameTest.Server {
 		}
 
 		void OnChangePosition(in Entity entity, in Position oldPosition, in Position newPosition) {
-			ref var character = ref entity.Get<Character>();
+			ref var character = ref entity.Get<CharacterId>();
 			Server.SendToAll(new MoveCharacterPacket {
-				CharacterId = character.Id,
+				OriginCharacterId = character.Id,
 				X = newPosition.Coord.X,
 				Y = newPosition.Coord.Y,
 				Duration = Movement.ACTION_DURATION
@@ -39,9 +39,9 @@ namespace MonoGameTest.Server {
 		}
 
 		void OnRemovePosition(in Entity entity, in Position position) {
-			ref var character = ref entity.Get<Character>();
+			ref var character = ref entity.Get<CharacterId>();
 			Server.SendToAll(new RemoveCharacterPacket {
-				CharacterId = character.Id
+				OriginCharacterId = character.Id
 			});
 		}
 

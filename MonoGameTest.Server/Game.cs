@@ -43,16 +43,17 @@ namespace MonoGameTest.Server {
 			HealthListener = new HealthListener(Context);
 			TargetListener = new TargetListener(Context);
 
-			ServerCharacter.SpawnMobs(Context.Grid, World);
+			Factory.SpawnMobs(Context.Grid, World);
 
-			Characters = World.GetEntities().With<Character>().AsSet();
-			Players = World.GetEntities().With<Character>().AsMap<Player>();
+			Characters = World.GetEntities().With<CharacterId>().AsSet();
+			Players = World.GetEntities().With<CharacterId>().AsMap<Player>();
 			Systems = new SequentialSystem<float>(
-				new CooldownSystem(Context),
+				new CharacterSystem(Context),
+				new ProjectileSystem(Context),
+				new DeathSystem(Context),
 				new MobTargetSystem(Context),
 				new MovementSystem(Context),
-				new AttackSystem(Context),
-				new DeathSystem(Context)
+				new AttackSystem(Context)
 			);
 		}
 
@@ -96,7 +97,7 @@ namespace MonoGameTest.Server {
 				Server.Send(peer, new AddCharacterPacket(entity));
 			}
 
-			ServerCharacter.SpawnPlayer(Context, peer.Id);
+			Factory.SpawnPlayer(Context, peer.Id);
 		}
 
 		void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo) {

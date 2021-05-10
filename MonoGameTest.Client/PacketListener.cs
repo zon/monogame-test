@@ -28,7 +28,7 @@ namespace MonoGameTest.Client {
 
 		void OnMoveCharacter(MoveCharacterPacket packet) {
 			Entity entity;
-			if (!GetEntity(packet.CharacterId, out entity)) return;
+			if (!GetEntity(packet.OriginCharacterId, out entity)) return;
 
 			var coord = new Coord(packet.X, packet.Y);
 
@@ -43,22 +43,24 @@ namespace MonoGameTest.Client {
 
 		void OnRemoveCharacter(RemoveCharacterPacket packet) {
 			Entity entity;
-			if (!GetEntity(packet.CharacterId, out entity)) return;
+			if (!GetEntity(packet.OriginCharacterId, out entity)) return;
 			entity.Dispose();
 		}
 
 		void OnAttack(AttackPacket packet) {
-			Entity entity;
-			if (!GetEntity(packet.CharacterId, out entity)) return;	
-			ref var attack = ref entity.Get<AttackAnimation>();
-			var target = new Coord(packet.TargetX, packet.TargetY);
-			attack.Start(Context, entity, target, "sword");
+			Entity origin;
+			if (!GetEntity(packet.OriginCharacterId, out origin)) return;
+			Entity target;
+			if (!GetEntity(packet.TargetCharacterId, out target)) return;
+			var attack = Attack.Get(packet.AttackId);
+			ref var animation = ref origin.Get<AttackAnimation>();
+			animation.Start(Context, origin, target, attack);
 		}
 
 		void OnHealth(HealthPacket packet) {
 			Entity entity;
-			if (!GetEntity(packet.CharacterId, out entity)) return;
-			ref var character = ref entity.Get<Character>();
+			if (!GetEntity(packet.OriginCharacterId, out entity)) return;
+			ref var character = ref entity.Get<CharacterId>();
 			ref var health = ref entity.Get<Health>();
 			ref var hit = ref entity.Get<HitAnimation>();
 			ref var bang = ref entity.Get<Bang>();

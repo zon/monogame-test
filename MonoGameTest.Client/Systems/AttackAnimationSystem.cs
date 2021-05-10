@@ -1,3 +1,4 @@
+using System;
 using DefaultEcs;
 using DefaultEcs.System;
 using Microsoft.Xna.Framework;
@@ -22,49 +23,33 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void Update(float dt, in Entity entity) {
-			ref var attack = ref entity.Get<AttackAnimation>();
-			if (!attack.IsActive) return;
-			attack.Update(dt);
-			if (!attack.IsActive) return;
+			ref var animation = ref entity.Get<AttackAnimation>();
+			if (!animation.IsActive) return;
+			animation.Update(dt);
+			if (!animation.IsActive) return;
 
 			ref var characterSprite = ref entity.Get<Sprite>();
-			var offset = Vector2.Zero;
-			var a = Vector2.Zero;
-			var b = new Vector2(attack.Facing.X, attack.Facing.Y) * FORWARD_STEP;
-			var half = 0.5f;
-			if (attack.Progress < half) {
-				offset = Vector2.Lerp(a, b, attack.Progress / half);
-			} else {
-				offset = Vector2.Lerp(b, a, (attack.Progress - half) / half);
-			}
-			characterSprite.Position += offset;
 
-			var width = new Vector2(characterSprite.Rectangle.Width, 0);
-			var height = new Vector2(0, characterSprite.Rectangle.Height);
-			var halfWidth = new Vector2(characterSprite.Rectangle.Width / 2, 0);
-			var halfHeight = new Vector2(0, characterSprite.Rectangle.Height / 2);
-			var depth = Depths.Attack;
-			if (attack.Facing.X == 0) {
-				if (attack.Facing.Y < 0) {
-					attack.Sprite.Position = characterSprite.Position + halfWidth;
-					attack.Sprite.SpriteEffect = SpriteEffects.FlipVertically;
-					depth = -Depths.Attack;
+			if (animation.Attack.IsMelee) {
+				var offset = Vector2.Zero;
+				var a = Vector2.Zero;
+				var b = animation.Forward * FORWARD_STEP;
+				if (animation.IsLeading) {
+					offset = Vector2.Lerp(a, b, animation.LeadProgress);
 				} else {
-					attack.Sprite.Position = characterSprite.Position + height + halfWidth;
-					attack.Sprite.SpriteEffect = SpriteEffects.None;
+					offset = Vector2.Lerp(b, a, animation.FollowProgress);
 				}
-			} else {
-				if (attack.Facing.X < 0) {
-					attack.Sprite.Position = characterSprite.Position + halfHeight;
-					attack.Sprite.SpriteEffect = SpriteEffects.FlipHorizontally;
-				} else {
-					attack.Sprite.Position = characterSprite.Position + width + halfHeight;
-					attack.Sprite.SpriteEffect = SpriteEffects.None;
-				}
-				characterSprite.Effects = attack.Sprite.SpriteEffect;
+				characterSprite.Position += offset;
 			}
-			attack.Sprite.LayerDepth = Camera.Depth(characterSprite.Position, depth);
-			attack.Sprite.Render(Batch);
+
+			animation.Sprite.Position = characterSprite.Position + Context.HalfTileSize + animation.Forward * Context.HalfTileSize.X;
+			animation.Sprite.Rotation = animation.Rotation;
+			var depth = Depths.Attack;
+			if (animation.Rotation < 0) {
+				depth = -Depths.Attack;
+			}
+			animation.Sprite.LayerDepth = Camera.Depth(characterSprite.Position, depth);
+			animation.Sprite.Render(Batch);
 		}
 
 	}

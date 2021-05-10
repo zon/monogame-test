@@ -20,11 +20,11 @@ namespace MonoGameTest.Server {
 		}
 
 		protected override void Update(float dt, in Entity entity) {
-			ref var cooldown = ref entity.Get<Cooldown>();
+			ref var character = ref entity.Get<Character>();
 			ref var movement = ref entity.Get<Movement>();
 			ref var position = ref entity.Get<Position>();
 
-			if (!cooldown.IsCool() || movement.IsIdle) return;
+			if (!character.IsIdle || movement.IsIdle) return;
 
 			// determine path
 			ImmutableStack<Node> path;
@@ -62,8 +62,7 @@ namespace MonoGameTest.Server {
 
 			// move
 			position.Coord = node.Coord;
-			cooldown.action = Movement.ACTION_DURATION;
-			cooldown.pause = Movement.PAUSE_DURATION;
+			character.StartCooldown(Movement.ACTION_DURATION + Movement.PAUSE_DURATION);
 
 			// clear at goal
 			if (node.Coord == movement.Goal) {

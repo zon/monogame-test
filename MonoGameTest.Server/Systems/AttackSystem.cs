@@ -6,7 +6,7 @@ namespace MonoGameTest.Server {
 
 	public class AttackSystem : AEntitySetSystem<float> {
 		readonly Context Context;
-		
+
 		public AttackSystem(Context context) : base(context.World
 			.GetEntities()
 			.With<Attack>()
@@ -16,34 +16,37 @@ namespace MonoGameTest.Server {
 		}
 
 		protected override void Update(float dt, in Entity entity) {
-			ref var cooldown = ref entity.Get<Cooldown>();
-			if (!cooldown.IsCool()) return;
+			ref var character = ref entity.Get<Character>();
+			if (!character.IsIdle) return;
 
 			ref var target = ref entity.Get<Target>();
 			if (!target.HasEntity) return;
 			var targetEntity = target.Entity.Value;
 
+			ref var attack = ref entity.Get<Attack>();
 			ref var position = ref entity.Get<Position>();
 			ref var targetPosition = ref targetEntity.Get<Position>();
-			var d = Coord.ChebyshevDistance(targetPosition.Coord, position.Coord);
-			if (d > 1) return;
 
-			ref var attack = ref entity.Get<Attack>();
-			ref var health = ref targetEntity.Get<Health>();
-			health.Amount = Calc.Max(health.Amount - attack.Damage, 0);
-			cooldown.action = Attack.ACTION_DURATION;
-			cooldown.pause = Attack.PAUSE_DURATION;
+			if (attack.IsMelee) {
+				var d = Coord.ChebyshevDistance(targetPosition.Coord, position.Coord);
+				if (d > 1) return;
 
-			ref var character = ref entity.Get<Character>();
+			} else {
+				var d = Coord.DistanceSquared(position.Coord, targetPosition.Coord);
+				if (d > attack.Range * attack.Range) return;
+				var pathfinder = new Pathfinder(Context.Grid, Context.Positions);
+				if (!pathfinder.HasSight(position.Coord, targetPosition.Coord)) return;
+			}
+
+			character.StartAttack(attack, targetEntity);
+
+			ref var characterId = ref entity.Get<CharacterId>();
+			ref var targetCharacterId = ref targetEntity.Get<CharacterId>();
 			Context.Server.SendToAll(new AttackPacket {
-				CharacterId = character.Id,
-				TargetX = targetPosition.Coord.X,
-				TargetY = targetPosition.Coord.Y,
-				Damage = attack.Damage,
-				Duration = Attack.ACTION_DURATION
+				AttackId = attack.Id,
+				OriginCharacterId = characterId.Id,
+				TargetCharacterId = targetCharacterId.Id
 			});
-
-			targetEntity.NotifyChanged<Health>();
 		}
 
 	}

@@ -1,3 +1,4 @@
+using System;
 using DefaultEcs;
 using Microsoft.Xna.Framework;
 using MonoGame.Aseprite.Documents;
@@ -8,42 +9,54 @@ namespace MonoGameTest.Client {
 
 	public struct AttackAnimation {
 		public AnimatedSprite Sprite;
-		public Coord Facing;
-		public float Progress;
-		public float Duration;
+		public Attack Attack;
+		public Vector2 Forward;
+		public float Rotation;
+		public Entity Origin;
+		public Entity Target;
+		public Coord TargetCoord;
+		public float Timeout;
 
 		public bool IsActive => Sprite.Animating;
+		public bool IsLeading => Timeout > Attack.Follow;
+		public float LeadProgress => (Attack.Lead - Timeout - Attack.Follow) / Attack.Lead;
+		public float FollowProgress => (Attack.Follow - Timeout) / Attack.Follow;
 
 		public AttackAnimation(AsepriteDocument document) {
 			Sprite = new AnimatedSprite(document);
-			Facing = Coord.Zero;
-			Progress = 0;
-			Duration = 0;
 			Sprite.Origin = new Vector2(Sprite.Width, Sprite.Height) / 2;
 			Sprite.Stop();
+			Attack = default;
+			Forward = default;
+			Rotation = default;
+			Origin = default;
+			Target = default;
+			TargetCoord = default;
+			Timeout = default;
 			Sprite.OnAnimationLoop = OnEnd;
 		}
 		
 		public void Start(
 			Context context,
-			in Entity entity,
-			Coord target,
-			string animationName
+			in Entity origin,
+			in Entity target,
+			Attack attack
 		) {
-			ref var position = ref entity.Get<Position>();
-			Facing = Coord.Facing(position.Coord, target);
-			if (Facing.X == 0) {
-				Sprite.Play($"{animationName}-down");
-			} else {
-				Sprite.Play($"{animationName}-right");
-			}
-			Progress = 0;
-			Duration = Sprite.GetCurrentDuration();
+			ref var originPosition = ref origin.Get<Position>();
+			ref var targetPosition = ref target.Get<Position>();
+			Attack = attack;
+			Forward = Vector2.Normalize((targetPosition.Coord - originPosition.Coord).ToVector());
+			Rotation = View.ToRadians(Forward);
+			Origin = origin;
+			Target = target;
+			TargetCoord = targetPosition.Coord;
+			Sprite.Play(attack.Animation);
+			Timeout = attack.Duration;
 			context.Resources.HitSound.Play();
 		}
 
 		public void Update(float dt) {
-			Progress = Calc.Progress(Progress, Duration, dt);
+			Timeout = Math.Max(Timeout - dt, 0);
 			Sprite.Update(dt);
 		}
 

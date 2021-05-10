@@ -1,30 +1,25 @@
-using System;
+using DefaultEcs;
 
 namespace MonoGameTest.Common {
 
-	public struct Character : IEquatable<Character> {
-		public readonly int Id;
+	public struct Character {
+		public CharacterState State;
+		public float Timeout;
+		public Attack Attack;
+		public Entity Target;
 
-		static int AutoId = 0;
+		public bool IsIdle => State == CharacterState.Idle;
 
-		public Character(int id) {
-			Id = id;
+		public void StartCooldown(float timeout) {
+			State = CharacterState.Cooldown;
+			Timeout = timeout;
 		}
 
-		public override int GetHashCode() => Id;
-
-		public override bool Equals(object obj) => obj is Character other && Equals(other);
-
-		public bool Equals(Character other) => Id == other.Id;
-
-		public override string ToString() => $"Character: {Id}";
-
-		public static bool operator ==(Character left, Character right) => left.Equals(right);
-
-		public static bool operator !=(Character left, Character right) => !left.Equals(right);
-
-		public static Character Create() {
-			return new Character(++AutoId);
+		public void StartAttack(Attack attack, Entity target) {
+			State = CharacterState.AttackLead;
+			Timeout = attack.Lead;
+			Attack = attack;
+			Target = target;
 		}
 
 	}

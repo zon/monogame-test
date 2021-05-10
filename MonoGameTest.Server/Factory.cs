@@ -4,7 +4,7 @@ using MonoGameTest.Common;
 
 namespace MonoGameTest.Server {
 
-	public static class ServerCharacter {
+	public static class Factory {
 
 		public static Entity SpawnPlayer(Context context, int peerId) {
 			var spawn = context.Grid.Spawns.First(s => s.Group == Group.Player);
@@ -14,10 +14,10 @@ namespace MonoGameTest.Server {
 			c.Set(new Attributes(5));
 			c.Set(new Health(100));
 			c.Set(new Movement());
-			c.Set(new Attack { Damage = 5 });
-			c.Set(new Cooldown());
+			c.Set(Attack.Get(1));
+			c.Set(new Character());
 			c.Set(new Target());
-			c.Set(Character.Create());
+			c.Set(CharacterId.Create());
 			c.Set(new Player(peerId));
 			c.Set(new Position { Coord = node.Coord });
 			return c;
@@ -28,11 +28,11 @@ namespace MonoGameTest.Server {
 			c.Set(group);
 			c.Set(new Attributes(sprite));
 			c.Set(new Health(100));
-			c.Set(new Attack { Damage = 5 });
-			c.Set(new Cooldown());
+			c.Set(Attack.Get(1));
+			c.Set(new Character());
 			c.Set(new Movement());
 			c.Set(new Target());
-			c.Set(Character.Create());
+			c.Set(CharacterId.Create());
 			c.Set(new Mob());
 			c.Set(new Position { Coord = coord });
 			return c;
@@ -48,6 +48,18 @@ namespace MonoGameTest.Server {
 				if (spawn.Group == Group.Player) continue;
 				SpawnMob(world, spawn);
 			}
+		}
+
+		public static Entity SpawnProjectile(Context context, Coord origin, Entity target, Attack attack) {
+			ref var targetPosition = ref target.Get<Position>();
+			var e = context.World.CreateEntity();
+			e.Set(new Projectile {
+				Origin = origin,
+				Target = target,
+				Attack = attack,
+				Lifetime = Coord.Distance(origin, targetPosition.Coord) * attack.ProjectleSpeed
+			});
+			return e;
 		}
 
 	}
