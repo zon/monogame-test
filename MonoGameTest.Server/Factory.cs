@@ -49,14 +49,8 @@ namespace MonoGameTest.Server {
 		}
 
 		public static Entity SpawnProjectile(Context context, Coord origin, Entity target, Attack attack) {
-			ref var targetPosition = ref target.Get<Position>();
 			var e = context.World.CreateEntity();
-			e.Set(new Projectile {
-				Origin = origin,
-				Target = target,
-				Attack = attack,
-				Lifetime = Coord.Distance(origin, targetPosition.Coord) * attack.ProjectleSpeed
-			});
+			e.Set(new Projectile(origin, target, attack));
 			return e;
 		}
 

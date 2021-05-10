@@ -32,12 +32,14 @@ namespace MonoGameTest.Common {
 				animation: "bow",
 				range: 3,
 				projectile: "arrow",
-				projectileSpeed: 1
+				projectileSpeed: 12
 			)
 		);
 
 		public static Attack Get(int id) {
-			return List[id - 1];
+			var index = id - 1;
+			if (index < 0 || index > List.Length) return null;
+			return List[index];
 		}
 
 		public Attack(

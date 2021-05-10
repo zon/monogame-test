@@ -17,6 +17,7 @@ namespace MonoGameTest.Server {
 		PositionListener PositionListener;
 		HealthListener HealthListener;
 		TargetListener TargetListener;
+		ProjectileListener ProjectileListener;
 		EntitySet Characters;
 		EntityMap<Player> Players;
 		ISystem<float> Systems;
@@ -42,6 +43,7 @@ namespace MonoGameTest.Server {
 			PositionListener = new PositionListener(Context);
 			HealthListener = new HealthListener(Context);
 			TargetListener = new TargetListener(Context);
+			ProjectileListener = new ProjectileListener(Context);
 
 			Factory.SpawnMobs(Context.Grid, World);
 

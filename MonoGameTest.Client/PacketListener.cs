@@ -18,12 +18,13 @@ namespace MonoGameTest.Client {
 			processor.SubscribeReusable<AttackPacket>(OnAttack);
 			processor.SubscribeReusable<HealthPacket>(OnHealth);
 			processor.SubscribeReusable<TargetPacket>(OnTarget);
+			processor.SubscribeReusable<ProjectilePacket>(OnProjectile);
 		}
 
 		public void Dispose() {}
 
 		void OnAddCharacter(AddCharacterPacket packet) {
-			ClientCharacter.Create(Context, packet);
+			Factory.CreateCharacter(Context, packet);
 		}
 
 		void OnMoveCharacter(MoveCharacterPacket packet) {
@@ -65,7 +66,7 @@ namespace MonoGameTest.Client {
 			ref var hit = ref entity.Get<HitAnimation>();
 			ref var bang = ref entity.Get<Bang>();
 			health.Amount = packet.Amount;
-			hit.Start();
+			hit.Start(Context);
 			bang.Start(packet.Delta);
 		}
 
@@ -79,6 +80,17 @@ namespace MonoGameTest.Client {
 			} else {
 				target.Entity = null;
 			}
+		}
+
+		void OnProjectile(ProjectilePacket packet) {
+			Entity target;
+			if (!GetEntity(packet.TargetCharacterId, out target)) return;
+
+			var attack = Attack.Get(packet.AttackId);
+			if (attack == null) return;
+
+			var origin = new Coord(packet.OriginX, packet.OriginY);
+			Factory.CreateProjectile(Context, origin, target, attack);
 		}
 
 		bool GetEntity(int characterId, out Entity entity) {

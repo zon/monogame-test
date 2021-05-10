@@ -3,9 +3,9 @@ using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
 
-	public static class ClientCharacter {
+	public static class Factory {
 
-		public static Entity Create(Context context, AddCharacterPacket packet) {
+		public static Entity CreateCharacter(Context context, AddCharacterPacket packet) {
 			var entity = context.World.CreateEntity();
 			entity.Set(new CharacterId(packet.Id));
 			entity.Set((Group) packet.Group);
@@ -38,6 +38,14 @@ namespace MonoGameTest.Client {
 			if (packet.PeerId == context.PeerId) {
 				entity.Set(new LocalPlayer());
 			}
+			return entity;
+		}
+
+		public static Entity CreateProjectile(Context context, Coord origin, Entity target, Attack attack) {
+			var entity = context.World.CreateEntity();
+			var projectile = new Projectile(origin, target, attack);
+			entity.Set(projectile);
+			entity.Set(new ProjectileView(context, projectile));
 			return entity;
 		}
 

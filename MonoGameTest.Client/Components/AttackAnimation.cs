@@ -52,7 +52,6 @@ namespace MonoGameTest.Client {
 			TargetCoord = targetPosition.Coord;
 			Sprite.Play(attack.Animation);
 			Timeout = attack.Duration;
-			context.Resources.HitSound.Play();
 		}
 
 		public void Update(float dt) {

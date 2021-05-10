@@ -17,8 +17,9 @@ namespace MonoGameTest.Client {
 			Sprite.OnAnimationLoop = OnEnd;
 		}
 
-		public void Start() {
+		public void Start(Context context) {
 			Sprite.Play("hit-0");
+			context.Resources.HitSound.Play();
 		}
 
 		void OnEnd() {
