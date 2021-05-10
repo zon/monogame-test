@@ -9,7 +9,7 @@ namespace MonoGameTest.Server {
 
 		public AttackSystem(Context context) : base(context.World
 			.GetEntities()
-			.With<Attack>()
+			.With<Character>()
 			.AsSet()
 		) {
 			Context = context;
@@ -17,13 +17,13 @@ namespace MonoGameTest.Server {
 
 		protected override void Update(float dt, in Entity entity) {
 			ref var character = ref entity.Get<Character>();
+			var attack = character.PrimaryAttack;
 			if (!character.IsIdle) return;
 
 			ref var target = ref entity.Get<Target>();
 			if (!target.HasEntity) return;
 			var targetEntity = target.Entity.Value;
 
-			ref var attack = ref entity.Get<Attack>();
 			ref var position = ref entity.Get<Position>();
 			ref var targetPosition = ref targetEntity.Get<Position>();
 

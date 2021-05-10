@@ -25,7 +25,7 @@ namespace MonoGameTest.Server {
 
 			var position = entity.Get<Position>();
 			var group = entity.Get<Group>();
-			var attack = entity.Get<Attack>();
+			var attack = character.PrimaryAttack;
 
 			var found = false;
 			var closest = new Closest(position.Coord, Others, e => {

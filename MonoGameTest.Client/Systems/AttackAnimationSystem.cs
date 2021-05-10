@@ -40,9 +40,12 @@ namespace MonoGameTest.Client {
 					offset = Vector2.Lerp(b, a, animation.FollowProgress);
 				}
 				characterSprite.Position += offset;
+				animation.Sprite.Position = characterSprite.Position + Context.HalfTileSize + animation.Forward * Context.HalfTileSize.X;
+
+			} else {
+				animation.Sprite.Position = characterSprite.Position + Context.HalfTileSize;
 			}
 
-			animation.Sprite.Position = characterSprite.Position + Context.HalfTileSize + animation.Forward * Context.HalfTileSize.X;
 			animation.Sprite.Rotation = animation.Rotation;
 			var depth = Depths.Attack;
 			if (animation.Rotation < 0) {
