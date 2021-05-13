@@ -3,6 +3,7 @@ using DefaultEcs.Command;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Input;
 using MonoGame.Extended.Tiled;
 using MonoGameTest.Common;
 
@@ -21,8 +22,10 @@ namespace MonoGameTest.Client {
 		public Vector2 TileSize { get; private set; }
 		public Vector2 HalfTileSize { get; private set; }
 		public Grid Grid { get; private set; }
-		public readonly SpriteBatch Foreground;
 		public readonly Camera Camera;
+		public readonly SpriteBatch Foreground;
+		public readonly SpriteBatch UI;
+		public MouseStateExtended Mouse { get; private set; }
 		public bool IsReady { get; private set; }
 
 		public Context(
@@ -30,8 +33,9 @@ namespace MonoGameTest.Client {
 			Resources resources,
 			World world,
 			Client client,
+			Camera camera,
 			SpriteBatch foreground,
-			Camera camera
+			SpriteBatch ui
 		) {
 			GraphicsDevice = graphicsDevice;
 			Resources = resources;
@@ -40,8 +44,9 @@ namespace MonoGameTest.Client {
 			Positions = world.GetEntities().With<CharacterId>().AsMap<Position>();
 			Recorder = new EntityCommandRecorder();
 			Client = client;
-			Foreground = foreground;
 			Camera = camera;
+			Foreground = foreground;
+			UI = ui;
 		}
 
 		public void Load(
@@ -63,6 +68,10 @@ namespace MonoGameTest.Client {
 			HalfTileSize = TileSize / 2;
 			Grid = Tiled.LoadGrid(TiledMap);
 			IsReady = true;
+		}
+
+		public void Update() {
+			Mouse = MouseExtended.GetState();
 		}
 
 		public Coord VectorToCoord(float x, float y) {

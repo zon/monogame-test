@@ -1,4 +1,5 @@
 using DefaultEcs;
+using Microsoft.Xna.Framework;
 using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
@@ -46,6 +47,17 @@ namespace MonoGameTest.Client {
 			var projectile = new Projectile(origin, target, attack);
 			entity.Set(projectile);
 			entity.Set(new ProjectileView(context, projectile));
+			return entity;
+		}
+
+		public static Entity CreateButton(Context context, int id, int skill, Point position) {
+			var entity = context.World.CreateEntity();
+			var button = context.Resources.Button;
+			entity.Set(new Button {
+				Id = id,
+				Skill = context.Resources.Skills.Frames[skill].ToRectangle(),
+				Position = position
+			});
 			return entity;
 		}
 

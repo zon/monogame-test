@@ -37,7 +37,7 @@ namespace MonoGameTest.Client {
 			World = new World();
 
 			var camera = new Camera(Window, GraphicsDevice);
-			Context = new Context(GraphicsDevice, Resources, World, null, Batch, camera);
+			Context = new Context(GraphicsDevice, Resources, World, null, camera, Batch, null);
 			Context.Load(Content, Window, "first");
 
 			Systems = new SequentialSystem<float>(

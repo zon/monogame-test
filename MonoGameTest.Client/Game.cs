@@ -16,12 +16,14 @@ namespace MonoGameTest.Client {
 		ISystem<float> Behavior;
 		ISystem<float> BackgroundRendering;
 		ISystem<float> ForegroundRendering;
+		ISystem<float> UIRendering;
 		Resources Resources;
 		GraphicsDeviceManager Graphics;
 		RenderTarget2D RenderTarget;
-		SpriteBatch Foreground;
 		Camera Camera;
-		SpriteBatch Target;
+		SpriteBatch Foreground;
+		SpriteBatch UI;
+		SpriteBatch Result;
 
 		public Game() {
 			Graphics = new GraphicsDeviceManager(this);
@@ -45,19 +47,20 @@ namespace MonoGameTest.Client {
 
 			RenderTarget = new RenderTarget2D(
 				graphicsDevice: GraphicsDevice,
-				width: View.WIDTH,
-				height: View.HEIGHT,
+				width: View.SCREEN_WIDTH,
+				height: View.SCREEN_HEIGHT,
 				mipMap: false,
 				preferredFormat: GraphicsDevice.PresentationParameters.BackBufferFormat,
 				preferredDepthFormat: DepthFormat.Depth24
 			);
 			GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true }; 
 
-			Foreground = new SpriteBatch(GraphicsDevice);
 			Camera = new Camera(Window, GraphicsDevice);
-			Target = new SpriteBatch(GraphicsDevice);
+			Foreground = new SpriteBatch(GraphicsDevice);
+			UI = new SpriteBatch(GraphicsDevice);
+			Result = new SpriteBatch(GraphicsDevice);
 
-			Context = new Context(GraphicsDevice, Resources, World, Client, Foreground, Camera);
+			Context = new Context(GraphicsDevice, Resources, World, Client, Camera, Foreground, UI);
 
 			PacketListener = new PacketListener(Context);
 
@@ -77,15 +80,28 @@ namespace MonoGameTest.Client {
 				new SpriteDrawSystem(Context),
 				new EffectSystem(Context)
 			);
+			UIRendering = new SequentialSystem<float>(
+				new ButtonSystem(Context)
+			);
 			
 			Context.Camera.SetWindowSize(Graphics);
+
+			var y = View.SCREEN_HEIGHT - View.SKILL_BAR_HEIGHT;
+			var x = 24;
+			Factory.CreateButton(Context, 1, 0, new Point(0, y));
+			Factory.CreateButton(Context, 1, 1, new Point(x, y));
+			Factory.CreateButton(Context, 1, 2, new Point(x * 2, y));
+			Factory.CreateButton(Context, 1, 3, new Point(x * 3, y));
 
 			Client.Connect();
 		}
 
 		protected override void Update(GameTime gameTime) {
 			var dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
-			if (Context.IsReady) Behavior.Update(dt);
+			if (Context.IsReady) {
+				Context.Update();
+				Behavior.Update(dt);
+			}
 			Context.Recorder.Execute();
 			Client.Poll();
 		}
@@ -95,10 +111,13 @@ namespace MonoGameTest.Client {
 			if (!Context.IsReady) return;
 
 			var dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
+
 			GraphicsDevice.SetRenderTarget(RenderTarget);
 			GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 			GraphicsDevice.Clear(Color.Black);
+
 			BackgroundRendering.Update(dt);
+
 			Foreground.Begin(
 				transformMatrix: Context.Camera.GetMatrix(),
 				samplerState: SamplerState.PointClamp,
@@ -106,10 +125,15 @@ namespace MonoGameTest.Client {
 			);
 			ForegroundRendering.Update(dt);
 			Foreground.End();
+
+			UI.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+			UIRendering.Update(dt);
+			UI.End();
+
 			GraphicsDevice.SetRenderTarget(null);
 
-			Target.Begin(samplerState: SamplerState.PointClamp);
-			Target.Draw(
+			Result.Begin(samplerState: SamplerState.PointClamp);
+			Result.Draw(
 				texture: RenderTarget,
 				position: Vector2.Zero,
 				sourceRectangle: null,
@@ -120,7 +144,7 @@ namespace MonoGameTest.Client {
 				effects: SpriteEffects.None,
 				layerDepth: 0
 			);
-			Target.End();
+			Result.End();
 		}
 		
 		void OnDisconnected(DisconnectInfo disconnectInfo) {

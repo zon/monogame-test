@@ -18,7 +18,7 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void Update(float dt, in Entity entity) {
-			var mouse = MouseExtended.GetState();
+			var mouse = Context.Mouse;
 			var leftDown = mouse.WasButtonJustDown(MouseButton.Left);
 			var rightDown = mouse.WasButtonJustDown(MouseButton.Right);
 			if (!leftDown && !rightDown) return;

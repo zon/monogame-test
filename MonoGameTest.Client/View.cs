@@ -9,6 +9,9 @@ namespace MonoGameTest.Client {
 		public const int HEIGHT = 256;
 		public const int SCALE = 3;
 		public const int TILE = 16;
+		public const int SKILL_BAR_HEIGHT = 24; 
+		public const int SCREEN_WIDTH = WIDTH;
+		public const int SCREEN_HEIGHT = HEIGHT + SKILL_BAR_HEIGHT;
 
 		public const float RADIAN = MathF.PI * 2;
 
