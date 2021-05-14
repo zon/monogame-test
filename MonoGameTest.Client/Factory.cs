@@ -9,6 +9,7 @@ namespace MonoGameTest.Client {
 		public static Entity CreateCharacter(Context context, AddCharacterPacket packet) {
 			var entity = context.World.CreateEntity();
 			entity.Set(new CharacterId(packet.Id));
+			entity.Set(new Character { Role = Role.Get(packet.RoleId) });
 			entity.Set((Group) packet.Group);
 			if (packet.PeerId > 0) {
 				entity.Set(new Player(packet.PeerId));

@@ -3,9 +3,9 @@ using DefaultEcs;
 namespace MonoGameTest.Common {
 
 	public struct Character {
+		public Role Role;
 		public CharacterState State;
 		public float Timeout;
-		public Attack PrimaryAttack;
 		public Attack Attack;
 		public Entity Target;
 

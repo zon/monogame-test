@@ -17,7 +17,7 @@ namespace MonoGameTest.Server {
 
 		protected override void Update(float dt, in Entity entity) {
 			ref var character = ref entity.Get<Character>();
-			var attack = character.PrimaryAttack;
+			var attack = character.Role.PrimaryAttack;
 			if (!character.IsIdle) return;
 
 			ref var target = ref entity.Get<Target>();

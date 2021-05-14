@@ -4,6 +4,7 @@ namespace MonoGameTest.Common {
 
 	public class AddCharacterPacket {
 		public int Id { get; set; }
+		public int RoleId { get; set; }
 		public int Group { get; set; }
 		public int Sprite { get; set; }
 		public int PeerId { get; set; }
