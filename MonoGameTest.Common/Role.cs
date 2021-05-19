@@ -12,7 +12,8 @@ namespace MonoGameTest.Common {
 		static readonly ImmutableArray<Role> Collection = ImmutableArray.Create(
 			new Role(
 				Attack.Get(1),
-				Attack.Get(2)
+				Attack.Get(2),
+				Attack.Get(3)
 			),
 			new Role(
 				Attack.Get(2)

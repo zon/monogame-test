@@ -269,6 +269,10 @@ namespace MonoGameTest.Common {
 			return HasSight(new Vector2(a.X + 0.5f, a.Y + 0.5f), new Vector2(b.X + 0.5f, b.Y + 0.5f));
 		}
 
+		public bool HasSight(Position a, Position b) {
+			return HasSight(a.Coord, b.Coord);
+		}
+
 		Result CreatePath(Node last, bool isGoal) {
 			var path = new Stack<Node>();
 			path.Push(last);

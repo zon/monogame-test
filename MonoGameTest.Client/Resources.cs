@@ -11,6 +11,7 @@ namespace MonoGameTest.Client {
 		public readonly AsepriteDocument Hits;
 		public readonly ButtonResource Button;
 		public readonly AsepriteDocument Skills;
+		public readonly AsepriteDocument Highlight;
 		public readonly SoundEffect MoveSound;
 		public readonly SoundEffect HitSound;
 		public readonly SoundEffect MoveConfirmSound;
@@ -22,6 +23,7 @@ namespace MonoGameTest.Client {
 			Hits = content.Load<AsepriteDocument>("hits");
 			Button = new ButtonResource(content);
 			Skills = content.Load<AsepriteDocument>("skills");
+			Highlight = content.Load<AsepriteDocument>("highlight");
 			MoveSound = content.Load<SoundEffect>("bump-strike-0");
 			HitSound = content.Load<SoundEffect>("bump-strike-1");
 			MoveConfirmSound = content.Load<SoundEffect>("bump-strike-8");

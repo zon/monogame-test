@@ -6,12 +6,10 @@ namespace MonoGameTest.Client {
 
 	public class ButtonListener : IDisposable {
 		readonly Context Context;
-		readonly EntitySet Buttons;
 		readonly IDisposable Subscriber;
 
 		public ButtonListener(Context context) {
 			Context = context;
-			Buttons = context.World.GetEntities().With<Button>().AsSet();
 			Subscriber = Context.World.Subscribe<ButtonMessage>(OnMessage);
 		}
 
@@ -20,7 +18,9 @@ namespace MonoGameTest.Client {
 		}
 
 		void OnMessage(in ButtonMessage message) {
-
+			if (!Context.LocalPlayer.HasValue) return;
+			ref var localPlayer = ref Context.LocalPlayer.Value.Get<LocalPlayer>();
+			localPlayer.SelectedSkill = Attack.Get(message.AttackId);
 		}
 
 	}

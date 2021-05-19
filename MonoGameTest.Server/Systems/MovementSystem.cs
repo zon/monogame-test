@@ -29,7 +29,7 @@ namespace MonoGameTest.Server {
 			// determine path
 			ImmutableStack<Node> path;
 			if (movement.Path == null) {
-				var pathfinder = new Pathfinder(Context.Grid, Positions);
+				var pathfinder = Context.CreatePathfinder();
 				
 				// correct unreachable goals
 				var start = Grid.Get(position.Coord);

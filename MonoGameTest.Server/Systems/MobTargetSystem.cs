@@ -32,7 +32,7 @@ namespace MonoGameTest.Server {
 				var g = e.Get<Group>();
 				return g != group;
 			});
-			var pathfinder = new Pathfinder(Context.Grid, Context.Positions);
+			var pathfinder = Context.CreatePathfinder();
 			foreach (var other in closest) {
 				var otherPosition = other.Get<Position>();
 				var res = pathfinder.MoveToAttack(position.Coord, otherPosition.Coord, attack);

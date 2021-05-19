@@ -27,14 +27,10 @@ namespace MonoGameTest.Server {
 			ref var position = ref entity.Get<Position>();
 			ref var targetPosition = ref targetEntity.Get<Position>();
 
-			if (attack.IsMelee) {
-				var d = Coord.ChebyshevDistance(targetPosition.Coord, position.Coord);
-				if (d > 1) return;
+			if (!attack.InRange(position, targetPosition)) return;
 
-			} else {
-				var d = Coord.DistanceSquared(position.Coord, targetPosition.Coord);
-				if (d > attack.Range * attack.Range) return;
-				var pathfinder = new Pathfinder(Context.Grid, Context.Positions);
+			if (!attack.IsMelee) {
+				var pathfinder = Context.CreatePathfinder();
 				if (!pathfinder.HasSight(position.Coord, targetPosition.Coord)) return;
 			}
 

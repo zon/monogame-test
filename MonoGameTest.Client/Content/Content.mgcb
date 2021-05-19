@@ -117,6 +117,18 @@
 /processor:TiledMapProcessor
 /build:first.tmx
 
+#begin highlight.aseprite
+/importer:AsepriteDocumentImporter
+/processor:AsepriteDocumentProcessor
+/processorParam:SheetType=Packed
+/processorParam:MergeDuplicateFrames=True
+/processorParam:IgnoreEmptyFrames=True
+/processorParam:OnlyVisibleLayers=True
+/processorParam:BorderPadding=0
+/processorParam:Spacing=0
+/processorParam:InnerPadding=0
+/build:highlight.aseprite
+
 #begin hits.aseprite
 /importer:AsepriteDocumentImporter
 /processor:AsepriteDocumentProcessor

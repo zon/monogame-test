@@ -13,6 +13,7 @@ namespace MonoGameTest.Client {
 		Client Client;
 		World World;
 		PacketListener PacketListener;
+		ButtonListener ButtonListener;
 		ISystem<float> Behavior;
 		ISystem<float> BackgroundRendering;
 		ISystem<float> ForegroundRendering;
@@ -63,6 +64,7 @@ namespace MonoGameTest.Client {
 			Context = new Context(GraphicsDevice, Resources, World, Client, Camera, Foreground, UI);
 
 			PacketListener = new PacketListener(Context);
+			ButtonListener = new ButtonListener(Context);
 
 			Behavior = new SequentialSystem<float>(
 				new LocalInputSystem(Context)
@@ -70,6 +72,7 @@ namespace MonoGameTest.Client {
 
 			BackgroundRendering = new TilemapDrawSystem(Context);
 			ForegroundRendering = new SequentialSystem<float>(
+				new SkillTargetingSystem(Context),
 				new MovementAnimationSystem(Context),
 				new HealthBarSystem(Context),
 				new BangSystem(Context),
@@ -85,13 +88,6 @@ namespace MonoGameTest.Client {
 			);
 			
 			Context.Camera.SetWindowSize(Graphics);
-
-			var y = View.SCREEN_HEIGHT - View.SKILL_BAR_HEIGHT;
-			var x = 24;
-			Factory.CreateButton(Context, 1, 0, new Point(0, y));
-			Factory.CreateButton(Context, 1, 1, new Point(x, y));
-			Factory.CreateButton(Context, 1, 2, new Point(x * 2, y));
-			Factory.CreateButton(Context, 1, 3, new Point(x * 3, y));
 
 			Client.Connect();
 		}
@@ -152,7 +148,7 @@ namespace MonoGameTest.Client {
 		}
 
 		void OnSession(SessionPacket session) {
-			Context.Load(Content, Window, session);
+			Context.Load(Content, session);
 		}
 
 		void ClearLevel() {

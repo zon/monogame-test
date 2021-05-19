@@ -38,7 +38,7 @@ namespace MonoGameTest.Client {
 
 			var camera = new Camera(Window, GraphicsDevice);
 			Context = new Context(GraphicsDevice, Resources, World, null, camera, Batch, null);
-			Context.Load(Content, Window, "first");
+			Context.Load(Content, "first");
 
 			Systems = new SequentialSystem<float>(
 				new TilemapDrawSystem(Context),

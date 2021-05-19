@@ -17,21 +17,28 @@ namespace MonoGameTest.Common {
 		public AddCharacterPacket() {}
 
 		public AddCharacterPacket(Entity entity) {
-			ref var character = ref entity.Get<CharacterId>();
+			ref var characterId = ref entity.Get<CharacterId>();
+			Id = characterId.Id;
+
+			ref var character = ref entity.Get<Character>();
+			RoleId = character.Role.Id;
+
 			ref var group = ref entity.Get<Group>();
+			Group = (int) group;
+
 			ref var attributes = ref entity.Get<Attributes>();
+			Sprite = attributes.Sprite;
+
 			var peerId = 0;
 			if (entity.Has<Player>()) {
 				peerId = entity.Get<Player>().PeerId;
 			}
+			PeerId = peerId;
+
 			ref var health = ref entity.Get<Health>();
 			HealthMaximum = health.Maximum;
 			HealthAmount = health.Amount;
-			ref var position = ref entity.Get<Position>();
-			Id = character.Id;
-			Group = (int) group;
-			Sprite = attributes.Sprite;
-			PeerId = peerId;
+
 			ref var target = ref entity.Get<Target>();
 			if (target.HasEntity) {
 				ref var other = ref target.Entity.Value.Get<CharacterId>();
@@ -39,6 +46,8 @@ namespace MonoGameTest.Common {
 			} else {
 				TargetId = Id;
 			}
+			
+			ref var position = ref entity.Get<Position>();
 			X = position.Coord.X;
 			Y = position.Coord.Y;
 		}

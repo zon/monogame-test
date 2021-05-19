@@ -1,3 +1,4 @@
+using System;
 using DefaultEcs;
 using DefaultEcs.Command;
 using Microsoft.Xna.Framework;
@@ -16,6 +17,8 @@ namespace MonoGameTest.Client {
 		public World World { get; private set; }
 		public EntityMap<CharacterId> Characters { get; private set; }
 		public EntityMap<Position> Positions { get; private set; }
+		public EntitySet Buttons { get; private set; }
+		public Entity? LocalPlayer { get; private set; }
 		public readonly EntityCommandRecorder Recorder;
 		public int PeerId { get; private set; }
 		public TiledMap TiledMap { get; private set; }
@@ -27,6 +30,9 @@ namespace MonoGameTest.Client {
 		public readonly SpriteBatch UI;
 		public MouseStateExtended Mouse { get; private set; }
 		public bool IsReady { get; private set; }
+
+		IDisposable LocalPlayerAddedListener;
+		IDisposable LocalPlayerRemovedListener;
 
 		public Context(
 			GraphicsDevice graphicsDevice,
@@ -42,6 +48,9 @@ namespace MonoGameTest.Client {
 			World = world;
 			Characters = world.GetEntities().AsMap<CharacterId>();
 			Positions = world.GetEntities().With<CharacterId>().AsMap<Position>();
+			Buttons = world.GetEntities().With<Button>().AsSet();
+			LocalPlayerAddedListener = world.SubscribeComponentAdded<LocalPlayer>(OnLocalPlayerAdded);
+			LocalPlayerRemovedListener = world.SubscribeComponentRemoved<LocalPlayer>(OnLocalPlayerRemoved);
 			Recorder = new EntityCommandRecorder();
 			Client = client;
 			Camera = camera;
@@ -51,16 +60,14 @@ namespace MonoGameTest.Client {
 
 		public void Load(
 			ContentManager content,
-			GameWindow window,
 			SessionPacket session
 		) {
 			PeerId = session.PeerId;
-			Load(content, window, session.TileMapName);
+			Load(content, session.TileMapName);
 		}
 
 		public void Load(
 			ContentManager content,
-			GameWindow window,
 			string tileMapName
 		) {
 			TiledMap = Tiled.LoadMap(content, tileMapName);
@@ -112,9 +119,16 @@ namespace MonoGameTest.Client {
 			return CoordToVector(position.Coord);
 		}
 
-		public Node GetNode(float x, float y) {
-			var p = Camera.ScreenToWorld(x, y);
-			return Grid.Get(VectorToCoord(p));
+		public Coord ScreenToCoord(float x, float y) {
+			return VectorToCoord(Camera.ScreenToWorld(x, y));
+		}
+
+		public Coord ScreenToCoord(Vector2 v) {
+			return ScreenToCoord(v.X, v.Y);
+		}
+
+		public Node ScreenToNode(float x, float y) {
+			return Grid.Get(ScreenToCoord(x, y));
 		}
 
 		public bool GetEntityByCharacterId(int characterId, out Entity entity) {
@@ -134,13 +148,24 @@ namespace MonoGameTest.Client {
 			return GetEntityByPosition(node.Coord, out entity);
 		}
 
+		public Pathfinder CreatePathfinder(bool debug = false) {
+			return new Pathfinder(Grid, Positions, debug);
+		}
+
 		public void Unload() {
 			PeerId = 0;
 			TiledMap = null;
 			Grid = null;
 			IsReady = false;
 		}
-		
+
+		void OnLocalPlayerAdded(in Entity entity, in LocalPlayer value) {
+			LocalPlayer = entity;
+		}
+
+		void OnLocalPlayerRemoved(in Entity entity, in LocalPlayer value) {
+			LocalPlayer = null;
+		}
 
 	}
 

@@ -1,3 +1,4 @@
+using DefaultEcs;
 using DefaultEcs.System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,7 +18,11 @@ namespace MonoGameTest.Client {
 			var skillsResource = Context.Resources.Skills;
 			var mouse = Context.Mouse;
 			var left = MouseButton.Left;
-			var area = new Rectangle(button.Position, buttonResource.Size);
+
+			var area = new Rectangle(
+				new Point(buttonResource.Size.X * button.Index, View.SCREEN_HEIGHT - View.SKILL_BAR_HEIGHT),
+				buttonResource.Size
+			);
 			var isHovered = area.Contains(Context.Camera.ScreenToUI(mouse.Position));
 			
 			var offset = Vector2.Zero;
@@ -25,14 +30,14 @@ namespace MonoGameTest.Client {
 			var depth = 0.1f;
 			if (isHovered && mouse.WasButtonJustDown(left)) {
 				drawRect = buttonResource.Pressed;
-				Context.World.Publish(new ButtonMessage { ButtonId = button.Id });
+				Context.World.Publish(new ButtonMessage { AttackId = button.Attack.Id });
 				offset = new Vector2(0, 2);
 
 			} else if (isHovered && mouse.IsButtonDown(left)) {
 				drawRect = buttonResource.Down;
 				offset = new Vector2(0, 1);
 			
-			} else if (button.IsSelected) {
+			} else if (button.Attack.Id == Context.LocalPlayer?.Get<LocalPlayer>().SelectedSkill?.Id) {
 				drawRect = buttonResource.Selected;
 			
 			} else if (isHovered) {
@@ -43,9 +48,10 @@ namespace MonoGameTest.Client {
 				depth = 0;
 			}
 			
+			var position = area.Location.ToVector2() + offset;
 			Context.UI.Draw(
 				texture: buttonResource.Document.Texture,
-				position: button.Position.ToVector2() + offset,
+				position: position,
 				sourceRectangle: drawRect,
 				color: Color.White,
 				rotation: 0,
@@ -55,13 +61,14 @@ namespace MonoGameTest.Client {
 				layerDepth: depth
 			);
 			
+			drawRect = skillsResource.Frames[button.IconFrame].ToRectangle();
 			Context.UI.Draw(
 				texture: Context.Resources.Skills.Texture,
-				position: button.Position.ToVector2() + offset + new Vector2(
-					(buttonResource.Size.X - skillsResource.Frames[0].Width) / 2,
-					(buttonResource.Size.Y - skillsResource.Frames[0].Height) / 2
+				position: position + new Vector2(
+					(buttonResource.Size.X - drawRect.Width) / 2,
+					(buttonResource.Size.Y - drawRect.Height) / 2
 				),
-				sourceRectangle: button.Skill,
+				sourceRectangle: drawRect,
 				color: Color.White,
 				rotation: 0,
 				origin: Vector2.Zero,

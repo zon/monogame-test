@@ -44,11 +44,11 @@ namespace MonoGameTest.Client {
 			var mouse = Mouse.GetState();
 			var dirty = false;
 			if (mouse.LeftButton == ButtonState.Pressed) {
-				Start = Context.GetNode(mouse.X, mouse.Y);
+				Start = Context.ScreenToNode(mouse.X, mouse.Y);
 				dirty = true;
 			}
 			if (mouse.RightButton == ButtonState.Pressed) {
-				End = Context.GetNode(mouse.X, mouse.Y);
+				End = Context.ScreenToNode(mouse.X, mouse.Y);
 				dirty = true;
 			}
 			if (Start == null || End == null) return;

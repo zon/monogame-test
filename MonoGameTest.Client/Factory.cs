@@ -1,5 +1,6 @@
 using DefaultEcs;
 using Microsoft.Xna.Framework;
+using MonoGame.Aseprite.Documents;
 using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
@@ -9,7 +10,8 @@ namespace MonoGameTest.Client {
 		public static Entity CreateCharacter(Context context, AddCharacterPacket packet) {
 			var entity = context.World.CreateEntity();
 			entity.Set(new CharacterId(packet.Id));
-			entity.Set(new Character { Role = Role.Get(packet.RoleId) });
+			var role = Role.Get(packet.RoleId);
+			entity.Set(new Character { Role = role });
 			entity.Set((Group) packet.Group);
 			if (packet.PeerId > 0) {
 				entity.Set(new Player(packet.PeerId));
@@ -37,9 +39,31 @@ namespace MonoGameTest.Client {
 			entity.Set(new AttackAnimation(context.Resources.Attacks));
 			entity.Set(new HitAnimation(context.Resources.Hits));
 			entity.Set(Bang.Create());
+
 			if (packet.PeerId == context.PeerId) {
 				entity.Set(new LocalPlayer());
+
+				foreach (var be in context.Buttons.GetEntities()) {
+					be.Dispose();
+				}
+
+				var i = 0;
+				var skillsResource = context.Resources.Skills;
+				foreach (var skill in role.Skills) {
+					var be = context.World.CreateEntity();
+					var iconFrame = 0;
+					AsepriteTag tag;
+					if (skillsResource.Tags.TryGetValue(skill.Icon, out tag)) {
+						iconFrame = tag.From;
+					}
+					be.Set(new Button {
+						Index = i++,
+						Attack = skill,
+						IconFrame = iconFrame
+					});
+				}
 			}
+
 			return entity;
 		}
 
@@ -48,17 +72,6 @@ namespace MonoGameTest.Client {
 			var projectile = new Projectile(origin, target, attack);
 			entity.Set(projectile);
 			entity.Set(new ProjectileView(context, projectile));
-			return entity;
-		}
-
-		public static Entity CreateButton(Context context, int id, int skill, Point position) {
-			var entity = context.World.CreateEntity();
-			var button = context.Resources.Button;
-			entity.Set(new Button {
-				Id = id,
-				Skill = context.Resources.Skills.Frames[skill].ToRectangle(),
-				Position = position
-			});
 			return entity;
 		}
 

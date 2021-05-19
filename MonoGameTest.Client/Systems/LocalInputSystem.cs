@@ -1,3 +1,4 @@
+using System;
 using DefaultEcs;
 using DefaultEcs.System;
 using Microsoft.Xna.Framework.Input;
@@ -23,7 +24,7 @@ namespace MonoGameTest.Client {
 			var rightDown = mouse.WasButtonJustDown(MouseButton.Right);
 			if (!leftDown && !rightDown) return;
 
-			var goal = Context.GetNode(mouse.X, mouse.Y);
+			var goal = Context.ScreenToNode(mouse.X, mouse.Y);
 			if (goal == null) return;
 
 			if (rightDown) {

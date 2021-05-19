@@ -76,6 +76,10 @@ namespace MonoGameTest.Server {
 			IsReady = false;
 		}
 
+		public Pathfinder CreatePathfinder(bool debug = false) {
+			return new Pathfinder(Grid, Positions, debug);
+		}
+
 		TiledProperty GetTileProperty(TiledTile tile, string name) {
 			if (tile == null) return null;
 			return tile.properties.FirstOrDefault(p => p.name == name);
