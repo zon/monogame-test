@@ -20,7 +20,12 @@ namespace MonoGameTest.Client {
 		void OnMessage(in ButtonMessage message) {
 			if (!Context.LocalPlayer.HasValue) return;
 			ref var localPlayer = ref Context.LocalPlayer.Value.Get<LocalPlayer>();
-			localPlayer.SelectedSkill = Attack.Get(message.AttackId);
+			var skill = Attack.Get(message.AttackId);
+			if (localPlayer.SelectedSkill != skill) {
+				localPlayer.SelectedSkill = skill;
+			} else {
+				localPlayer.SelectedSkill = null;
+			}
 		}
 
 	}

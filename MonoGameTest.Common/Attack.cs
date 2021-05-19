@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Immutable;
 
 namespace MonoGameTest.Common {
 
-	public class Attack {
+	public class Attack : IEquatable<Attack> {
 		public readonly int Id;
 		public readonly Targeting Targeting;
 		public readonly int Range;
@@ -116,6 +117,20 @@ namespace MonoGameTest.Common {
 				pathfinder.HasEntity(target)
 			);
 		}
+
+		public override int GetHashCode() => Id;
+
+		public override bool Equals(object obj) => obj is Attack other && Equals(other);
+
+		public bool Equals(Attack other) {
+			return Equals(this, other);
+		}
+
+		public static bool Equals(Attack left, Attack right) => left?.Id == right?.Id;
+
+		public static bool operator ==(Attack left, Attack right) => Equals(left, right);
+
+		public static bool operator !=(Attack left, Attack right) => !Equals(left, right);
 
 	}
 
