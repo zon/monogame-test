@@ -29,25 +29,25 @@ namespace MonoGameTest.Server {
 					character.State = CharacterState.Idle;
 					break;
 				
-				case CharacterState.AttackFollow:
+				case CharacterState.SkillFollow:
 					character.State = CharacterState.Cooldown;
-					character.Timeout = character.Attack.Cooldown;
+					character.Timeout = character.Skill.Cooldown;
 					break;
 				
-				case CharacterState.AttackLead:
+				case CharacterState.SkillLead:
 					if (character.Target.IsAlive) {
-						if (character.Attack.IsMelee) {
+						if (character.Skill.IsMelee) {
 							ref var health = ref character.Target.Get<Health>();
-							var damage = character.Attack.Damage;
+							var damage = character.Skill.Damage;
 							health.Amount = Calc.Max(health.Amount - damage, 0);
 							character.Target.NotifyChanged<Health>();
 						} else {
 							ref var position = ref entity.Get<Position>();
-							Factory.SpawnProjectile(Context, position.Coord, character.Target, character.Attack);
+							Factory.SpawnProjectile(Context, position.Coord, character.Target, character.Skill);
 						}
 					}
-					character.State = CharacterState.AttackFollow;
-					character.Timeout = character.Attack.Follow;
+					character.State = CharacterState.SkillFollow;
+					character.Timeout = character.Skill.Follow;
 					break;
 
 			}

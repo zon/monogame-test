@@ -97,14 +97,14 @@ namespace MonoGameTest.Common {
 			return MoveWithinRange(a, b, range);
 		}
 
-		public Result MoveToAttack(Coord start, Coord goal, Attack attack) {
+		public Result MoveToSkill(Coord start, Coord goal, Skill skill) {
 			var a = Grid.Get(start);
 			var b = Grid.Get(goal);
 			if (a == null || b == null) return Result.NotFound;
-			if (attack.IsMelee) {
+			if (skill.IsMelee) {
 				return MoveAdjacent(start, goal);
 			} else {
-				return MoveWithinRange(start, goal, attack.Range);
+				return MoveWithinRange(start, goal, skill.Range);
 			}
 		}
 

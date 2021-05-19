@@ -9,9 +9,9 @@ namespace MonoGameTest.Client {
 		public Vector2 TargetPosition;
 
 		public ProjectileView(Context context, Projectile projectile) {
-			Sprite = new AnimatedSprite(context.Resources.Attacks);
+			Sprite = new AnimatedSprite(context.Resources.Skills);
 			Sprite.Origin = new Vector2(Sprite.Width, Sprite.Height) / 2;
-			Sprite.Play(projectile.Attack.Projectile);
+			Sprite.Play(projectile.Skill.Projectile);
 			TargetPosition = default;
 		}
 

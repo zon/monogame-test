@@ -15,7 +15,7 @@ namespace MonoGameTest.Client {
 			processor.SubscribeReusable<AddCharacterPacket>(OnAddCharacter);
 			processor.SubscribeReusable<MoveCharacterPacket>(OnMoveCharacter);
 			processor.SubscribeReusable<RemoveCharacterPacket>(OnRemoveCharacter);
-			processor.SubscribeReusable<AttackPacket>(OnAttack);
+			processor.SubscribeReusable<SkillPacket>(OnSkill);
 			processor.SubscribeReusable<HealthPacket>(OnHealth);
 			processor.SubscribeReusable<TargetPacket>(OnTarget);
 			processor.SubscribeReusable<ProjectilePacket>(OnProjectile);
@@ -48,14 +48,14 @@ namespace MonoGameTest.Client {
 			entity.Dispose();
 		}
 
-		void OnAttack(AttackPacket packet) {
+		void OnSkill(SkillPacket packet) {
 			Entity origin;
 			if (!GetEntity(packet.OriginCharacterId, out origin)) return;
 			Entity target;
 			if (!GetEntity(packet.TargetCharacterId, out target)) return;
-			var attack = Attack.Get(packet.AttackId);
-			ref var animation = ref origin.Get<AttackAnimation>();
-			animation.Start(Context, origin, target, attack);
+			var skill = Skill.Get(packet.SkillId);
+			ref var animation = ref origin.Get<SkillAnimation>();
+			animation.Start(Context, origin, target, skill);
 		}
 
 		void OnHealth(HealthPacket packet) {
@@ -86,11 +86,11 @@ namespace MonoGameTest.Client {
 			Entity target;
 			if (!GetEntity(packet.TargetCharacterId, out target)) return;
 
-			var attack = Attack.Get(packet.AttackId);
-			if (attack == null) return;
+			var skill = Skill.Get(packet.SkillId);
+			if (skill == null) return;
 
 			var origin = new Coord(packet.OriginX, packet.OriginY);
-			Factory.CreateProjectile(Context, origin, target, attack);
+			Factory.CreateProjectile(Context, origin, target, skill);
 		}
 
 		bool GetEntity(int characterId, out Entity entity) {

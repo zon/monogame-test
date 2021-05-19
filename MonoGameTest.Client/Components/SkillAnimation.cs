@@ -7,9 +7,9 @@ using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
 
-	public struct AttackAnimation {
+	public struct SkillAnimation {
 		public AnimatedSprite Sprite;
-		public Attack Attack;
+		public Skill Skill;
 		public Vector2 Forward;
 		public float Rotation;
 		public Entity Origin;
@@ -18,15 +18,15 @@ namespace MonoGameTest.Client {
 		public float Timeout;
 
 		public bool IsActive => Sprite.Animating;
-		public bool IsLeading => Timeout > Attack.Follow;
-		public float LeadProgress => (Attack.Lead - Timeout - Attack.Follow) / Attack.Lead;
-		public float FollowProgress => (Attack.Follow - Timeout) / Attack.Follow;
+		public bool IsLeading => Timeout > Skill.Follow;
+		public float LeadProgress => (Skill.Lead - Timeout - Skill.Follow) / Skill.Lead;
+		public float FollowProgress => (Skill.Follow - Timeout) / Skill.Follow;
 
-		public AttackAnimation(AsepriteDocument document) {
+		public SkillAnimation(AsepriteDocument document) {
 			Sprite = new AnimatedSprite(document);
 			Sprite.Origin = new Vector2(Sprite.Width, Sprite.Height) / 2;
 			Sprite.Stop();
-			Attack = default;
+			Skill = default;
 			Forward = default;
 			Rotation = default;
 			Origin = default;
@@ -40,18 +40,18 @@ namespace MonoGameTest.Client {
 			Context context,
 			in Entity origin,
 			in Entity target,
-			Attack attack
+			Skill skill
 		) {
 			ref var originPosition = ref origin.Get<Position>();
 			ref var targetPosition = ref target.Get<Position>();
-			Attack = attack;
+			Skill = skill;
 			Forward = Vector2.Normalize((targetPosition.Coord - originPosition.Coord).ToVector());
 			Rotation = View.ToRadians(Forward);
 			Origin = origin;
 			Target = target;
 			TargetCoord = targetPosition.Coord;
-			Sprite.Play(attack.Animation);
-			Timeout = attack.Duration;
+			Sprite.Play(skill.Animation);
+			Timeout = skill.Duration;
 		}
 
 		public void Update(float dt) {

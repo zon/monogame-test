@@ -55,7 +55,7 @@ namespace MonoGameTest.Server {
 				new DeathSystem(Context),
 				new MobTargetSystem(Context),
 				new MovementSystem(Context),
-				new AttackSystem(Context)
+				new SkillSystem(Context)
 			);
 		}
 

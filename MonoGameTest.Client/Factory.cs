@@ -36,7 +36,7 @@ namespace MonoGameTest.Client {
 				entity.Set(new Target());
 			}
 			entity.Set(new MovementAnimation());
-			entity.Set(new AttackAnimation(context.Resources.Attacks));
+			entity.Set(new SkillAnimation(context.Resources.Skills));
 			entity.Set(new HitAnimation(context.Resources.Hits));
 			entity.Set(Bang.Create());
 
@@ -58,7 +58,7 @@ namespace MonoGameTest.Client {
 					}
 					be.Set(new Button {
 						Index = i++,
-						Attack = skill,
+						Skill = skill,
 						IconFrame = iconFrame
 					});
 				}
@@ -67,9 +67,9 @@ namespace MonoGameTest.Client {
 			return entity;
 		}
 
-		public static Entity CreateProjectile(Context context, Coord origin, Entity target, Attack attack) {
+		public static Entity CreateProjectile(Context context, Coord origin, Entity target, Skill skill) {
 			var entity = context.World.CreateEntity();
-			var projectile = new Projectile(origin, target, attack);
+			var projectile = new Projectile(origin, target, skill);
 			entity.Set(projectile);
 			entity.Set(new ProjectileView(context, projectile));
 			return entity;

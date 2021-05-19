@@ -24,7 +24,7 @@ namespace MonoGameTest.Server {
 				OriginX = projectile.Origin.X,
 				OriginY = projectile.Origin.Y,
 				TargetCharacterId = targetCharacterId.Id,
-				AttackId = projectile.Attack.Id
+				SkillId = projectile.Skill.Id
 			});
 		}
 

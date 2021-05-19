@@ -4,19 +4,19 @@ namespace MonoGameTest.Common {
 
 	public class Role {
 		public readonly int Id;
-		public readonly Attack PrimaryAttack;
-		public readonly ImmutableArray<Attack> Skills;
+		public readonly Skill PrimarySkill;
+		public readonly ImmutableArray<Skill> Skills;
 
 		static int AutoId;
 
 		static readonly ImmutableArray<Role> Collection = ImmutableArray.Create(
 			new Role(
-				Attack.Get(1),
-				Attack.Get(2),
-				Attack.Get(3)
+				Skill.Get(1),
+				Skill.Get(2),
+				Skill.Get(3)
 			),
 			new Role(
-				Attack.Get(2)
+				Skill.Get(2)
 			)
 		);
 
@@ -26,9 +26,9 @@ namespace MonoGameTest.Common {
 			return Collection[index];
 		}
 
-		public Role(Attack primaryAttack, params Attack[] skills) {
+		public Role(Skill primarySkill, params Skill[] skills) {
 			Id = ++AutoId;
-			PrimaryAttack = primaryAttack;
+			PrimarySkill = primarySkill;
 			Skills = ImmutableArray.Create(skills);
 		}
 

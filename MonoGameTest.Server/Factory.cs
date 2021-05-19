@@ -48,9 +48,9 @@ namespace MonoGameTest.Server {
 			}
 		}
 
-		public static Entity SpawnProjectile(Context context, Coord origin, Entity target, Attack attack) {
+		public static Entity SpawnProjectile(Context context, Coord origin, Entity target, Skill skill) {
 			var e = context.World.CreateEntity();
-			e.Set(new Projectile(origin, target, attack));
+			e.Set(new Projectile(origin, target, skill));
 			return e;
 		}
 

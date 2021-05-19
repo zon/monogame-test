@@ -1,7 +1,7 @@
 namespace MonoGameTest.Common {
 
 	public class SkillCommand {
-		public int AttackId { get; set; }
+		public int SkillId { get; set; }
 	}
 
 }

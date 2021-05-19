@@ -25,7 +25,7 @@ namespace MonoGameTest.Server {
 
 			var position = entity.Get<Position>();
 			var group = entity.Get<Group>();
-			var attack = character.Role.PrimaryAttack;
+			var skill = character.Role.PrimarySkill;
 
 			var found = false;
 			var closest = new Closest(position.Coord, Others, e => {
@@ -35,7 +35,7 @@ namespace MonoGameTest.Server {
 			var pathfinder = Context.CreatePathfinder();
 			foreach (var other in closest) {
 				var otherPosition = other.Get<Position>();
-				var res = pathfinder.MoveToAttack(position.Coord, otherPosition.Coord, attack);
+				var res = pathfinder.MoveToSkill(position.Coord, otherPosition.Coord, skill);
 				if (!res.IsGoal) continue;
 				ref var target = ref entity.Get<Target>();
 				ref var movement = ref entity.Get<Movement>();

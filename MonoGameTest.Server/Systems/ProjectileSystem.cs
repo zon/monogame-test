@@ -24,7 +24,7 @@ namespace MonoGameTest.Server {
 
 			if (projectile.Target.IsAlive) {
 				ref var health = ref projectile.Target.Get<Health>();
-				var damage = projectile.Attack.Damage;
+				var damage = projectile.Skill.Damage;
 				health.Amount = Calc.Max(health.Amount - damage, 0);
 				projectile.Target.NotifyChanged<Health>();
 			}

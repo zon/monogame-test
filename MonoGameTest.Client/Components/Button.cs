@@ -6,7 +6,7 @@ namespace MonoGameTest.Client {
 
 	public struct Button {
 		public int Index;
-		public Attack Attack;
+		public Skill Skill;
 		public int IconFrame;
 		public bool IsSelected;
 	}

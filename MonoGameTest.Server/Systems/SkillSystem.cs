@@ -4,10 +4,10 @@ using MonoGameTest.Common;
 
 namespace MonoGameTest.Server {
 
-	public class AttackSystem : AEntitySetSystem<float> {
+	public class SkillSystem : AEntitySetSystem<float> {
 		readonly Context Context;
 
-		public AttackSystem(Context context) : base(context.World
+		public SkillSystem(Context context) : base(context.World
 			.GetEntities()
 			.With<Character>()
 			.AsSet()
@@ -17,7 +17,7 @@ namespace MonoGameTest.Server {
 
 		protected override void Update(float dt, in Entity entity) {
 			ref var character = ref entity.Get<Character>();
-			var attack = character.Role.PrimaryAttack;
+			var skill = character.Role.PrimarySkill;
 			if (!character.IsIdle) return;
 
 			ref var target = ref entity.Get<Target>();
@@ -27,19 +27,19 @@ namespace MonoGameTest.Server {
 			ref var position = ref entity.Get<Position>();
 			ref var targetPosition = ref targetEntity.Get<Position>();
 
-			if (!attack.InRange(position, targetPosition)) return;
+			if (!skill.InRange(position, targetPosition)) return;
 
-			if (!attack.IsMelee) {
+			if (!skill.IsMelee) {
 				var pathfinder = Context.CreatePathfinder();
 				if (!pathfinder.HasSight(position.Coord, targetPosition.Coord)) return;
 			}
 
-			character.StartAttack(attack, targetEntity);
+			character.StartSkill(skill, targetEntity);
 
 			ref var characterId = ref entity.Get<CharacterId>();
 			ref var targetCharacterId = ref targetEntity.Get<CharacterId>();
-			Context.Server.SendToAll(new AttackPacket {
-				AttackId = attack.Id,
+			Context.Server.SendToAll(new SkillPacket {
+				SkillId = skill.Id,
 				OriginCharacterId = characterId.Id,
 				TargetCharacterId = targetCharacterId.Id
 			});

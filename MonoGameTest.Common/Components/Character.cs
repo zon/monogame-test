@@ -6,7 +6,7 @@ namespace MonoGameTest.Common {
 		public Role Role;
 		public CharacterState State;
 		public float Timeout;
-		public Attack Attack;
+		public Skill Skill;
 		public Entity Target;
 
 		public bool IsIdle => State == CharacterState.Idle;
@@ -16,10 +16,10 @@ namespace MonoGameTest.Common {
 			Timeout = timeout;
 		}
 
-		public void StartAttack(Attack attack, Entity target) {
-			State = CharacterState.AttackLead;
-			Timeout = attack.Lead;
-			Attack = attack;
+		public void StartSkill(Skill skill, Entity target) {
+			State = CharacterState.SkillLead;
+			Timeout = skill.Lead;
+			Skill = skill;
 			Target = target;
 		}
 

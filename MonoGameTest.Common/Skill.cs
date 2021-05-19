@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace MonoGameTest.Common {
 
-	public class Attack : IEquatable<Attack> {
+	public class Skill : IEquatable<Skill> {
 		public readonly int Id;
 		public readonly Targeting Targeting;
 		public readonly int Range;
@@ -22,8 +22,8 @@ namespace MonoGameTest.Common {
 
 		static int AutoId = 0;
 
-		static readonly ImmutableArray<Attack> List = ImmutableArray.Create(
-			new Attack(
+		static readonly ImmutableArray<Skill> List = ImmutableArray.Create(
+			new Skill(
 				damage: 5,
 				lead: Time.Frames(3),
 				follow: Time.Frames(3),
@@ -31,7 +31,7 @@ namespace MonoGameTest.Common {
 				animation: "sword-right",
 				repeating: true
 			),
-			new Attack(
+			new Skill(
 				damage: 5,
 				lead: Time.Frames(6),
 				follow: Time.Frames(3),
@@ -42,14 +42,14 @@ namespace MonoGameTest.Common {
 				projectileSpeed: 12,
 				repeating: true
 			),
-			new Attack(
+			new Skill(
 				damage: 10,
 				lead: Time.Frames(3),
 				follow: Time.Frames(3),
 				icon: "poison",
 				animation: "sword-right"
 			),
-			new Attack(
+			new Skill(
 				damage: 10,
 				lead: Time.Frames(6),
 				follow: Time.Frames(3),
@@ -61,13 +61,13 @@ namespace MonoGameTest.Common {
 			)
 		);
 
-		public static Attack Get(int id) {
+		public static Skill Get(int id) {
 			var index = id - 1;
 			if (index < 0 || index > List.Length) return null;
 			return List[index];
 		}
 
-		public Attack(
+		public Skill(
 			int damage,
 			float lead,
 			float follow,
@@ -120,17 +120,17 @@ namespace MonoGameTest.Common {
 
 		public override int GetHashCode() => Id;
 
-		public override bool Equals(object obj) => obj is Attack other && Equals(other);
+		public override bool Equals(object obj) => obj is Skill other && Equals(other);
 
-		public bool Equals(Attack other) {
+		public bool Equals(Skill other) {
 			return Equals(this, other);
 		}
 
-		public static bool Equals(Attack left, Attack right) => left?.Id == right?.Id;
+		public static bool Equals(Skill left, Skill right) => left?.Id == right?.Id;
 
-		public static bool operator ==(Attack left, Attack right) => Equals(left, right);
+		public static bool operator ==(Skill left, Skill right) => Equals(left, right);
 
-		public static bool operator !=(Attack left, Attack right) => !Equals(left, right);
+		public static bool operator !=(Skill left, Skill right) => !Equals(left, right);
 
 	}
 

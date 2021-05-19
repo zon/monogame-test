@@ -15,7 +15,7 @@ namespace MonoGameTest.Client {
 
 		protected override void Update(float dt, ref Button button) {
 			var buttonResource = Context.Resources.Button;
-			var skillsResource = Context.Resources.Skills;
+			var skillsResource = Context.Resources.SkillIcons;
 			var mouse = Context.Mouse;
 			var left = MouseButton.Left;
 
@@ -30,14 +30,14 @@ namespace MonoGameTest.Client {
 			var depth = 0.1f;
 			if (isHovered && mouse.WasButtonJustDown(left)) {
 				drawRect = buttonResource.Pressed;
-				Context.World.Publish(new ButtonMessage { AttackId = button.Attack.Id });
+				Context.World.Publish(new ButtonMessage { SkillId = button.Skill.Id });
 				offset = new Vector2(0, 2);
 
 			} else if (isHovered && mouse.IsButtonDown(left)) {
 				drawRect = buttonResource.Down;
 				offset = new Vector2(0, 1);
 			
-			} else if (button.Attack.Id == Context.LocalPlayer?.Get<LocalPlayer>().SelectedSkill?.Id) {
+			} else if (button.Skill.Id == Context.LocalPlayer?.Get<LocalPlayer>().SelectedSkill?.Id) {
 				drawRect = buttonResource.Selected;
 			
 			} else if (isHovered) {
@@ -63,7 +63,7 @@ namespace MonoGameTest.Client {
 			
 			drawRect = skillsResource.Frames[button.IconFrame].ToRectangle();
 			Context.UI.Draw(
-				texture: Context.Resources.Skills.Texture,
+				texture: skillsResource.Texture,
 				position: position + new Vector2(
 					(buttonResource.Size.X - drawRect.Width) / 2,
 					(buttonResource.Size.Y - drawRect.Height) / 2
