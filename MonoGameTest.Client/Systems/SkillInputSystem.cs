@@ -31,28 +31,6 @@ namespace MonoGameTest.Client {
 				localPlayer.SelectedSkill = null;
 				return;
 			}
-
-			var goal = Context.ScreenToNode(mouse.X, mouse.Y);
-			if (goal == null) return;
-
-			Entity other;
-			if (Context.GetEntityByPosition(goal, out other)) {
-				var character = other.Get<CharacterId>();
-				Context.Client.Send(new SkillTargetCommand {
-					AttackId = skillId,
-					CharacterId = character.Id
-				});
-				Context.Resources.MoveConfirmSound.Play();
-				return;
-			}
-
-			Context.Client.Send(new SkillPositionCommand {
-				AttackId = skillId,
-				X = goal.X,
-				Y = goal.Y
-			});
-			Effect.CreateEntity(Context, "ping-small", goal.Coord);
-			Context.Resources.MoveConfirmSound.Play();
 		}
 
 	}

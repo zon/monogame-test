@@ -67,7 +67,8 @@ namespace MonoGameTest.Client {
 			ButtonListener = new ButtonListener(Context);
 
 			Behavior = new SequentialSystem<float>(
-				new LocalInputSystem(Context)
+				new LocalInputSystem(Context),
+				new SkillInputSystem(Context)
 			);
 
 			BackgroundRendering = new TilemapDrawSystem(Context);

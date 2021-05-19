@@ -97,7 +97,6 @@ namespace MonoGameTest.Common {
 			if (IsMelee) {
 				var d = Coord.ChebyshevDistance(position, target);
 				if (d > 1) return false;
-
 			} else {
 				var d = Coord.DistanceSquared(position, target);
 				if (d > Range * Range) return false;
