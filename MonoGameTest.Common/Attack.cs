@@ -114,7 +114,7 @@ namespace MonoGameTest.Common {
 				position != target &&
 				InRange(position, target) &&
 				pathfinder.HasSight(position, target) &&
-				pathfinder.Positions.ContainsKey(new Position { Coord = position })
+				pathfinder.HasEntity(target)
 			);
 		}
 

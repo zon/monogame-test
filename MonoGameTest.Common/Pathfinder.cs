@@ -273,6 +273,14 @@ namespace MonoGameTest.Common {
 			return HasSight(a.Coord, b.Coord);
 		}
 
+		public bool HasEntity(Position p) {
+			return Positions.ContainsKey(p);
+		}
+
+		public bool HasEntity(Coord c) {
+			return HasEntity(new Position { Coord = c });
+		}
+
 		Result CreatePath(Node last, bool isGoal) {
 			var path = new Stack<Node>();
 			path.Push(last);
