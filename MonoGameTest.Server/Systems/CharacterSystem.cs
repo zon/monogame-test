@@ -8,6 +8,8 @@ namespace MonoGameTest.Server {
 	public class CharacterSystem : AEntitySetSystem<float> {
 		readonly Context Context;
 
+		Server Server => Context.Server;
+
 		public CharacterSystem(Context context) : base(context.World
 			.GetEntities()
 			.With<Character>()
@@ -18,39 +20,89 @@ namespace MonoGameTest.Server {
 
 		protected override void Update(float dt, in Entity entity) {
 			ref var character = ref entity.Get<Character>();
-			if (character.IsIdle) return;
+			if (!character.HasCommand) return;
 
 			character.Timeout = Math.Max(character.Timeout - dt, 0);
 			if (character.Timeout > 0) return;
 
-			switch (character.State) {
+			// let movement system handle move commands
+			var command = character.GetCurrentCommand().Value;
+			if (command.IsMove && character.State == CharacterState.Standby) return;
+			var skill = command.Skill;
 
-				case CharacterState.Cooldown:
-					character.State = CharacterState.Idle;
-					break;
-				
-				case CharacterState.SkillFollow:
-					character.State = CharacterState.Cooldown;
-					character.Timeout = character.Skill.Cooldown;
-					break;
-				
-				case CharacterState.SkillLead:
-					if (character.Target.IsAlive) {
-						if (character.Skill.IsMelee) {
-							ref var health = ref character.Target.Get<Health>();
-							var damage = character.Skill.Damage;
+			// only leave standby if there is a valid target
+			if (character.State == CharacterState.Standby) {
+				var characterId = entity.Get<CharacterId>().Id;
+				if (command.HasTarget) {
+					var position = entity.Get<Position>().Coord;
+					var target = command.Target.Value;
+					var targetPosition = target.GetPosition();
+
+					if (skill.IsMelee) {
+						if (!skill.IsValidMeleeTarget(position, targetPosition)) return;
+					} else {
+						var pathfinder = Context.CreatePathfinder();
+						if (!skill.IsValidTarget(pathfinder, position, targetPosition)) return;
+					}
+					
+					// target is valid
+					// broadcast skill start packet
+					if (target.IsMobile) {
+						var targetCharacterId = target.Entity.Value.Get<CharacterId>().Id;
+						Server.SendToAll(new SkillStartMobilePacket {
+							SkillId = skill.Id,
+							OriginCharacterId = characterId,
+							TargetCharacterId = targetCharacterId
+						});
+
+					} else {
+						var coord = target.Coord.Value;
+						Server.SendToAll(new SkillStartFixedPacket {
+							SkillId = skill.Id,
+							OriginCharacterId = characterId,
+							TargetX = coord.X,
+							TargetY = coord.Y
+						});
+
+					}
+
+				} else {
+					Server.SendToAll(new SkillStartPacket {
+						SkillId = skill.Id,
+						OriginCharacterId = characterId
+					});
+				}
+			}
+
+			// advance state
+			character.NextState(skill);
+
+			// perform generic skill behavior
+			if (character.State == CharacterState.Active) {
+
+				// only entity target bahavior is supported so far
+				if (command.Target?.Entity != null) {
+					var targetEntity = command.Target.Value.Entity.Value;
+					if (targetEntity.IsAlive) {
+
+						if (skill.IsMelee) {
+							ref var health = ref targetEntity.Get<Health>();
+							var damage = skill.Damage;
 							health.Amount = Calc.Max(health.Amount - damage, 0);
-							character.Target.NotifyChanged<Health>();
+							targetEntity.NotifyChanged<Health>();
+
 						} else {
 							ref var position = ref entity.Get<Position>();
-							Factory.SpawnProjectile(Context, position.Coord, character.Target, character.Skill);
+							Factory.SpawnProjectile(Context, position.Coord, targetEntity, skill);
 						}
 					}
-					character.State = CharacterState.SkillFollow;
-					character.Timeout = character.Skill.Follow;
-					break;
-
+				}
+				
+				// immediately advance state
+				character.NextState(skill);
 			}
+
+			entity.NotifyChanged<Character>();
 		}
 
 	}

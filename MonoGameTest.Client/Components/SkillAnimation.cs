@@ -39,23 +39,38 @@ namespace MonoGameTest.Client {
 		public void Start(
 			Context context,
 			in Entity origin,
-			in Entity target,
+			Coord target,
 			Skill skill
 		) {
 			ref var originPosition = ref origin.Get<Position>();
-			ref var targetPosition = ref target.Get<Position>();
 			Skill = skill;
-			Forward = Vector2.Normalize((targetPosition.Coord - originPosition.Coord).ToVector());
+			Forward = Vector2.Normalize((target - originPosition.Coord).ToVector());
 			Rotation = View.ToRadians(Forward);
 			Origin = origin;
-			Target = target;
-			TargetCoord = targetPosition.Coord;
+			TargetCoord = target;
 			Sprite.Play(skill.Animation);
 			Timeout = skill.Duration;
+		}
+		
+		public void Start(
+			Context context,
+			in Entity origin,
+			in Entity target,
+			Skill skill
+		) {
+			Target = target;
+			ref var targetPosition = ref target.Get<Position>();
+			Start(context, origin, targetPosition.Coord, skill);
 		}
 
 		public void Update(float dt) {
 			Timeout = Math.Max(Timeout - dt, 0);
+
+			if (Target != null && Target.IsAlive) {
+				ref var targetPosition = ref Target.Get<Position>();
+				TargetCoord = targetPosition.Coord;
+			}
+			
 			Sprite.Update(dt);
 		}
 

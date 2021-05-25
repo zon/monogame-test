@@ -37,17 +37,13 @@ namespace MonoGameTest.Server {
 				var otherPosition = other.Get<Position>();
 				var res = pathfinder.MoveToSkill(position.Coord, otherPosition.Coord, skill);
 				if (!res.IsGoal) continue;
-				ref var target = ref entity.Get<Target>();
-				ref var movement = ref entity.Get<Movement>();
-				target.Entity = other;
-				movement.Goal = res.Node.Coord;
-				movement.Path = res.Path;
+				character.Enqueue(Command.Targeting(other, skill));
 				found = true;
 				break;
 			}
 			
 			if (!found) {
-				character.StartCooldown(NOTHING_PAUSE);
+				character.Enqueue(Command.Pause());
 			}
 		}
 

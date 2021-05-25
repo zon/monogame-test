@@ -11,7 +11,7 @@ namespace MonoGameTest.Client {
 			var entity = context.World.CreateEntity();
 			entity.Set(new CharacterId(packet.Id));
 			var role = Role.Get(packet.RoleId);
-			entity.Set(new Character { Role = role });
+			entity.Set(new Character(role));
 			entity.Set((Group) packet.Group);
 			if (packet.PeerId > 0) {
 				entity.Set(new Player(packet.PeerId));
@@ -26,15 +26,6 @@ namespace MonoGameTest.Client {
 			);
 			sprite.Depth = Depths.Character;
 			entity.Set(sprite);
-			Entity other;
-			if (
-				packet.TargetId != packet.Id &&
-				context.Characters.TryGetEntity(new CharacterId(packet.TargetId), out other)
-			) {
-				entity.Set(new Target { Entity = other });
-			} else {
-				entity.Set(new Target());
-			}
 			entity.Set(new MovementAnimation());
 			entity.Set(new SkillAnimation(context.Resources.Skills));
 			entity.Set(new HitAnimation(context.Resources.Hits));
@@ -48,12 +39,12 @@ namespace MonoGameTest.Client {
 				}
 
 				var i = 0;
-				var skillsResource = context.Resources.Skills;
+				var iconsResource = context.Resources.SkillIcons;
 				foreach (var skill in role.Skills) {
 					var be = context.World.CreateEntity();
 					var iconFrame = 0;
 					AsepriteTag tag;
-					if (skillsResource.Tags.TryGetValue(skill.Icon, out tag)) {
+					if (iconsResource.Tags.TryGetValue(skill.Icon, out tag)) {
 						iconFrame = tag.From;
 					}
 					be.Set(new Button {

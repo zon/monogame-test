@@ -1,8 +1,7 @@
 namespace MonoGameTest.Common {
 
-	public class TargetPacket {
+	public class TargetEmptyPacket {
 		public int CharacterId { get; set; }
-		public int TargetId { get; set; }
 	}
 
 }

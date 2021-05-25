@@ -18,6 +18,7 @@ namespace MonoGameTest.Common {
 		public readonly bool Repeating;
 
 		public bool IsMelee => Range <= 1;
+		public bool IsRanged => Range > 0;
 		public float Duration => Lead + Follow;
 
 		static int AutoId = 0;
@@ -115,6 +116,13 @@ namespace MonoGameTest.Common {
 				InRange(position, target) &&
 				pathfinder.HasSight(position, target) &&
 				pathfinder.HasEntity(target)
+			);
+		}
+
+		public bool IsValidMeleeTarget(Coord position, Coord target) {
+			return (
+				position != target &&
+				InRange(position, target)
 			);
 		}
 

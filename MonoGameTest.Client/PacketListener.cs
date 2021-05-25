@@ -15,9 +15,13 @@ namespace MonoGameTest.Client {
 			processor.SubscribeReusable<AddCharacterPacket>(OnAddCharacter);
 			processor.SubscribeReusable<MoveCharacterPacket>(OnMoveCharacter);
 			processor.SubscribeReusable<RemoveCharacterPacket>(OnRemoveCharacter);
-			processor.SubscribeReusable<SkillPacket>(OnSkill);
+			processor.SubscribeReusable<SkillStartMobilePacket>(OnMobileSkill);
+			processor.SubscribeReusable<SkillStartFixedPacket>(OnFixedSkill);
+			processor.SubscribeReusable<SkillStartPacket>(OnSkill);
 			processor.SubscribeReusable<HealthPacket>(OnHealth);
-			processor.SubscribeReusable<TargetPacket>(OnTarget);
+			processor.SubscribeReusable<TargetMobilePacket>(OnMobileTarget);
+			processor.SubscribeReusable<TargetFixedPacket>(OnFixedTarget);
+			processor.SubscribeReusable<TargetEmptyPacket>(OnEmptyTarget);
 			processor.SubscribeReusable<ProjectilePacket>(OnProjectile);
 		}
 
@@ -48,7 +52,7 @@ namespace MonoGameTest.Client {
 			entity.Dispose();
 		}
 
-		void OnSkill(SkillPacket packet) {
+		void OnMobileSkill(SkillStartMobilePacket packet) {
 			Entity origin;
 			if (!GetEntity(packet.OriginCharacterId, out origin)) return;
 			Entity target;
@@ -56,6 +60,19 @@ namespace MonoGameTest.Client {
 			var skill = Skill.Get(packet.SkillId);
 			ref var animation = ref origin.Get<SkillAnimation>();
 			animation.Start(Context, origin, target, skill);
+		}
+
+		void OnFixedSkill(SkillStartFixedPacket packet) {
+			Entity origin;
+			if (!GetEntity(packet.OriginCharacterId, out origin)) return;
+			var target = new Coord(packet.TargetX, packet.TargetY);
+			var skill = Skill.Get(packet.SkillId);
+			ref var animation = ref origin.Get<SkillAnimation>();
+			animation.Start(Context, origin, target, skill);
+		}
+
+		void OnSkill(SkillStartPacket packet) {
+			Console.WriteLine("Untargeted skill");
 		}
 
 		void OnHealth(HealthPacket packet) {
@@ -70,16 +87,30 @@ namespace MonoGameTest.Client {
 			bang.Start(packet.Delta);
 		}
 
-		void OnTarget(TargetPacket packet) {
+		void OnMobileTarget(TargetMobilePacket packet) {
 			Entity entity;
 			if (!GetEntity(packet.CharacterId, out entity)) return;
-			ref var target = ref entity.Get<Target>();
+			ref var localPlayer = ref entity.Get<LocalPlayer>();
 			Entity other;
-			if (packet.TargetId != packet.CharacterId && GetEntity(packet.TargetId, out other)) {
-				target.Entity = other;
+			if (packet.TargetCharacterId != packet.CharacterId && GetEntity(packet.TargetCharacterId, out other)) {
+				localPlayer.Target = new Target(other);
 			} else {
-				target.Entity = null;
+				localPlayer.Target = null;
 			}
+		}
+
+		void OnFixedTarget(TargetFixedPacket packet) {
+			Entity entity;
+			if (!GetEntity(packet.CharacterId, out entity)) return;
+			ref var localPlayer = ref entity.Get<LocalPlayer>();
+			localPlayer.Target = new Target(new Coord(packet.X, packet.Y));
+		}
+
+		void OnEmptyTarget(TargetEmptyPacket packet) {
+			Entity entity;
+			if (!GetEntity(packet.CharacterId, out entity)) return;
+			ref var localPlayer = ref entity.Get<LocalPlayer>();
+			localPlayer.Target = null;
 		}
 
 		void OnProjectile(ProjectilePacket packet) {

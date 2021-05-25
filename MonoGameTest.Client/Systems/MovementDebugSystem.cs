@@ -5,7 +5,7 @@ using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
 
-	public class MovementDebugSystem : AComponentSystem<float, Movement> {
+	public class MovementDebugSystem : AComponentSystem<float, Character> {
 		readonly Context Context;
 		readonly SpriteBatch Batch;
 
@@ -18,7 +18,7 @@ namespace MonoGameTest.Client {
 			Batch.Begin(transformMatrix: Context.Camera.GetMatrix());
 		}
 
-		protected override void Update(float dt, ref Movement movement) {
+		protected override void Update(float dt, ref Character movement) {
 			// if (movement.Path == null) return;
 			// PathfinderDebugSystem.DrawPath(Batch, Context, movement.Path);
 		}

@@ -2,9 +2,6 @@ using DefaultEcs;
 using DefaultEcs.System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Input;
-using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
 
@@ -26,10 +23,12 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void Update(float dt, in Entity entity) {
-			ref var target = ref entity.Get<Target>();
-			if (!target.HasEntity) return;
-			var other = target.Entity.Value;
-			ref var sprite = ref other.Get<Sprite>();
+			ref var localPlayer = ref entity.Get<LocalPlayer>();
+
+			var other = localPlayer.Target?.Entity;
+			if (other == null) return;
+
+			ref var sprite = ref other.Value.Get<Sprite>();
 			Context.Foreground.Draw(
 				texture: Texture,
 				position: sprite.Position + Context.HalfTileSize,

@@ -4,6 +4,7 @@ namespace MonoGameTest.Client {
 
 	public struct LocalPlayer {
 		public Skill SelectedSkill;
+		public Target? Target;
 
 	}
 

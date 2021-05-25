@@ -15,7 +15,7 @@ namespace MonoGameTest.Client {
 
 		protected override void Update(float dt, ref Button button) {
 			var buttonResource = Context.Resources.Button;
-			var skillsResource = Context.Resources.SkillIcons;
+			var iconsResource = Context.Resources.SkillIcons;
 			var mouse = Context.Mouse;
 			var left = MouseButton.Left;
 
@@ -61,9 +61,9 @@ namespace MonoGameTest.Client {
 				layerDepth: depth
 			);
 			
-			drawRect = skillsResource.Frames[button.IconFrame].ToRectangle();
+			drawRect = iconsResource.Frames[button.IconFrame].ToRectangle();
 			Context.UI.Draw(
-				texture: skillsResource.Texture,
+				texture: iconsResource.Texture,
 				position: position + new Vector2(
 					(buttonResource.Size.X - drawRect.Width) / 2,
 					(buttonResource.Size.Y - drawRect.Height) / 2

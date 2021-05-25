@@ -10,7 +10,6 @@ namespace MonoGameTest.Common {
 		public int PeerId { get; set; }
 		public int HealthMaximum { get; set; }
 		public int HealthAmount { get; set; }
-		public int TargetId { get; set; }
 		public int X { get; set; }
 		public int Y { get; set; }
 
@@ -38,14 +37,6 @@ namespace MonoGameTest.Common {
 			ref var health = ref entity.Get<Health>();
 			HealthMaximum = health.Maximum;
 			HealthAmount = health.Amount;
-
-			ref var target = ref entity.Get<Target>();
-			if (target.HasEntity) {
-				ref var other = ref target.Entity.Value.Get<CharacterId>();
-				TargetId = other.Id;
-			} else {
-				TargetId = Id;
-			}
 			
 			ref var position = ref entity.Get<Position>();
 			X = position.Coord.X;

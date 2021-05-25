@@ -28,14 +28,21 @@ namespace MonoGameTest.Server {
 			Entity entity;
 			if (!GetPlayerEntity(peer, out entity)) return;
 
-			ref var position = ref entity.Get<Position>();
-			ref var movement = ref entity.Get<Movement>();
-
-			var start = Grid.Get(position.Coord);
 			var goal = Grid.Get(command.X, command.Y);
 			if (goal == null) return;
 
-			movement.Goal = goal.Coord;
+			// correct solid node targets
+			if (goal.Solid) {
+				var pathfinder = Context.CreatePathfinder();
+				ref var position = ref entity.Get<Position>();
+				var start = Grid.Get(position.Coord);
+				goal = pathfinder.OptimalMoveTo(start, goal).Node;
+			}
+			if (goal == null) return;
+
+			ref var character = ref entity.Get<Character>();
+			character.EnqueueNext(Command.Targeting(goal.Coord));
+			entity.NotifyChanged<Character>();
 		}
 
 		void OnTargetCommand(TargetCommand command, NetPeer peer) {
@@ -44,11 +51,10 @@ namespace MonoGameTest.Server {
 
 			Entity other;
 			if (!Context.Characters.TryGetEntity(new CharacterId(command.CharacterId), out other)) return;
-
-			ref var target = ref entity.Get<Target>();
-			target.Entity = other != entity ? other : null;
 			
-			entity.NotifyChanged<Target>();
+			ref var character = ref entity.Get<Character>();
+			character.EnqueueNext(Command.Targeting(other, character.Role.PrimarySkill));
+			entity.NotifyChanged<Character>();
 		}
 
 		bool GetPlayerEntity(NetPeer peer, out Entity entity) {

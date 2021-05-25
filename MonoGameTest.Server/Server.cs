@@ -39,6 +39,14 @@ namespace MonoGameTest.Server {
 			Manager.Stop();
 		}
 
+		public bool GetPeerById(int id, out NetPeer peer) {
+			return Peers.TryGetValue(id, out peer);
+		}
+
+		public bool GetPeerByPlayer(Player player, out NetPeer peer) {
+			return GetPeerById(player.PeerId, out peer);
+		}
+
 		public void Send<T>(
 			NetPeer peer,
 			T packet,
@@ -52,6 +60,16 @@ namespace MonoGameTest.Server {
 			DeliveryMethod method = DeliveryMethod.ReliableOrdered
 		) where T : class, new() {
 			Manager.SendToAll(Processor.Write(packet), method);
+		}
+
+		public void SendToPlayer<T>(
+			Player player,
+			T packet,
+			DeliveryMethod method = DeliveryMethod.ReliableOrdered
+		) where T : class, new() {
+			NetPeer peer;
+			if (!GetPeerByPlayer(player, out peer)) return;
+			Send(peer, packet, method);
 		}
 
 		void INetEventListener.OnConnectionRequest(ConnectionRequest request) {
