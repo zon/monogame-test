@@ -31,7 +31,7 @@ namespace MonoGameTest.Server {
 			var skill = command.Skill;
 
 			// only leave standby if there is a valid target
-			if (character.State == CharacterState.Standby) {
+			if (command.HasSkill && character.State == CharacterState.Standby) {
 				var characterId = entity.Get<CharacterId>().Id;
 				if (command.HasTarget) {
 					var position = entity.Get<Position>().Coord;
@@ -78,7 +78,7 @@ namespace MonoGameTest.Server {
 			character.NextState(skill);
 
 			// perform generic skill behavior
-			if (character.State == CharacterState.Active) {
+			if (command.HasSkill && character.State == CharacterState.Active) {
 
 				// only entity target bahavior is supported so far
 				if (command.Target?.Entity != null) {

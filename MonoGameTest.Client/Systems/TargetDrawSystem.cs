@@ -26,7 +26,7 @@ namespace MonoGameTest.Client {
 			ref var localPlayer = ref entity.Get<LocalPlayer>();
 
 			var other = localPlayer.Target?.Entity;
-			if (other == null) return;
+			if (other == null || !other.Value.IsAlive) return;
 
 			ref var sprite = ref other.Value.Get<Sprite>();
 			Context.Foreground.Draw(

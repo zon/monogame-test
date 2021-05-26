@@ -37,13 +37,13 @@ namespace MonoGameTest.Server {
 				var otherPosition = other.Get<Position>();
 				var res = pathfinder.MoveToSkill(position.Coord, otherPosition.Coord, skill);
 				if (!res.IsGoal) continue;
-				character.Enqueue(Command.Targeting(other, skill));
+				character.EnqueueNext(Command.Targeting(other, skill));
 				found = true;
 				break;
 			}
 			
 			if (!found) {
-				character.Enqueue(Command.Pause());
+				character.EnqueueNext(Command.Pause());
 			}
 		}
 

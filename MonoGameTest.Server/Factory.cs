@@ -14,7 +14,6 @@ namespace MonoGameTest.Server {
 			c.Set(new Attributes(5));
 			c.Set(new Health(100));
 			c.Set(new Character(Role.Get(1)));
-			c.Set(new Target());
 			c.Set(CharacterId.Create());
 			c.Set(new Player(peerId));
 			c.Set(new Position { Coord = node.Coord });
@@ -27,9 +26,8 @@ namespace MonoGameTest.Server {
 			c.Set(new Attributes(sprite));
 			c.Set(new Health(100));
 			c.Set(new Character(Role.Get(2)));
-			c.Set(new Target());
 			c.Set(CharacterId.Create());
-			c.Set(new Mob());
+			// c.Set(new Mob());
 			c.Set(new Position { Coord = coord });
 			return c;
 		}

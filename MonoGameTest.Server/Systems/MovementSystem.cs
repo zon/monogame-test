@@ -42,9 +42,11 @@ namespace MonoGameTest.Server {
 				path = pathfinder.MoveTo(start, goal).Path;
 			}
 			
-			// cancel command if path is empty
+			// cancel move commands if path is empty
 			if (path.IsEmpty) {
-				character.CancelCommand();
+				if (command.IsMove) {
+					character.CancelCommand();
+				}
 				return;
 			}
 
