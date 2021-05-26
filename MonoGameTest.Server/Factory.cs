@@ -27,7 +27,7 @@ namespace MonoGameTest.Server {
 			c.Set(new Health(100));
 			c.Set(new Character(Role.Get(2)));
 			c.Set(CharacterId.Create());
-			// c.Set(new Mob());
+			c.Set(new Mob());
 			c.Set(new Position { Coord = coord });
 			return c;
 		}
