@@ -7,7 +7,7 @@ namespace MonoGameTest.Common {
 		public int RoleId { get; set; }
 		public int Group { get; set; }
 		public int Sprite { get; set; }
-		public int PeerId { get; set; }
+		public int SessionId { get; set; }
 		public int HealthMaximum { get; set; }
 		public int HealthAmount { get; set; }
 		public int X { get; set; }
@@ -28,11 +28,11 @@ namespace MonoGameTest.Common {
 			ref var attributes = ref entity.Get<Attributes>();
 			Sprite = attributes.Sprite;
 
-			var peerId = 0;
+			var sessionId = 0;
 			if (entity.Has<Player>()) {
-				peerId = entity.Get<Player>().PeerId;
+				sessionId = entity.Get<Player>().SessionId;
 			}
-			PeerId = peerId;
+			SessionId = sessionId;
 
 			ref var health = ref entity.Get<Health>();
 			HealthMaximum = health.Maximum;

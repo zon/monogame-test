@@ -13,7 +13,7 @@ namespace MonoGameTest.Client {
 		public Vector2 Forward;
 		public float Rotation;
 		public Entity Origin;
-		public Entity Target;
+		public Entity? Target;
 		public Coord TargetCoord;
 		public float Timeout;
 
@@ -66,8 +66,8 @@ namespace MonoGameTest.Client {
 		public void Update(float dt) {
 			Timeout = Math.Max(Timeout - dt, 0);
 
-			if (Target != null && Target.IsAlive) {
-				ref var targetPosition = ref Target.Get<Position>();
+			if (Target.HasValue && Target.Value.IsAlive) {
+				ref var targetPosition = ref Target.Value.Get<Position>();
 				TargetCoord = targetPosition.Coord;
 			}
 			

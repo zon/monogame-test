@@ -36,6 +36,13 @@ namespace MonoGameTest.Common {
 			Skills = ImmutableArray.Create(skills);
 		}
 
+		public Skill GetSkill(int id) {
+			foreach (var skill in Skills) {
+				if (skill.Id == id) return skill;
+			}
+			return null;
+		}
+
 	}
 
 }

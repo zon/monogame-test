@@ -16,7 +16,8 @@ namespace MonoGameTest.Server {
 		public event OnPeerConnected PeerConnectedEvent;
 		public event OnPeerDisconnected PeerDisconnectedEvent;
 
-		readonly Dictionary<int, NetPeer> Peers = new Dictionary<int, NetPeer>();
+		readonly Dictionary<int, Session> SessionsById = new Dictionary<int, Session>();
+		readonly Dictionary<int, Session> SessionsByPeerId = new Dictionary<int, Session>();
 		readonly NetManager Manager;
 
 		public Server() {
@@ -39,12 +40,12 @@ namespace MonoGameTest.Server {
 			Manager.Stop();
 		}
 
-		public bool GetPeerById(int id, out NetPeer peer) {
-			return Peers.TryGetValue(id, out peer);
+		public bool GetSessionById(int id, out Session session) {
+			return SessionsById.TryGetValue(id, out session);
 		}
 
-		public bool GetPeerByPlayer(Player player, out NetPeer peer) {
-			return GetPeerById(player.PeerId, out peer);
+		public bool GetSessionByPeerId(int peerId, out Session session) {
+			return SessionsByPeerId.TryGetValue(peerId, out session);
 		}
 
 		public void Send<T>(
@@ -67,9 +68,9 @@ namespace MonoGameTest.Server {
 			T packet,
 			DeliveryMethod method = DeliveryMethod.ReliableOrdered
 		) where T : class, new() {
-			NetPeer peer;
-			if (!GetPeerByPlayer(player, out peer)) return;
-			Send(peer, packet, method);
+			Session session;
+			if (!GetSessionById(player.SessionId, out session)) return;
+			Send(session.Client, packet, method);
 		}
 
 		void INetEventListener.OnConnectionRequest(ConnectionRequest request) {
@@ -95,9 +96,12 @@ namespace MonoGameTest.Server {
 		}
 
 		void INetEventListener.OnPeerConnected(NetPeer peer) {
-			Console.WriteLine("Connected: {0}, {1}", peer.Id, peer.EndPoint);
-			
-			Peers.Add(peer.Id, peer);
+			var session = new Session(peer);
+
+			Console.WriteLine("Connected: {0}, {1}", session.Id, peer.EndPoint);
+
+			SessionsById.Add(session.Id, session);
+			SessionsByPeerId.Add(peer.Id, session);
 
 			if (PeerConnectedEvent == null) return;
 			PeerConnectedEvent(peer);
@@ -105,7 +109,12 @@ namespace MonoGameTest.Server {
 
 		void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo) {
 			Console.WriteLine("Disconnected: {0}, {1}", peer.Id, peer.EndPoint);
-			Peers.Remove(peer.Id);
+
+			Session session;
+			if (GetSessionByPeerId(peer.Id, out session)) {
+				SessionsById.Remove(session.Id);
+			}
+			SessionsByPeerId.Remove(peer.Id);
 
 			if (PeerDisconnectedEvent == null) return;
 			PeerDisconnectedEvent(peer, disconnectInfo);

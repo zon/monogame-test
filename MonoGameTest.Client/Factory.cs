@@ -1,3 +1,4 @@
+using System;
 using DefaultEcs;
 using Microsoft.Xna.Framework;
 using MonoGame.Aseprite.Documents;
@@ -13,8 +14,8 @@ namespace MonoGameTest.Client {
 			var role = Role.Get(packet.RoleId);
 			entity.Set(new Character(role));
 			entity.Set((Group) packet.Group);
-			if (packet.PeerId > 0) {
-				entity.Set(new Player(packet.PeerId));
+			if (packet.SessionId > 0) {
+				entity.Set(new Player(packet.SessionId));
 			}
 			entity.Set(new Health { Maximum = packet.HealthMaximum, Amount = packet.HealthAmount });
 			var coord = new Coord(packet.X, packet.Y);
@@ -31,7 +32,7 @@ namespace MonoGameTest.Client {
 			entity.Set(new HitAnimation(context.Resources.Hits));
 			entity.Set(Bang.Create());
 
-			if (packet.PeerId == context.PeerId) {
+			if (packet.SessionId == context.SessionId) {
 				entity.Set(new LocalPlayer());
 
 				foreach (var be in context.Buttons.GetEntities()) {

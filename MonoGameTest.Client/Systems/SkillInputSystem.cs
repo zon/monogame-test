@@ -23,14 +23,23 @@ namespace MonoGameTest.Client {
 			var skillId = localPlayer.SelectedSkill.Id;
 
 			var mouse = Context.Mouse;
-			var leftDown = mouse.WasButtonJustDown(MouseButton.Left);
-			var rightDown = mouse.WasButtonJustDown(MouseButton.Right);
-			if (!leftDown && !rightDown) return;
-
-			if (rightDown) {
+			if (mouse.WasButtonJustDown(MouseButton.Right)) {
 				localPlayer.SelectedSkill = null;
 				return;
 			}
+
+			if (!mouse.WasButtonJustDown(MouseButton.Left)) return;
+			
+			var tap = Context.ScreenToNode(mouse);
+			if (tap == null) return;
+
+			Entity target;
+			if (!Context.GetEntityByPosition(tap, out target)) return;
+
+			var targetCharacterId = target.Get<CharacterId>().Id;
+			Context.Client.Send(new SkillTargetMobileCommand { SkillId = skillId, TargetCharacterId = targetCharacterId });
+			Context.Resources.MoveConfirmSound.Play();
+			localPlayer.SelectedSkill = null;
 		}
 
 	}

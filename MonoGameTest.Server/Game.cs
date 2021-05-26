@@ -92,13 +92,16 @@ namespace MonoGameTest.Server {
 		}
 
 		void OnPeerConnected(NetPeer peer) {
-			Server.Send(peer, new SessionPacket { TileMapName = TileMapName, PeerId = peer.Id });
+			Session session;
+			if (!Server.GetSessionByPeerId(peer.Id, out session)) return;
+
+			Server.Send(peer, new SessionPacket { TileMapName = TileMapName, Id = session.Id });
 
 			foreach (var entity in Characters.GetEntities()) {
 				Server.Send(peer, new AddCharacterPacket(entity));
 			}
 
-			Factory.SpawnPlayer(Context, peer.Id);
+			Factory.SpawnPlayer(Context, session);
 		}
 
 		void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo) {

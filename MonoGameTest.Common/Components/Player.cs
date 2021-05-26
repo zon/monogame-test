@@ -3,19 +3,19 @@ using System;
 namespace MonoGameTest.Common {
 
 	public struct Player : IEquatable<Player> {
-		public readonly int PeerId;
+		public readonly int SessionId;
 
-		public Player(int peerId) {
-			PeerId = peerId;
+		public Player(int sessionId) {
+			SessionId = sessionId;
 		}
 
-		public override int GetHashCode() => PeerId;
+		public override int GetHashCode() => SessionId;
 
 		public override bool Equals(object obj) => obj is Player other && Equals(other);
 
-		public bool Equals(Player other) => PeerId == other.PeerId;
+		public bool Equals(Player other) => SessionId == other.SessionId;
 
-		public override string ToString() => $"Player: {PeerId}";
+		public override string ToString() => $"Player: {SessionId}";
 
 		public static bool operator ==(Player left, Player right) => left.Equals(right);
 

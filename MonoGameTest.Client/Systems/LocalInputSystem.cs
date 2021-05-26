@@ -24,14 +24,14 @@ namespace MonoGameTest.Client {
 			var rightDown = mouse.WasButtonJustDown(MouseButton.Right);
 			if (!leftDown && !rightDown) return;
 
-			var goal = Context.ScreenToNode(mouse.X, mouse.Y);
+			var goal = Context.ScreenToNode(mouse);
 			if (goal == null) return;
 
 			if (rightDown) {
 				Entity other;
 				if (Context.GetEntityByPosition(goal, out other)) {
 					var character = other.Get<CharacterId>();
-					Context.Client.Send(new TargetCommand { CharacterId = character.Id });
+					Context.Client.Send(new PrimaryAttackCommand { TargetCharacterId = character.Id });
 					Context.Resources.MoveConfirmSound.Play();
 					return;
 				}

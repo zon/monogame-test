@@ -16,7 +16,8 @@ namespace MonoGameTest.Server {
 			Context = context;
 			Players = Context.World.GetEntities().AsMap<Player>();
 			Server.Processor.SubscribeReusable<MoveCommand, NetPeer>(OnMoveCommand);
-			Server.Processor.SubscribeReusable<TargetCommand, NetPeer>(OnTargetCommand);
+			Server.Processor.SubscribeReusable<PrimaryAttackCommand, NetPeer>(OnPrimaryAttackCommand);
+			Server.Processor.SubscribeReusable<SkillTargetMobileCommand, NetPeer>(OnSkillTargetMobileCommand);
 		}
 
 		public void Dispose() {
@@ -45,20 +46,40 @@ namespace MonoGameTest.Server {
 			entity.NotifyChanged<Character>();
 		}
 
-		void OnTargetCommand(TargetCommand command, NetPeer peer) {
+		void OnPrimaryAttackCommand(PrimaryAttackCommand command, NetPeer peer) {
 			Entity entity;
 			if (!GetPlayerEntity(peer, out entity)) return;
 
 			Entity other;
-			if (!Context.Characters.TryGetEntity(new CharacterId(command.CharacterId), out other)) return;
+			if (!Context.Characters.TryGetEntity(new CharacterId(command.TargetCharacterId), out other)) return;
 			
 			ref var character = ref entity.Get<Character>();
 			character.EnqueueNext(Command.Targeting(other, character.Role.PrimarySkill));
 			entity.NotifyChanged<Character>();
 		}
 
+		void OnSkillTargetMobileCommand(SkillTargetMobileCommand command, NetPeer peer) {
+			Entity entity;
+			if (!GetPlayerEntity(peer, out entity)) return;
+			ref var character = ref entity.Get<Character>();
+
+			var skill = character.Role.GetSkill(command.SkillId);
+			if (skill == null) return;
+
+			Entity other;
+			if (!Context.Characters.TryGetEntity(new CharacterId(command.TargetCharacterId), out other)) return;
+			
+			character.EnqueueNext(Command.Targeting(other, skill));
+			entity.NotifyChanged<Character>();
+		}
+
 		bool GetPlayerEntity(NetPeer peer, out Entity entity) {
-			return Players.TryGetEntity(new Player(peer.Id), out entity);
+			Session session;
+			if (!Server.GetSessionByPeerId(peer.Id, out session)) {
+				entity = default;
+				return false;
+			}
+			return Players.TryGetEntity(new Player(session.Id), out entity);
 		}
 
 	}

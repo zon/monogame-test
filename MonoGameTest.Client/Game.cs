@@ -149,6 +149,7 @@ namespace MonoGameTest.Client {
 		}
 
 		void OnSession(SessionPacket session) {
+			Console.WriteLine("Session: {0}", session.Id);
 			Context.Load(Content, session);
 		}
 

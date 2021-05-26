@@ -6,7 +6,7 @@ namespace MonoGameTest.Server {
 
 	public static class Factory {
 
-		public static Entity SpawnPlayer(Context context, int peerId) {
+		public static Entity SpawnPlayer(Context context, Session session) {
 			var spawn = context.Grid.Spawns.First(s => s.Group == Group.Player);
 			var node = context.Grid.GetOpenNearby(context.Positions, spawn.Coord);
 			var c = context.World.CreateEntity();
@@ -15,7 +15,7 @@ namespace MonoGameTest.Server {
 			c.Set(new Health(100));
 			c.Set(new Character(Role.Get(1)));
 			c.Set(CharacterId.Create());
-			c.Set(new Player(peerId));
+			c.Set(new Player(session.Id));
 			c.Set(new Position { Coord = node.Coord });
 			return c;
 		}
@@ -27,7 +27,7 @@ namespace MonoGameTest.Server {
 			c.Set(new Health(100));
 			c.Set(new Character(Role.Get(2)));
 			c.Set(CharacterId.Create());
-			c.Set(new Mob());
+			// c.Set(new Mob());
 			c.Set(new Position { Coord = coord });
 			return c;
 		}

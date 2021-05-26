@@ -20,7 +20,7 @@ namespace MonoGameTest.Client {
 		public EntitySet Buttons { get; private set; }
 		public Entity? LocalPlayer { get; private set; }
 		public readonly EntityCommandRecorder Recorder;
-		public int PeerId { get; private set; }
+		public int SessionId { get; private set; }
 		public TiledMap TiledMap { get; private set; }
 		public Vector2 TileSize { get; private set; }
 		public Vector2 HalfTileSize { get; private set; }
@@ -62,7 +62,7 @@ namespace MonoGameTest.Client {
 			ContentManager content,
 			SessionPacket session
 		) {
-			PeerId = session.PeerId;
+			SessionId = session.Id;
 			Load(content, session.TileMapName);
 		}
 
@@ -131,6 +131,10 @@ namespace MonoGameTest.Client {
 			return Grid.Get(ScreenToCoord(x, y));
 		}
 
+		public Node ScreenToNode(MouseStateExtended mouse) {
+			return ScreenToNode(mouse.X, mouse.Y);
+		}
+
 		public bool GetEntityByCharacterId(int characterId, out Entity entity) {
 			var character = new CharacterId(characterId);
 			return Characters.TryGetEntity(character, out entity);
@@ -153,7 +157,7 @@ namespace MonoGameTest.Client {
 		}
 
 		public void Unload() {
-			PeerId = 0;
+			SessionId = 0;
 			TiledMap = null;
 			Grid = null;
 			IsReady = false;
