@@ -75,7 +75,7 @@ namespace MonoGameTest.Server {
 			}
 
 			// advance state
-			character.NextState(skill);
+			character.NextState(entity, skill);
 
 			// perform generic skill behavior
 			if (command.HasSkill && character.State == CharacterState.Active) {
@@ -99,10 +99,8 @@ namespace MonoGameTest.Server {
 				}
 				
 				// immediately advance state
-				character.NextState(skill);
+				character.NextState(entity, skill);
 			}
-
-			entity.NotifyChanged<Character>();
 		}
 
 	}

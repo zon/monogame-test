@@ -45,7 +45,7 @@ namespace MonoGameTest.Server {
 			// cancel move commands if path is empty
 			if (path.IsEmpty) {
 				if (command.IsMove) {
-					character.CancelCommand();
+					character.CancelCommand(entity);
 				}
 				return;
 			}
@@ -59,14 +59,13 @@ namespace MonoGameTest.Server {
  
 			// move
 			position.Coord = node.Coord;
-			character.BeginCooldown(Movement.ACTION_DURATION + character.Role.MoveCooldown);
+			entity.NotifyChanged<Position>();
+			character.RepeatCommand(Movement.ACTION_DURATION + character.Role.MoveCooldown);
 
 			// clear at goal
 			if (command.IsMove && node == goal) {
-				character.CancelCommand();
+				character.CancelCommand(entity);
 			}
-
-			entity.NotifyChanged<Position>();
 		}
 
 	}

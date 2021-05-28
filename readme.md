@@ -12,8 +12,10 @@
 * Stuns
 * Corpses
 
+## QoL
+
+* Resume primary attack after skill
+
 ## Bugs
 
-* Non-repeating skills don't move into range
-* Target should clear (advance?) when cooldown starts
 * Characters don't face target during attacks

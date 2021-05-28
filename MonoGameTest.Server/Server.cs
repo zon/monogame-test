@@ -108,13 +108,13 @@ namespace MonoGameTest.Server {
 		}
 
 		void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo) {
-			Console.WriteLine("Disconnected: {0}, {1}", peer.Id, peer.EndPoint);
-
 			Session session;
 			if (GetSessionByPeerId(peer.Id, out session)) {
 				SessionsById.Remove(session.Id);
 			}
 			SessionsByPeerId.Remove(peer.Id);
+
+			Console.WriteLine("Disconnected: {0}, {1}", session.Id, peer.EndPoint);
 
 			if (PeerDisconnectedEvent == null) return;
 			PeerDisconnectedEvent(peer, disconnectInfo);

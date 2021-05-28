@@ -14,6 +14,7 @@ namespace MonoGameTest.Common {
 		public bool IsMove => Skill == null;
 		public bool IsPause => Skill == null && Target == null;
 		public bool IsRepeating => IsMove || Skill?.Repeating == true;
+		public bool IsValid => Target?.IsValid ?? true;
 
 		public Command(Target? target = null, Skill skill = null) {
 			Id = ++AutoId;

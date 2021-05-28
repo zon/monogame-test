@@ -42,8 +42,7 @@ namespace MonoGameTest.Server {
 			if (goal == null) return;
 
 			ref var character = ref entity.Get<Character>();
-			character.EnqueueNext(Command.Targeting(goal.Coord));
-			entity.NotifyChanged<Character>();
+			character.EnqueueNext(entity, Command.Targeting(goal.Coord));
 		}
 
 		void OnPrimaryAttackCommand(PrimaryAttackCommand command, NetPeer peer) {
@@ -54,8 +53,7 @@ namespace MonoGameTest.Server {
 			if (!Context.Characters.TryGetEntity(new CharacterId(command.TargetCharacterId), out other)) return;
 			
 			ref var character = ref entity.Get<Character>();
-			character.EnqueueNext(Command.Targeting(other, character.Role.PrimarySkill));
-			entity.NotifyChanged<Character>();
+			character.EnqueueNext(entity, Command.Targeting(other, character.Role.PrimarySkill));
 		}
 
 		void OnSkillTargetMobileCommand(SkillTargetMobileCommand command, NetPeer peer) {
@@ -69,8 +67,7 @@ namespace MonoGameTest.Server {
 			Entity other;
 			if (!Context.Characters.TryGetEntity(new CharacterId(command.TargetCharacterId), out other)) return;
 			
-			character.EnqueueNext(Command.Targeting(other, skill));
-			entity.NotifyChanged<Character>();
+			character.EnqueueNext(entity, Command.Targeting(other, skill));
 		}
 
 		bool GetPlayerEntity(NetPeer peer, out Entity entity) {

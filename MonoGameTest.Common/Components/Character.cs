@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using DefaultEcs;
 
@@ -8,30 +9,33 @@ namespace MonoGameTest.Common {
 		public CharacterState State;
 		public ImmutableQueue<Command> Commands;
 		public float Timeout;
-		public bool IsCanceled;
+		public bool StopRepeating;
 
 		public bool IsIdle => State == CharacterState.Standby && Commands.IsEmpty;
 		public bool HasCommand => !Commands.IsEmpty;
+		public bool IsActive => State != CharacterState.Standby && State != CharacterState.Cooldown;
 
 		public Character(Role role) {
 			Role = role;
 			State = CharacterState.Standby;
 			Commands = ImmutableQueue.Create<Command>();
 			Timeout = 0;
-			IsCanceled = false;
+			StopRepeating = false;
 		}
 
 		public Command? GetCurrentCommand() {
 			return Commands.IsEmpty ? null : Commands.Peek();
 		}
 
-		public void EnqueueNext(Command command) {
-			if (Commands.IsEmpty || State == CharacterState.Standby) {
+		public void EnqueueNext(Entity entity, Command command) {
+			if (Commands.IsEmpty || !IsActive) {
 				Commands = ImmutableQueue.Create(command);
-				IsCanceled = false;
+				StopRepeating = false;
+				entity.NotifyChanged<Character>();
+
 			} else {
 				Commands = ImmutableQueue.Create(Commands.Peek(), command);
-				IsCanceled = true;
+				StopRepeating = true;
 			}
 		}
 
@@ -39,7 +43,7 @@ namespace MonoGameTest.Common {
 			Commands = Commands.Enqueue(command);
 		}
 
-		public void NextState(Skill skill) {
+		public void NextState(Entity entity, Skill skill) {
 			switch (State) {
 
 				case CharacterState.Standby:
@@ -60,43 +64,52 @@ namespace MonoGameTest.Common {
 						State = CharacterState.Follow;
 						Timeout = skill.Follow;
 					} else if (skill.Cooldown > 0) {
-						BeginCooldown(skill.Cooldown);
+						CompleteCommand(entity, skill.Cooldown);
 					} else {
-						NextCommand();
+						State = CharacterState.Standby;
 					}
 					break;
 
 				case CharacterState.Follow:
 					if (skill.Cooldown > 0) {
-						BeginCooldown(skill.Cooldown);
+						CompleteCommand(entity, skill.Cooldown);
 					} else {
-						NextCommand();
+						State = CharacterState.Standby;
 					}
 					break;
 
 				case CharacterState.Cooldown:
-					NextCommand();
+					State = CharacterState.Standby;
 					break;
 			}
 		}
 
-		public void BeginCooldown(float time) {
+		public void CompleteCommand(Entity entity, float cooldown) {
 			State = CharacterState.Cooldown;
-			Timeout = time;
+			Timeout = cooldown;
+
+			var command = Commands.Peek();
+			if (!StopRepeating && command.IsRepeating && command.IsValid) return;
+
+			NextCommand(entity);
 		}
 
-		public void NextCommand() {
-			State = CharacterState.Standby;
-			var current = GetCurrentCommand();
-			if (current == null) return;
-			var command = current.Value;
-			if (!IsCanceled && command.IsRepeating && command.Target?.IsValid == true) return;
+		public void RepeatCommand(float cooldown) {
+			State = CharacterState.Cooldown;
+			Timeout = cooldown;
+		}
+
+		public void CancelCommand(Entity entity) {
+			if (State != CharacterState.Cooldown) {
+				State = CharacterState.Standby;
+			}
+			NextCommand(entity);
+		}
+
+		void NextCommand(Entity entity) {
 			Commands = Commands.Dequeue();
-			IsCanceled = false;
-		}
-
-		public void CancelCommand() {
-			IsCanceled = true;
+			StopRepeating = false;
+			entity.NotifyChanged<Character>();
 		}
 
 	}
