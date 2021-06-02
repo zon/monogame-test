@@ -43,15 +43,15 @@ namespace MonoGameTest.Client {
 				var iconsResource = context.Resources.SkillIcons;
 				foreach (var skill in role.Skills) {
 					var be = context.World.CreateEntity();
-					var iconFrame = 0;
+					var rect = iconsResource.Frames[0].ToRectangle();
 					AsepriteTag tag;
 					if (iconsResource.Tags.TryGetValue(skill.Icon, out tag)) {
-						iconFrame = tag.From;
+						rect = iconsResource.Frames[tag.From].ToRectangle();
 					}
 					be.Set(new Button {
 						Index = i++,
 						Skill = skill,
-						IconFrame = iconFrame
+						IconRect = rect
 					});
 				}
 			}

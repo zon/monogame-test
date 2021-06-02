@@ -23,6 +23,7 @@ namespace MonoGameTest.Client {
 			processor.SubscribeReusable<TargetFixedPacket>(OnFixedTarget);
 			processor.SubscribeReusable<TargetEmptyPacket>(OnEmptyTarget);
 			processor.SubscribeReusable<ProjectilePacket>(OnProjectile);
+			processor.SubscribeReusable<CooldownPacket>(OnCooldown);
 		}
 
 		public void Dispose() {}
@@ -122,6 +123,17 @@ namespace MonoGameTest.Client {
 
 			var origin = new Coord(packet.OriginX, packet.OriginY);
 			Factory.CreateProjectile(Context, origin, target, skill);
+		}
+
+		void OnCooldown(CooldownPacket cooldown) {
+			if (!Context.LocalPlayer.HasValue) return;
+			var entity = Context.LocalPlayer.Value;
+
+			var skill = Skill.Get(cooldown.SkillId);
+			if (skill == null) return;
+
+			ref var character = ref entity.Get<Character>();
+			character.StartCooldown(entity, skill);
 		}
 
 		bool GetEntity(int characterId, out Entity entity) {

@@ -10,6 +10,7 @@ namespace MonoGameTest.Common {
 		public readonly int Damage;
 		public readonly float Lead;
 		public readonly float Follow;
+		public readonly float Timeout;
 		public readonly float Cooldown;
 		public readonly string Icon;
 		public readonly string Animation;
@@ -48,7 +49,8 @@ namespace MonoGameTest.Common {
 				lead: Time.Frames(3),
 				follow: Time.Frames(3),
 				icon: "poison",
-				animation: "sword-right"
+				animation: "sword-right",
+				cooldown: 10
 			),
 			new Skill(
 				damage: 10,
@@ -58,7 +60,8 @@ namespace MonoGameTest.Common {
 				animation: "bow",
 				range: 4,
 				projectile: "arrow",
-				projectileSpeed: 12
+				projectileSpeed: 12,
+				cooldown: 15
 			)
 		);
 
@@ -78,7 +81,8 @@ namespace MonoGameTest.Common {
 			int range = 1,
 			string projectile = "",
 			float projectileSpeed = 0,
-			float cooldown = 1,
+			float timeout = 1,
+			float cooldown = 0,
 			bool repeating = false
 		) {
 			Id = ++AutoId;
@@ -91,6 +95,7 @@ namespace MonoGameTest.Common {
 			Range = range;
 			Projectile = projectile;
 			ProjectleSpeed = projectileSpeed;
+			Timeout = timeout;
 			Cooldown = cooldown;
 			Repeating = repeating;
 		}

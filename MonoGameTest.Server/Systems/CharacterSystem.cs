@@ -20,12 +20,14 @@ namespace MonoGameTest.Server {
 
 		protected override void Update(float dt, in Entity entity) {
 			ref var character = ref entity.Get<Character>();
-			if (!character.HasCommand) return;
+			character.Update(dt);
+			if (character.IsIdle) return;
 
 			character.Timeout = Math.Max(character.Timeout - dt, 0);
 			if (character.Timeout > 0) return;
 
 			// let movement system handle move commands
+			if (!character.HasCommand) return;
 			var command = character.GetCurrentCommand().Value;
 			if (command.IsMove && character.State == CharacterState.Standby) return;
 			var skill = command.Skill;

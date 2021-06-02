@@ -18,6 +18,7 @@ namespace MonoGameTest.Server {
 		HealthListener HealthListener;
 		CharacterListener CharacterListener;
 		ProjectileListener ProjectileListener;
+		CooldownListener CooldownListener;
 		EntitySet Characters;
 		EntityMap<Player> Players;
 		ISystem<float> Systems;
@@ -44,6 +45,7 @@ namespace MonoGameTest.Server {
 			HealthListener = new HealthListener(Context);
 			CharacterListener = new CharacterListener(Context);
 			ProjectileListener = new ProjectileListener(Context);
+			CooldownListener = new CooldownListener(Context);
 
 			Factory.SpawnMobs(Context.Grid, World);
 
@@ -86,6 +88,8 @@ namespace MonoGameTest.Server {
 			PacketListener.Dispose();
 			PositionListener.Dispose();
 			CharacterListener.Dispose();
+			ProjectileListener.Dispose();
+			CooldownListener.Dispose();
 			Players.Dispose(); 
 			Systems.Dispose();
 			World.Dispose();

@@ -67,6 +67,7 @@ namespace MonoGameTest.Client {
 			ButtonListener = new ButtonListener(Context);
 
 			Behavior = new SequentialSystem<float>(
+				new CharacterSystem(Context),
 				new LocalInputSystem(Context),
 				new SkillInputSystem(Context)
 			);

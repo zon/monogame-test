@@ -11,6 +11,7 @@ namespace MonoGameTest.Client {
 		public readonly Rectangle Pressed;
 		public readonly Rectangle Down;
 		public readonly Rectangle Selected;
+		public readonly Rectangle Cooldown;
 
 		public Point Size => Idle.Size;
 
@@ -21,6 +22,7 @@ namespace MonoGameTest.Client {
 			Pressed = Document.Frames[2].ToRectangle();
 			Down = Document.Frames[3].ToRectangle();
 			Selected = Document.Frames[4].ToRectangle();
+			Cooldown = Document.Frames[5].ToRectangle();
 		}
 
 	}
