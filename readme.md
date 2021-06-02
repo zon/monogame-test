@@ -18,5 +18,4 @@
 
 ## Bugs
 
-* Characters don't leave timeout without a pending command
 * Characters don't face target during attacks
