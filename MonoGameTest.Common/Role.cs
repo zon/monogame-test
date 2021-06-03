@@ -15,7 +15,8 @@ namespace MonoGameTest.Common {
 				1,
 				Skill.Get(1),
 				Skill.Get(3),
-				Skill.Get(4)
+				Skill.Get(4),
+				Skill.Get(5)
 			),
 			new Role(
 				1,

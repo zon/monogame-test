@@ -8,19 +8,24 @@ namespace MonoGameTest.Common {
 		public readonly Targeting Targeting;
 		public readonly int Range;
 		public readonly int Damage;
+		public readonly float Area;
+		public readonly float Charge;
 		public readonly float Lead;
 		public readonly float Follow;
 		public readonly float Timeout;
 		public readonly float Cooldown;
 		public readonly string Icon;
-		public readonly string Animation;
-		public readonly string Projectile;
+		public readonly SpriteLocation? ChargeSprite;
+		public readonly SpriteLocation CastSprite;
+		public readonly SpriteLocation? ProjectileSprite;
+		public readonly SpriteLocation? ImpactSprite;
 		public readonly float ProjectleSpeed;
 		public readonly bool Repeating;
 
 		public bool IsMelee => Range <= 1;
 		public bool IsRanged => Range > 0;
 		public float Duration => Lead + Follow;
+		public bool HasAreaEffect => Area > 0;
 
 		static int AutoId = 0;
 
@@ -30,7 +35,7 @@ namespace MonoGameTest.Common {
 				lead: Time.Frames(3),
 				follow: Time.Frames(3),
 				icon: "sword",
-				animation: "sword-right",
+				castSprite: new SpriteLocation("sword-right"),
 				repeating: true
 			),
 			new Skill(
@@ -38,9 +43,9 @@ namespace MonoGameTest.Common {
 				lead: Time.Frames(6),
 				follow: Time.Frames(3),
 				icon: "bow",
-				animation: "bow",
+				castSprite: new SpriteLocation("bow"),
 				range: 3,
-				projectile: "arrow",
+				projectileSprite: new SpriteLocation("arrow"),
 				projectileSpeed: 12,
 				repeating: true
 			),
@@ -49,7 +54,7 @@ namespace MonoGameTest.Common {
 				lead: Time.Frames(3),
 				follow: Time.Frames(3),
 				icon: "poison",
-				animation: "sword-right",
+				castSprite: new SpriteLocation("sword-right"),
 				cooldown: 10
 			),
 			new Skill(
@@ -57,11 +62,26 @@ namespace MonoGameTest.Common {
 				lead: Time.Frames(6),
 				follow: Time.Frames(3),
 				icon: "bow",
-				animation: "bow",
+				castSprite: new SpriteLocation("bow"),
 				range: 4,
-				projectile: "arrow",
+				projectileSprite: new SpriteLocation("arrow"),
 				projectileSpeed: 12,
 				cooldown: 15
+			),
+			new Skill(
+				icon: "fireball",
+				range: 4,
+				damage: 15,
+				area: 1.5f,
+				charge: 1,
+				lead: Time.Frames(6),
+				follow: Time.Frames(5),
+				chargeSprite: new SpriteLocation("fire-charge"),
+				castSprite: new SpriteLocation("fire-cast"),
+				projectileSprite: new SpriteLocation("fireball"),
+				impactSprite: new SpriteLocation("fireball-impact", SpriteFile.EffectsLarge),
+				projectileSpeed: 10,
+				cooldown: 20
 			)
 		);
 
@@ -76,11 +96,15 @@ namespace MonoGameTest.Common {
 			float lead,
 			float follow,
 			string icon,
-			string animation,
+			SpriteLocation castSprite,
+			SpriteLocation? chargeSprite = null,
+			SpriteLocation? projectileSprite = null,
+			SpriteLocation? impactSprite = null,
 			Targeting targeting = Targeting.Character,
 			int range = 1,
-			string projectile = "",
 			float projectileSpeed = 0,
+			float area = 0,
+			float charge = 0,
 			float timeout = 1,
 			float cooldown = 0,
 			bool repeating = false
@@ -90,11 +114,15 @@ namespace MonoGameTest.Common {
 			Lead = lead;
 			Follow = follow;
 			Icon = icon;
-			Animation = animation;
+			CastSprite = castSprite;
+			ChargeSprite = chargeSprite;
+			ProjectileSprite = projectileSprite;
+			ImpactSprite = impactSprite;
 			Targeting = targeting;
 			Range = range;
-			Projectile = projectile;
 			ProjectleSpeed = projectileSpeed;
+			Area = area;
+			Charge = charge;
 			Timeout = timeout;
 			Cooldown = cooldown;
 			Repeating = repeating;

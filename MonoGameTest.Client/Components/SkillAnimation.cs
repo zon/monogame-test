@@ -8,7 +8,8 @@ using MonoGameTest.Common;
 namespace MonoGameTest.Client {
 
 	public struct SkillAnimation {
-		public AnimatedSprite Sprite;
+		public AnimatedSprite Effects;
+		public AnimatedSprite EffectsLarge;
 		public Skill Skill;
 		public Vector2 Forward;
 		public float Rotation;
@@ -17,15 +18,20 @@ namespace MonoGameTest.Client {
 		public Coord TargetCoord;
 		public float Timeout;
 
-		public bool IsActive => Sprite.Animating;
+		public bool IsActive => Effects.Animating;
 		public bool IsLeading => Timeout > Skill.Follow;
 		public float LeadProgress => (Skill.Lead - Timeout - Skill.Follow) / Skill.Lead;
 		public float FollowProgress => (Skill.Follow - Timeout) / Skill.Follow;
 
-		public SkillAnimation(AsepriteDocument document) {
-			Sprite = new AnimatedSprite(document);
-			Sprite.Origin = new Vector2(Sprite.Width, Sprite.Height) / 2;
-			Sprite.Stop();
+		public SkillAnimation(Context context) {
+			Effects = context.Resources.GetAnimatedSprite(SpriteFile.Effects);
+			Effects.Origin = new Vector2(Effects.Width, Effects.Height) / 2;
+			Effects.Stop();
+
+			EffectsLarge = context.Resources.GetAnimatedSprite(SpriteFile.EffectsLarge);
+			EffectsLarge.Origin = new Vector2(EffectsLarge.Width, EffectsLarge.Height) / 2;
+			EffectsLarge.Stop();
+
 			Skill = default;
 			Forward = default;
 			Rotation = default;
@@ -33,7 +39,9 @@ namespace MonoGameTest.Client {
 			Target = default;
 			TargetCoord = default;
 			Timeout = default;
-			Sprite.OnAnimationLoop = OnEnd;
+			
+			Effects.OnAnimationLoop = OnEnd;
+			EffectsLarge.OnAnimationLoop = OnEnd;
 		}
 		
 		public void Start(
@@ -48,7 +56,7 @@ namespace MonoGameTest.Client {
 			Rotation = View.ToRadians(Forward);
 			Origin = origin;
 			TargetCoord = target;
-			Sprite.Play(skill.Animation);
+			GetSprite().Play(skill.CastSprite.Tag);
 			Timeout = skill.Duration;
 		}
 		
@@ -71,11 +79,21 @@ namespace MonoGameTest.Client {
 				TargetCoord = targetPosition.Coord;
 			}
 			
-			Sprite.Update(dt);
+			GetSprite().Update(dt);
 		}
 
 		void OnEnd() {
-			Sprite.Stop();
+			Effects.Stop();
+			EffectsLarge.Stop();
+		}
+
+		AnimatedSprite GetSprite() {
+			switch (Skill.CastSprite.File) {
+				case SpriteFile.EffectsLarge:
+					return EffectsLarge;
+				default:
+					return Effects;
+			}
 		}
 
 	}

@@ -28,7 +28,7 @@ namespace MonoGameTest.Client {
 			sprite.Depth = Depths.Character;
 			entity.Set(sprite);
 			entity.Set(new MovementAnimation());
-			entity.Set(new SkillAnimation(context.Resources.Skills));
+			entity.Set(new SkillAnimation(context));
 			entity.Set(new HitAnimation(context.Resources.Hits));
 			entity.Set(Bang.Create());
 

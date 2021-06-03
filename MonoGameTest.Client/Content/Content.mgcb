@@ -100,6 +100,18 @@
 /processorParam:TextureFormat=Compressed
 /build:default.spritefont
 
+#begin effects-3x3.aseprite
+/importer:AsepriteDocumentImporter
+/processor:AsepriteDocumentProcessor
+/processorParam:SheetType=Packed
+/processorParam:MergeDuplicateFrames=True
+/processorParam:IgnoreEmptyFrames=True
+/processorParam:OnlyVisibleLayers=True
+/processorParam:BorderPadding=0
+/processorParam:Spacing=0
+/processorParam:InnerPadding=0
+/build:effects-3x3.aseprite
+
 #begin entities.aseprite
 /importer:AsepriteDocumentImporter
 /processor:AsepriteDocumentProcessor

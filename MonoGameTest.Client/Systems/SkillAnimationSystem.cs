@@ -39,19 +39,19 @@ namespace MonoGameTest.Client {
 					offset = Vector2.Lerp(b, a, animation.FollowProgress);
 				}
 				characterSprite.Position += offset;
-				animation.Sprite.Position = characterSprite.Position + Context.HalfTileSize + animation.Forward * Context.HalfTileSize.X;
+				animation.Effects.Position = characterSprite.Position + Context.HalfTileSize + animation.Forward * Context.HalfTileSize.X;
 
 			} else {
-				animation.Sprite.Position = characterSprite.Position + Context.HalfTileSize;
+				animation.Effects.Position = characterSprite.Position + Context.HalfTileSize;
 			}
 
-			animation.Sprite.Rotation = animation.Rotation;
+			animation.Effects.Rotation = animation.Rotation;
 			var depth = Depths.Skill;
 			if (animation.Rotation < 0) {
 				depth = -Depths.Skill;
 			}
-			animation.Sprite.LayerDepth = Camera.Depth(characterSprite.Position, depth);
-			animation.Sprite.Render(Batch);
+			animation.Effects.LayerDepth = Camera.Depth(characterSprite.Position, depth);
+			animation.Effects.Render(Batch);
 		}
 
 	}
