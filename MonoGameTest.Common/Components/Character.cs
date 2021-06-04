@@ -62,6 +62,18 @@ namespace MonoGameTest.Common {
 			switch (State) {
 
 				case CharacterState.Standby:
+					if (skill.Charge > 0) {
+						State = CharacterState.Charge;
+						Timeout = skill.Charge;
+					} else if (skill.Lead > 0) {
+						State = CharacterState.Lead;
+						Timeout = skill.Lead;
+					} else {
+						State = CharacterState.Active;
+					}
+					break;
+
+				case CharacterState.Charge:
 					if (skill.Lead > 0) {
 						State = CharacterState.Lead;
 						Timeout = skill.Lead;

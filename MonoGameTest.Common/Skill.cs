@@ -24,7 +24,7 @@ namespace MonoGameTest.Common {
 
 		public bool IsMelee => Range <= 1;
 		public bool IsRanged => Range > 0;
-		public float Duration => Lead + Follow;
+		public float Duration => Charge + Lead + Follow;
 		public bool HasAreaEffect => Area > 0;
 
 		static int AutoId = 0;
@@ -73,7 +73,7 @@ namespace MonoGameTest.Common {
 				range: 4,
 				damage: 15,
 				area: 1.5f,
-				charge: 1,
+				charge: 2,
 				lead: Time.Frames(6),
 				follow: Time.Frames(5),
 				chargeSprite: new SpriteLocation("fire-charge"),

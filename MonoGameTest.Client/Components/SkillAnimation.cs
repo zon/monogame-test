@@ -8,29 +8,25 @@ using MonoGameTest.Common;
 namespace MonoGameTest.Client {
 
 	public struct SkillAnimation {
-		public AnimatedSprite Effects;
-		public AnimatedSprite EffectsLarge;
+		public AnimatedSprite Attack;
 		public Skill Skill;
 		public Vector2 Forward;
 		public float Rotation;
 		public Entity Origin;
 		public Entity? Target;
 		public Coord TargetCoord;
+		public CharacterState State;
 		public float Timeout;
 
-		public bool IsActive => Effects.Animating;
-		public bool IsLeading => Timeout > Skill.Follow;
+		public bool IsActive => Timeout > 0;
+		public bool IsLeading => State == CharacterState.Lead;
 		public float LeadProgress => (Skill.Lead - Timeout - Skill.Follow) / Skill.Lead;
 		public float FollowProgress => (Skill.Follow - Timeout) / Skill.Follow;
 
 		public SkillAnimation(Context context) {
-			Effects = context.Resources.GetAnimatedSprite(SpriteFile.Attacks);
-			Effects.Origin = new Vector2(Effects.Width, Effects.Height) / 2;
-			Effects.Stop();
-
-			EffectsLarge = context.Resources.GetAnimatedSprite(SpriteFile.Effects);
-			EffectsLarge.Origin = new Vector2(EffectsLarge.Width, EffectsLarge.Height) / 2;
-			EffectsLarge.Stop();
+			Attack = context.Resources.GetAnimatedSprite(SpriteFile.Attacks);
+			Attack.Origin = new Vector2(Attack.Width, Attack.Height) / 2;
+			Attack.Stop();
 
 			Skill = default;
 			Forward = default;
@@ -38,10 +34,10 @@ namespace MonoGameTest.Client {
 			Origin = default;
 			Target = default;
 			TargetCoord = default;
+			State = CharacterState.Charge;
 			Timeout = default;
 			
-			Effects.OnAnimationLoop = OnEnd;
-			EffectsLarge.OnAnimationLoop = OnEnd;
+			Attack.OnAnimationLoop = OnEnd;
 		}
 		
 		public void Start(
@@ -50,14 +46,18 @@ namespace MonoGameTest.Client {
 			Coord target,
 			Skill skill
 		) {
-			ref var originPosition = ref origin.Get<Position>();
 			Skill = skill;
-			Forward = Vector2.Normalize((target - originPosition.Coord).ToVector());
-			Rotation = View.ToRadians(Forward);
+			Forward = new Vector2(1, 0);
+			Rotation = 0;
 			Origin = origin;
 			TargetCoord = target;
-			GetSprite().Play(skill.CastSprite.Tag);
 			Timeout = skill.Duration;
+			State = GetState();
+			if (skill.Charge > 0 && skill.ChargeSprite.HasValue) {
+				Attack.Play(skill.ChargeSprite.Value.Tag);
+			} else {
+				StartCast();
+			}
 		}
 		
 		public void Start(
@@ -78,22 +78,37 @@ namespace MonoGameTest.Client {
 				ref var targetPosition = ref Target.Value.Get<Position>();
 				TargetCoord = targetPosition.Coord;
 			}
+
+			var state = GetState();
+			if (State == CharacterState.Charge && state != State) {
+				StartCast();
+			}
+			State = state;
 			
-			GetSprite().Update(dt);
+			Attack.Update(dt);
 		}
 
 		void OnEnd() {
-			Effects.Stop();
-			EffectsLarge.Stop();
+			if (State != CharacterState.Charge) {
+				Attack.Stop();
+			}
 		}
 
-		AnimatedSprite GetSprite() {
-			switch (Skill.CastSprite.File) {
-				case SpriteFile.Effects:
-					return EffectsLarge;
-				default:
-					return Effects;
+		CharacterState GetState() {
+			if (Skill.Charge > 0 && Timeout > Skill.Lead + Skill.Follow) {
+				return CharacterState.Charge;
+			} else if (Skill.Lead > 0 && Timeout > Skill.Follow) {
+				return CharacterState.Lead;
+			} else {
+				return CharacterState.Follow;
 			}
+		}
+
+		void StartCast() {
+			ref var originPosition = ref Origin.Get<Position>();
+			Forward = Vector2.Normalize((TargetCoord - originPosition.Coord).ToVector());
+			Rotation = View.ToRadians(Forward);
+			Attack.Play(Skill.CastSprite.Tag);
 		}
 
 	}
