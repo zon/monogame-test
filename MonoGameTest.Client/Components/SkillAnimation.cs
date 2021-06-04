@@ -24,11 +24,11 @@ namespace MonoGameTest.Client {
 		public float FollowProgress => (Skill.Follow - Timeout) / Skill.Follow;
 
 		public SkillAnimation(Context context) {
-			Effects = context.Resources.GetAnimatedSprite(SpriteFile.Effects);
+			Effects = context.Resources.GetAnimatedSprite(SpriteFile.Attacks);
 			Effects.Origin = new Vector2(Effects.Width, Effects.Height) / 2;
 			Effects.Stop();
 
-			EffectsLarge = context.Resources.GetAnimatedSprite(SpriteFile.EffectsLarge);
+			EffectsLarge = context.Resources.GetAnimatedSprite(SpriteFile.Effects);
 			EffectsLarge.Origin = new Vector2(EffectsLarge.Width, EffectsLarge.Height) / 2;
 			EffectsLarge.Stop();
 
@@ -89,7 +89,7 @@ namespace MonoGameTest.Client {
 
 		AnimatedSprite GetSprite() {
 			switch (Skill.CastSprite.File) {
-				case SpriteFile.EffectsLarge:
+				case SpriteFile.Effects:
 					return EffectsLarge;
 				default:
 					return Effects;

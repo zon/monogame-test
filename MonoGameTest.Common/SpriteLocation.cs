@@ -4,7 +4,7 @@ namespace MonoGameTest.Common {
 		public readonly string Tag;
 		public readonly SpriteFile File;
 
-		public SpriteLocation(string tag, SpriteFile file = SpriteFile.Effects) {
+		public SpriteLocation(string tag, SpriteFile file = SpriteFile.Attacks) {
 			Tag = tag;
 			File = file;
 		}

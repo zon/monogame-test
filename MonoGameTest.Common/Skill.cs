@@ -79,9 +79,9 @@ namespace MonoGameTest.Common {
 				chargeSprite: new SpriteLocation("fire-charge"),
 				castSprite: new SpriteLocation("fire-cast"),
 				projectileSprite: new SpriteLocation("fireball"),
-				impactSprite: new SpriteLocation("fireball-impact", SpriteFile.EffectsLarge),
+				impactSprite: new SpriteLocation("fireball-impact", SpriteFile.Effects),
 				projectileSpeed: 10,
-				cooldown: 20
+				cooldown: 1
 			)
 		);
 

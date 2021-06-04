@@ -1,8 +1,9 @@
 namespace MonoGameTest.Common {
 
 	public enum SpriteFile {
+		Attacks,
 		Effects,
-		EffectsLarge
+		Hits
 	}
 
 }

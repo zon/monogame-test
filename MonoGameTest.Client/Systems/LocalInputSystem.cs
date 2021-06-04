@@ -37,7 +37,11 @@ namespace MonoGameTest.Client {
 				}
 
 				Context.Client.Send(new MoveCommand { X = goal.X, Y = goal.Y });
-				Effect.CreateEntity(Context, "ping-small", goal.Coord);
+				Effect.CreateEntity(
+					Context,
+					new SpriteLocation("ping-small", SpriteFile.Hits),
+					goal.Coord
+				);
 				Context.Resources.MoveConfirmSound.Play();
 				return;
 			}

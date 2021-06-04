@@ -12,20 +12,24 @@ namespace MonoGameTest.Client {
 
 		public bool IsAnimating => Sprite.Animating;
 
-		public Effect(AsepriteDocument document, string animation) {
-			Sprite = new AnimatedSprite(document);
+		public Effect(Context context, SpriteLocation location) {
+			Sprite = context.Resources.GetAnimatedSprite(location);
 			Sprite.Origin = new Vector2(Sprite.Width, Sprite.Height) / 2;
 			Sprite.OnAnimationLoop = OnEnd;
-			Sprite.Play(animation);
+			Sprite.Play(location.Tag);
 		}
 
 		void OnEnd() {
 			Sprite.Stop();
 		}
 
-		public static EntityRecord CreateEntity(Context context, string animation, Coord coord) {
+		public static EntityRecord CreateEntity(
+			Context context,
+			SpriteLocation location,
+			Coord coord
+		) {
 			var entity = context.Recorder.CreateEntity(context.World);
-			entity.Set(new Effect(context.Resources.Hits, animation));
+			entity.Set(new Effect(context, location));
 			entity.Set(new Position { Coord = coord });
 			return entity;
 		}

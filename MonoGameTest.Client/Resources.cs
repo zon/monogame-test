@@ -9,8 +9,8 @@ namespace MonoGameTest.Client {
 
 	public class Resources {
 		public readonly AsepriteDocument Characters;
+		public readonly AsepriteDocument Attacks;
 		public readonly AsepriteDocument Effects;
-		public readonly AsepriteDocument EffectsLarge;
 		public readonly AsepriteDocument Hits;
 		public readonly ButtonResource Button;
 		public readonly AsepriteDocument SkillIcons;
@@ -22,8 +22,8 @@ namespace MonoGameTest.Client {
 
 		Resources(ContentManager content) {
 			Characters = content.Load<AsepriteDocument>("entities");
-			Effects = content.Load<AsepriteDocument>("attacks");
-			EffectsLarge = content.Load<AsepriteDocument>("effects-3x3");
+			Attacks = content.Load<AsepriteDocument>("attacks");
+			Effects = content.Load<AsepriteDocument>("effects-3x3");
 			Hits = content.Load<AsepriteDocument>("hits");
 			Button = new ButtonResource(content);
 			SkillIcons = content.Load<AsepriteDocument>("skills");
@@ -36,10 +36,12 @@ namespace MonoGameTest.Client {
 
 		public AsepriteDocument GetSprite(SpriteFile? file) {
 			switch (file) {
+				case SpriteFile.Attacks:
+					return Attacks;
 				case SpriteFile.Effects:
 					return Effects;
-				case SpriteFile.EffectsLarge:
-					return EffectsLarge;
+				case SpriteFile.Hits:
+					return Hits;
 			}
 			return null;
 		}
@@ -48,6 +50,10 @@ namespace MonoGameTest.Client {
 			var doc = GetSprite(file);
 			if (doc == null) return null;
 			return new AnimatedSprite(doc);
+		}
+
+		public AnimatedSprite GetAnimatedSprite(SpriteLocation? location) {
+			return GetAnimatedSprite(location?.File);
 		}
 
 		public static Resources Load(ContentManager content) {

@@ -41,6 +41,15 @@ namespace MonoGameTest.Client {
 
 			projectile.Timeout = Math.Max(projectile.Timeout - dt, 0);
 			if (projectile.Timeout <= 0) {
+
+				if (projectile.Skill.ImpactSprite.HasValue) {
+					Effect.CreateEntity(
+						Context,
+						projectile.Skill.ImpactSprite.Value,
+						Context.VectorToCoord(b)
+					);
+				}
+
 				Context.Recorder.Record(entity).Dispose();
 			}
 		}
