@@ -19,12 +19,26 @@ namespace MonoGameTest.Server {
 		protected override void Update(float dt, in Entity entity) {
 			ref var projectile = ref entity.Get<Projectile>();
 			projectile.Timeout = MathF.Max(projectile.Timeout - dt, 0);
+
+			if (projectile.Target.IsAlive) {
+				projectile.TargetCoord = projectile.Target.Get<Position>().Coord;
+			}
 			
 			if (projectile.Timeout > 0) return;
 
-			if (projectile.Target.IsAlive) {
+			var damage = projectile.Skill.Damage;
+			if (projectile.Skill.HasAreaEffect) {
+				var area = new RadiusArea(projectile.TargetCoord, projectile.Skill.Area);
+				foreach (var coord in area) {
+					Entity other;
+					if (!Context.Positions.TryGetEntity(new Position { Coord = coord }, out other)) continue;
+					ref var health = ref other.Get<Health>();
+					health.Amount = Calc.Max(health.Amount - damage, 0);
+					other.NotifyChanged<Health>();
+				}
+
+			} else if (projectile.Target.IsAlive) {
 				ref var health = ref projectile.Target.Get<Health>();
-				var damage = projectile.Skill.Damage;
 				health.Amount = Calc.Max(health.Amount - damage, 0);
 				projectile.Target.NotifyChanged<Health>();
 			}

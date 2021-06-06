@@ -5,6 +5,7 @@ namespace MonoGameTest.Common {
 	public struct Projectile {
 		public Coord Origin;
 		public Entity Target;
+		public Coord TargetCoord;
 		public Skill Skill;
 		public float Lifetime;
 		public float Timeout;
@@ -13,6 +14,7 @@ namespace MonoGameTest.Common {
 			ref var targetPosition = ref target.Get<Position>();
 			Origin = origin;
 			Target = target;
+			TargetCoord = targetPosition.Coord;
 			Skill = skill;
 			Lifetime = Coord.Distance(origin, targetPosition.Coord) / skill.ProjectleSpeed;
 			Timeout = Lifetime;
