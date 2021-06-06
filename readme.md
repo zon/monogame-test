@@ -1,19 +1,20 @@
 ## Features
 
-* Scenarios
-* Energy
 * AoE
+* DoTs(HoTs)
+* Energy
 * Healing
 * Stats
 * Debuffs(Buffs)
 * Slows
-* DoTs(HoTs)
 * Shields
 * Stuns
 * Corpses
+* Scenarios
 
 ## QoL
 
+* Cast bars
 * Resume primary attack after skill
 
 ## Bugs

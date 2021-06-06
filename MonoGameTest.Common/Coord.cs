@@ -7,6 +7,7 @@ namespace MonoGameTest.Common {
 		public readonly int Y;
 
 		public readonly static Coord Zero = new Coord(0, 0);
+		public readonly static Coord One = new Coord(1, 1);
 		public readonly static Coord Left = new Coord(-1, 0);
 		public readonly static Coord Right = new Coord(1, 0);
 		public readonly static Coord Up = new Coord(0, -1);
@@ -31,6 +32,8 @@ namespace MonoGameTest.Common {
 
 		public static Coord operator +(Coord left, Coord right) => new Coord(left.X + right.X, left.Y + right.Y);
 		public static Coord operator -(Coord left, Coord right) => new Coord(left.X - right.X, left.Y - right.Y);
+
+		public static Coord operator *(Coord coord, int value) => new Coord(coord.X * value, coord.Y * value);
 
 		public static float ManhattanDistance(Coord a, Coord b) {
 			return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) * Movement.COST;

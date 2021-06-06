@@ -12,6 +12,10 @@ namespace MonoGameTest.Common {
 			return Convert.ToInt32(Math.Floor(v));
 		}
 
+		public static int Ceiling(float v) {
+			return Convert.ToInt32(Math.Ceiling(v));
+		}
+
 		public static float Progress(float progress, float duration, float dt) {
 			return Math.Clamp(progress + dt / duration, 0, 1);
 		}

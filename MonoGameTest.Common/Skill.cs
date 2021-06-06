@@ -72,7 +72,7 @@ namespace MonoGameTest.Common {
 				icon: "fireball",
 				range: 4,
 				damage: 15,
-				area: 1.5f,
+				area: 1,
 				charge: 2,
 				lead: Time.Frames(6),
 				follow: Time.Frames(5),

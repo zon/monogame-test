@@ -38,7 +38,7 @@ namespace MonoGameTest.Client {
 			var mouseCoord = Context.ScreenToCoord(new Vector2(Context.Mouse.X, Context.Mouse.Y) / View.SCALE);
 			ref var position = ref entity.Get<Position>();
 			var pathfinder = Context.CreatePathfinder();
-			Rectangle drawRect;
+			Rectangle sourceRect;
 			foreach (var node in Context.Grid.Nodes) {
 				if (
 					node.Solid ||
@@ -48,15 +48,15 @@ namespace MonoGameTest.Client {
 				) continue;
 				
 				if (pathfinder.HasSight(position, node.Position)) {
-					drawRect = HasSight;
+					sourceRect = HasSight;
 				} else {
-					drawRect = InRange;
+					sourceRect = InRange;
 				}
 
 				Batch.Draw(
 					texture: Context.Resources.Highlight.Texture,
 					position: Context.CoordToVector(node.Coord),
-					sourceRectangle: drawRect,
+					sourceRectangle: sourceRect,
 					color: Color.White,
 					rotation: 0,
 					origin: Vector2.Zero,
@@ -67,15 +67,35 @@ namespace MonoGameTest.Client {
 			}
 
 			if (skill.IsValidTarget(pathfinder, position.Coord, mouseCoord)) {
-				drawRect = Valid;
+				sourceRect = Valid;
 			} else {
-				drawRect = Invalid;
+				sourceRect = Invalid;
+			}
+
+			if (skill.HasAreaEffect) {
+				var area = new RadiusArea(mouseCoord, skill.Area);
+				foreach (var coord in area) {
+					var node = Context.Grid.Get(coord);
+					if (node == null || node.Solid) continue;
+					Batch.Draw(
+						texture: Context.Resources.Highlight.Texture,
+						position: Context.CoordToVector(coord),
+						sourceRectangle: sourceRect,
+						color: Color.White,
+						rotation: 0,
+						origin: Vector2.Zero,
+						scale: Vector2.One,
+						effects: SpriteEffects.None,
+						layerDepth: 0.1f
+					);
+				}
+				return;
 			}
 
 			Batch.Draw(
 				texture: Context.Resources.Highlight.Texture,
 				position: Context.CoordToVector(mouseCoord),
-				sourceRectangle: drawRect,
+				sourceRectangle: sourceRect,
 				color: Color.White,
 				rotation: 0,
 				origin: Vector2.Zero,

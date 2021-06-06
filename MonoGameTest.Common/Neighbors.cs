@@ -39,7 +39,7 @@ namespace MonoGameTest.Common {
 			Current = default;
 		}
 		
-		public Neighbors GetEnumerator() => new Neighbors(X, Y, Grid, Positions, Check);
+		public Neighbors GetEnumerator() => this;
 
 		public bool MoveNext() {
 			while (Step < 8) {
