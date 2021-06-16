@@ -7,27 +7,20 @@ namespace MonoGameTest.Server {
 	public static class Factory {
 
 		public static Entity SpawnPlayer(Context context, Session session) {
+			var role = Role.Get(1);
 			var spawn = context.Grid.Spawns.First(s => s.Group == Group.Player);
 			var node = context.Grid.GetOpenNearby(context.Positions, spawn.Coord);
-			var c = context.World.CreateEntity();
-			c.Set(Group.Player);
-			c.Set(new Attributes(5));
-			c.Set(new Health(100));
-			c.Set(new Character(Role.Get(1)));
-			c.Set(CharacterId.Create());
+			var sprite = 5;
+			var c = SpawnCharacter(context.World, role, Group.Player, sprite);
 			c.Set(new Player(session.Id));
 			c.Set(new Position { Coord = node.Coord });
 			return c;
 		}
 
 		public static Entity SpawnMob(World world, Group group, int sprite, Coord coord) {
-			var c = world.CreateEntity();
-			c.Set(group);
-			c.Set(new Attributes(sprite));
-			c.Set(new Health(100));
-			c.Set(new Character(Role.Get(2)));
-			c.Set(CharacterId.Create());
-			// c.Set(new Mob());
+			var role = Role.Get(2);
+			var c = SpawnCharacter(world, role, group, sprite);
+			c.Set(new Mob());
 			c.Set(new Position { Coord = coord });
 			return c;
 		}
@@ -44,10 +37,37 @@ namespace MonoGameTest.Server {
 			}
 		}
 
+		public static Entity SpawnCharacter(
+			World world,
+			Role role,
+			Coord coord,
+			Group group = Group.Red,
+			int sprite = 4
+		) {
+			var c = SpawnCharacter(world, role, group, sprite);
+			c.Set(new Position { Coord = coord });
+			return c;
+		}
+
 		public static Entity SpawnProjectile(Context context, Coord origin, Entity target, Skill skill) {
 			var e = context.World.CreateEntity();
 			e.Set(new Projectile(origin, target, skill));
 			return e;
+		}
+
+		static Entity SpawnCharacter(
+			World world,
+			Role role,
+			Group group = Group.Red,
+			int sprite = 4
+		) {
+			var c = world.CreateEntity();
+			c.Set(group);
+			c.Set(new Attributes(sprite));
+			c.Set(new Health(100));
+			c.Set(new Character(role));
+			c.Set(CharacterId.Create());
+			return c;
 		}
 
 	}

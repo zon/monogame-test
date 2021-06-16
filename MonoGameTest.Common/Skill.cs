@@ -20,6 +20,7 @@ namespace MonoGameTest.Common {
 		public readonly SpriteLocation? ProjectileSprite;
 		public readonly SpriteLocation? ImpactSprite;
 		public readonly float ProjectleSpeed;
+		public readonly Buff Buff;
 		public readonly bool Repeating;
 
 		public bool IsMelee => Range <= 1;
@@ -50,7 +51,8 @@ namespace MonoGameTest.Common {
 				repeating: true
 			),
 			new Skill(
-				damage: 10,
+				damage: 5,
+				buff: new Buff(10, 1),
 				lead: Time.Frames(3),
 				follow: Time.Frames(3),
 				icon: "poison",
@@ -91,6 +93,13 @@ namespace MonoGameTest.Common {
 			return List[index];
 		}
 
+		public static Skill GetByIcon(string icon) {
+			foreach (var skill in List) {
+				if (skill.Icon == icon) return skill;
+			}
+			return null;
+		}
+
 		public Skill(
 			int damage,
 			float lead,
@@ -107,7 +116,8 @@ namespace MonoGameTest.Common {
 			float charge = 0,
 			float timeout = 1,
 			float cooldown = 0,
-			bool repeating = false
+			bool repeating = false,
+			Buff buff = null
 		) {
 			Id = ++AutoId;
 			Damage = damage;
@@ -126,6 +136,7 @@ namespace MonoGameTest.Common {
 			Timeout = timeout;
 			Cooldown = cooldown;
 			Repeating = repeating;
+			Buff = buff?.Complete(this);
 		}
 
 		public bool InRange(Coord position, Coord target) {

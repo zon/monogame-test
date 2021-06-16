@@ -50,7 +50,7 @@ namespace MonoGameTest.Server {
 			if (!GetPlayerEntity(peer, out entity)) return;
 
 			Entity other;
-			if (!Context.Characters.TryGetEntity(new CharacterId(command.TargetCharacterId), out other)) return;
+			if (!Context.CharacterIds.TryGetEntity(new CharacterId(command.TargetCharacterId), out other)) return;
 			
 			ref var character = ref entity.Get<Character>();
 			character.EnqueueNext(entity, Command.Targeting(other, character.Role.PrimarySkill));
@@ -65,7 +65,7 @@ namespace MonoGameTest.Server {
 			if (skill == null) return;
 
 			Entity other;
-			if (!Context.Characters.TryGetEntity(new CharacterId(command.TargetCharacterId), out other)) return;
+			if (!Context.CharacterIds.TryGetEntity(new CharacterId(command.TargetCharacterId), out other)) return;
 			
 			character.EnqueueNext(entity, Command.Targeting(other, skill));
 		}

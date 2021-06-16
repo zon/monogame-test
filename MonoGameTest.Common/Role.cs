@@ -4,6 +4,7 @@ namespace MonoGameTest.Common {
 
 	public class Role {
 		public readonly int Id;
+		public readonly int Sprite;
 		public readonly float MoveCooldown;
 		public readonly Skill PrimarySkill;
 		public readonly ImmutableArray<Skill> Skills;

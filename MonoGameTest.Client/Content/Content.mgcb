@@ -112,6 +112,11 @@
 /processorParam:InnerPadding=0
 /build:effects-3x3.aseprite
 
+#begin empty.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:empty.tmx
+
 #begin entities.aseprite
 /importer:AsepriteDocumentImporter
 /processor:AsepriteDocumentProcessor

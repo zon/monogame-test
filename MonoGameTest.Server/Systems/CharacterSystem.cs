@@ -36,10 +36,11 @@ namespace MonoGameTest.Server {
 			if (command.HasSkill && character.State == CharacterState.Standby) {
 				var characterId = entity.Get<CharacterId>().Id;
 				if (command.HasTarget) {
-					var position = entity.Get<Position>().Coord;
 					var target = command.Target.Value;
-					var targetPosition = target.GetPosition();
+					if (!target.IsValid) return;
 
+					var position = entity.Get<Position>().Coord;
+					var targetPosition = target.GetPosition();
 					if (skill.IsMelee) {
 						if (!skill.IsValidMeleeTarget(position, targetPosition)) return;
 					} else {
@@ -88,10 +89,7 @@ namespace MonoGameTest.Server {
 					if (targetEntity.IsAlive) {
 
 						if (skill.IsMelee) {
-							ref var health = ref targetEntity.Get<Health>();
-							var damage = skill.Damage;
-							health.Amount = Calc.Max(health.Amount - damage, 0);
-							targetEntity.NotifyChanged<Health>();
+							Impact(Context, targetEntity, skill);
 
 						} else {
 							ref var position = ref entity.Get<Position>();
@@ -102,6 +100,23 @@ namespace MonoGameTest.Server {
 				
 				// immediately advance state
 				character.NextState(entity, skill);
+			}
+		}
+
+		public static void Impact(Context context, in Entity target, Skill skill) {
+			if (!target.IsAlive) return;
+
+			var damage = skill.Damage;
+			if (damage > 0) {
+				ref var health = ref target.Get<Health>();
+				health.Amount = Calc.Max(health.Amount - damage, 0);
+				target.NotifyChanged<Health>();
+			}
+
+			var buff = skill.Buff;
+			if (buff != null) {
+				var characterId = target.Get<CharacterId>();
+				BuffEffect.CreateEntity(context, characterId, buff);
 			}
 		}
 

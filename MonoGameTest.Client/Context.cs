@@ -17,9 +17,11 @@ namespace MonoGameTest.Client {
 		public World World { get; private set; }
 		public EntityMap<CharacterId> Characters { get; private set; }
 		public EntityMap<Position> Positions { get; private set; }
+		public readonly EntityMap<BuffEffectId> Buffs;
+		public readonly EntityMultiMap<CharacterId> CharacterBuffs; 
 		public EntitySet Buttons { get; private set; }
 		public Entity? LocalPlayer { get; private set; }
-		public readonly EntityCommandRecorder Recorder;
+		public EntityCommandRecorder Recorder { get; private set; }
 		public int SessionId { get; private set; }
 		public TiledMap TiledMap { get; private set; }
 		public Vector2 TileSize { get; private set; }
@@ -46,8 +48,10 @@ namespace MonoGameTest.Client {
 			GraphicsDevice = graphicsDevice;
 			Resources = resources;
 			World = world;
-			Characters = world.GetEntities().AsMap<CharacterId>();
-			Positions = world.GetEntities().With<CharacterId>().AsMap<Position>();
+			Characters = world.GetEntities().With<Character>().AsMap<CharacterId>();
+			Positions = world.GetEntities().With<Character>().With<CharacterId>().AsMap<Position>();
+			Buffs = world.GetEntities().With<BuffEffect>().AsMap<BuffEffectId>();
+			CharacterBuffs = world.GetEntities().With<BuffEffect>().AsMultiMap<CharacterId>();
 			Buttons = world.GetEntities().With<Button>().AsSet();
 			LocalPlayerAddedListener = world.SubscribeComponentAdded<LocalPlayer>(OnLocalPlayerAdded);
 			LocalPlayerRemovedListener = world.SubscribeComponentRemoved<LocalPlayer>(OnLocalPlayerRemoved);
@@ -56,6 +60,17 @@ namespace MonoGameTest.Client {
 			Camera = camera;
 			Foreground = foreground;
 			UI = ui;
+		}
+
+		public void Dispose() {
+			Characters.Dispose();
+			Positions.Dispose();
+			Buffs.Dispose();
+			CharacterBuffs.Dispose();
+			Buttons.Dispose();
+			LocalPlayerAddedListener.Dispose();
+			LocalPlayerRemovedListener.Dispose();
+			Recorder.Dispose();
 		}
 
 		public void Load(

@@ -23,6 +23,8 @@ namespace MonoGameTest.Client {
 			processor.SubscribeReusable<TargetFixedPacket>(OnFixedTarget);
 			processor.SubscribeReusable<TargetEmptyPacket>(OnEmptyTarget);
 			processor.SubscribeReusable<ProjectilePacket>(OnProjectile);
+			processor.SubscribeReusable<BuffEffectAddPacket>(OnBuffAdd);
+			processor.SubscribeReusable<BuffEffectRemovePacket>(OnBuffRemove);
 			processor.SubscribeReusable<CooldownPacket>(OnCooldown);
 		}
 
@@ -123,6 +125,18 @@ namespace MonoGameTest.Client {
 
 			var origin = new Coord(packet.OriginX, packet.OriginY);
 			Factory.CreateProjectile(Context, origin, target, skill);
+		}
+
+		void OnBuffAdd(BuffEffectAddPacket packet) {
+			var skill = Skill.Get(packet.SkillId);
+			if (skill == null || skill.Buff == null) return;
+			BuffEffect.CreateEntity(Context, new CharacterId(packet.CharacterId), skill.Buff);
+		}
+
+		void OnBuffRemove(BuffEffectRemovePacket packet) {
+			Entity entity;
+			if (!Context.Buffs.TryGetEntity(new BuffEffectId(packet.BuffEffectId), out entity)) return;
+			entity.Dispose();
 		}
 
 		void OnCooldown(CooldownPacket cooldown) {

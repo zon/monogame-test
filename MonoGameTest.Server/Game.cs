@@ -9,27 +9,25 @@ using MonoGameTest.Common;
 namespace MonoGameTest.Server {
 
 	public class Game : IDisposable {
-		string TileMapName;
-		Context Context;
-		Server Server;
-		World World;
+		public readonly string TileMapName;
+		public readonly Context Context;
+		public readonly Server Server;
+		public readonly World World;
 		PacketListener PacketListener;
 		PositionListener PositionListener;
 		HealthListener HealthListener;
 		CharacterListener CharacterListener;
 		ProjectileListener ProjectileListener;
 		CooldownListener CooldownListener;
-		EntitySet Characters;
-		EntityMap<Player> Players;
 		ISystem<float> Systems;
 		Stopwatch Timer;
 
-		const int SLEEP = 15;
+		public const int SLEEP = 15;
 
 		public bool IsActive { get; private set; }
 
-		public Game() {
-			TileMapName = "first";
+		public Game(string tileMapName) {
+			TileMapName = tileMapName;
 
 			Server = new Server();
 			Server.PeerConnectedEvent += OnPeerConnected;
@@ -49,9 +47,8 @@ namespace MonoGameTest.Server {
 
 			Factory.SpawnMobs(Context.Grid, World);
 
-			Characters = World.GetEntities().With<CharacterId>().AsSet();
-			Players = World.GetEntities().With<CharacterId>().AsMap<Player>();
 			Systems = new SequentialSystem<float>(
+				new BuffEffectSystem(Context),
 				new CharacterSystem(Context),
 				new ProjectileSystem(Context),
 				new DeathSystem(Context),
@@ -71,11 +68,15 @@ namespace MonoGameTest.Server {
 				var elapsed = Timer.Elapsed.TotalSeconds;
 				var dt = elapsed - previous;
 				previous = elapsed;
-				Systems.Update((float) dt);
-				Context.Recorder.Execute();
-				Server.Poll();
+				Update((float) dt);
 				Thread.Sleep(SLEEP);
 			}
+		}
+
+		protected void Update(float dt) {
+			Systems.Update(dt);
+			Context.Recorder.Execute();
+			Server.Poll();
 		}
 
 		public void Exit() {
@@ -90,8 +91,8 @@ namespace MonoGameTest.Server {
 			CharacterListener.Dispose();
 			ProjectileListener.Dispose();
 			CooldownListener.Dispose();
-			Players.Dispose(); 
 			Systems.Dispose();
+			Context.Dispose();
 			World.Dispose();
 		}
 
@@ -101,7 +102,7 @@ namespace MonoGameTest.Server {
 
 			Server.Send(peer, new SessionPacket { TileMapName = TileMapName, Id = session.Id });
 
-			foreach (var entity in Characters.GetEntities()) {
+			foreach (var entity in Context.Characters.GetEntities()) {
 				Server.Send(peer, new AddCharacterPacket(entity));
 			}
 
@@ -111,7 +112,7 @@ namespace MonoGameTest.Server {
 		void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo) {
 			var player = new Player(peer.Id);
 			Entity entity;
-			if (!Players.TryGetEntity(player, out entity)) return;
+			if (!Context.PlayerIds.TryGetEntity(player, out entity)) return;
 			entity.Dispose();
 		}
 

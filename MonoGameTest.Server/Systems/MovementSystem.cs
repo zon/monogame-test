@@ -28,6 +28,7 @@ namespace MonoGameTest.Server {
 			var command = character.GetCurrentCommand().Value;
 			if (!command.HasTarget) return;
 			var target = command.Target.Value;
+			if (!target.IsValid) return;
 			var pathfinder = Context.CreatePathfinder();
 			var start = Grid.Get(position.Coord);
 			var goal = Grid.Get(target.GetPosition());

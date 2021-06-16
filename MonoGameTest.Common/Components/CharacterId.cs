@@ -17,7 +17,7 @@ namespace MonoGameTest.Common {
 
 		public bool Equals(CharacterId other) => Id == other.Id;
 
-		public override string ToString() => $"Character: {Id}";
+		public override string ToString() => $"CharacterId: {Id}";
 
 		public static bool operator ==(CharacterId left, CharacterId right) => left.Equals(right);
 

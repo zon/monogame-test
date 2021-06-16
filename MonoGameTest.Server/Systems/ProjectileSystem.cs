@@ -26,21 +26,17 @@ namespace MonoGameTest.Server {
 			
 			if (projectile.Timeout > 0) return;
 
-			var damage = projectile.Skill.Damage;
+			var skill = projectile.Skill;
 			if (projectile.Skill.HasAreaEffect) {
 				var area = new RadiusArea(projectile.TargetCoord, projectile.Skill.Area);
 				foreach (var coord in area) {
 					Entity other;
 					if (!Context.Positions.TryGetEntity(new Position { Coord = coord }, out other)) continue;
-					ref var health = ref other.Get<Health>();
-					health.Amount = Calc.Max(health.Amount - damage, 0);
-					other.NotifyChanged<Health>();
+					CharacterSystem.Impact(Context, other, skill);
 				}
 
-			} else if (projectile.Target.IsAlive) {
-				ref var health = ref projectile.Target.Get<Health>();
-				health.Amount = Calc.Max(health.Amount - damage, 0);
-				projectile.Target.NotifyChanged<Health>();
+			} else {
+				CharacterSystem.Impact(Context, projectile.Target, skill);
 			}
 
 			Context.Recorder.Record(entity).Dispose();

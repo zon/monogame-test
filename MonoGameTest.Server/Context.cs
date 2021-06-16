@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DefaultEcs;
 using DefaultEcs.Command;
@@ -13,9 +14,11 @@ namespace MonoGameTest.Server {
 		
 		public readonly Server Server;
 		public World World { get; private set; }
-		public readonly EntityCommandRecorder Recorder;
-		public EntityMap<CharacterId> Characters { get; private set; }
+		public EntityCommandRecorder Recorder { get; private set; }
+		public EntitySet Characters { get; private set; }
+		public EntityMap<CharacterId> CharacterIds { get; private set; }
 		public EntityMap<Position> Positions { get; private set; }
+		public EntityMap<Player> PlayerIds { get; private set; }
 		public Grid Grid { get; private set; }
 		public bool IsReady { get; private set; }
 
@@ -23,12 +26,25 @@ namespace MonoGameTest.Server {
 			Server = server;
 			World = world;
 			Recorder = new EntityCommandRecorder();
-			Characters = World.GetEntities().AsMap<CharacterId>();
-			Positions = World.GetEntities().With<CharacterId>().AsMap<Position>();
+			Characters = World.GetEntities().With<Character>().AsSet();
+			CharacterIds = World.GetEntities().With<Character>().AsMap<CharacterId>();
+			Positions = World.GetEntities().With<Character>().With<CharacterId>().AsMap<Position>();
+			PlayerIds = World.GetEntities().AsMap<Player>();
+		}
+
+		public void Dispose() {
+			Recorder.Dispose();
+			Characters.Dispose();
+			CharacterIds.Dispose();
+			Positions.Dispose();
+			PlayerIds.Dispose();
 		}
 
 		public void Load(string name) {
-			var path = $"{CONTENT_PATH}/{name}.tmx";
+			var path = name;
+			if (!path.EndsWith(".tmx")) {
+				path = $"{CONTENT_PATH}/{name}.tmx";
+			}
 			var map = new TiledMap(path);
 			var tilesets = map.GetTiledTilesets(path);
 

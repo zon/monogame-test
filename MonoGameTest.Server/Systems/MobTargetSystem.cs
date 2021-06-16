@@ -16,7 +16,7 @@ namespace MonoGameTest.Server {
 			.AsSet()
 		) {
 			Context = context;
-			Others = context.World.GetEntities().With<CharacterId>().With<Position>().AsSet();
+			Others = context.World.GetEntities().With<Character>().With<CharacterId>().With<Position>().AsSet();
 		}
 
 		protected override void Update(float state, in Entity entity) {
