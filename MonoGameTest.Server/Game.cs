@@ -16,6 +16,7 @@ namespace MonoGameTest.Server {
 		PacketListener PacketListener;
 		PositionListener PositionListener;
 		HealthListener HealthListener;
+		EnergyListener EnergyListener;
 		CharacterListener CharacterListener;
 		ProjectileListener ProjectileListener;
 		CooldownListener CooldownListener;
@@ -41,6 +42,7 @@ namespace MonoGameTest.Server {
 			PacketListener = new PacketListener(Context);
 			PositionListener = new PositionListener(Context);
 			HealthListener = new HealthListener(Context);
+			EnergyListener = new EnergyListener(Context);
 			CharacterListener = new CharacterListener(Context);
 			ProjectileListener = new ProjectileListener(Context);
 			CooldownListener = new CooldownListener(Context);
@@ -48,6 +50,7 @@ namespace MonoGameTest.Server {
 			Factory.SpawnMobs(Context.Grid, World);
 
 			Systems = new SequentialSystem<float>(
+				new EnergySystem(Context),
 				new BuffEffectSystem(Context),
 				new CharacterSystem(Context),
 				new ProjectileSystem(Context),
@@ -88,6 +91,8 @@ namespace MonoGameTest.Server {
 			Server.Stop();
 			PacketListener.Dispose();
 			PositionListener.Dispose();
+			HealthListener.Dispose();
+			EnergyListener.Dispose();
 			CharacterListener.Dispose();
 			ProjectileListener.Dispose();
 			CooldownListener.Dispose();

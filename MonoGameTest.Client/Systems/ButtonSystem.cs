@@ -30,7 +30,7 @@ namespace MonoGameTest.Client {
 			var character = playerEntity?.Get<Character>();
 
 			var area = new Rectangle(
-				new Point(buttonResource.Size.X * button.Index, View.SCREEN_HEIGHT - View.SKILL_BAR_HEIGHT),
+				new Point(buttonResource.Size.X * button.Index, View.SCREEN_HEIGHT - View.ENERGY_BAR_HEIGHT - View.SKILL_BAR_HEIGHT),
 				buttonResource.Size
 			);
 			var isHovered = area.Contains(Context.Camera.ScreenToUI(mouse.Position));

@@ -41,9 +41,10 @@ namespace MonoGameTest.Common {
 			return Commands.IsEmpty ? null : Commands.Peek();
 		}
 
-		public void EnqueueNext(Entity entity, Command command) {
+		public void EnqueueNext(in Entity entity, Command command) {
 			if (Commands.IsEmpty || !IsActive) {
-				if (!IsCool(command)) return;
+				ref var energy = ref entity.Get<Energy>();
+				if (!IsCool(command) || !energy.CanAfford(command)) return;
 				Commands = ImmutableQueue.Create(command);
 				StopRepeating = false;
 				entity.NotifyChanged<Character>();
@@ -54,32 +55,28 @@ namespace MonoGameTest.Common {
 			}
 		}
 
-		public void Enqueue(Command command) {
+		public void Enqueue(in Entity entity, Command command) {
+			if (Commands.IsEmpty) {
+				ref var energy = ref entity.Get<Energy>();
+				if (!IsCool(command) || !energy.CanAfford(command)) return;
+			}
 			Commands = Commands.Enqueue(command);
 		}
 
-		public void NextState(Entity entity, Skill skill) {
+		public void NextState(in Entity entity, Skill skill) {
 			switch (State) {
 
 				case CharacterState.Standby:
 					if (skill.Charge > 0) {
 						State = CharacterState.Charge;
 						Timeout = skill.Charge;
-					} else if (skill.Lead > 0) {
-						State = CharacterState.Lead;
-						Timeout = skill.Lead;
 					} else {
-						State = CharacterState.Active;
+						BeginCommand(entity, skill);
 					}
 					break;
 
 				case CharacterState.Charge:
-					if (skill.Lead > 0) {
-						State = CharacterState.Lead;
-						Timeout = skill.Lead;
-					} else {
-						State = CharacterState.Active;
-					}
+					BeginCommand(entity, skill);
 					break;
 
 				case CharacterState.Lead:
@@ -111,7 +108,9 @@ namespace MonoGameTest.Common {
 			}
 		}
 
-		public void CompleteCommand(Entity entity, float timeout) {
+
+
+		public void CompleteCommand(in Entity entity, float timeout) {
 			State = CharacterState.Cooldown;
 			Timeout = timeout;
 
@@ -126,7 +125,7 @@ namespace MonoGameTest.Common {
 			Timeout = pause;
 		}
 
-		public void CancelCommand(Entity entity) {
+		public void CancelCommand(in Entity entity) {
 			if (State != CharacterState.Cooldown) {
 				State = CharacterState.Standby;
 			}
@@ -145,13 +144,24 @@ namespace MonoGameTest.Common {
 			return !command.HasSkill || IsCool(command.Skill.Id);
 		}
 
-		public void StartCooldown(Entity entity, Skill skill) {
+		public void StartCooldown(in Entity entity, Skill skill) {
 			Cooldowns[skill.Id] = skill.Cooldown;
 			if (!entity.Has<Player>()) return;
 			entity.World.Publish(new CooldownMessage { Entity = entity, SkillId = skill.Id });
 		}
 
-		void NextCommand(Entity entity) {
+		void BeginCommand(in Entity entity, Skill skill) {
+			ref var energy = ref entity.Get<Energy>();
+			energy.Spend(entity, skill);
+			if (skill.Lead > 0) {
+				State = CharacterState.Lead;
+				Timeout = skill.Lead;
+			} else {
+				State = CharacterState.Active;
+			}
+		}
+
+		void NextCommand(in Entity entity) {
 			var previous = Commands.Peek();
 			if (previous.HasSkill) {
 				StartCooldown(entity, previous.Skill);
@@ -160,9 +170,11 @@ namespace MonoGameTest.Common {
 			Commands = Commands.Dequeue();
 			StopRepeating = false;
 
+			ref var energy = ref entity.Get<Energy>();
+
 			while (!Commands.IsEmpty) {
 				var next = Commands.Peek();
-				if (IsCool(next)) break;
+				if (IsCool(next) && energy.CanAfford(next)) break;
 				Commands = Commands.Dequeue();
 			}
 

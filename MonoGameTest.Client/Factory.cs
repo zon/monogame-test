@@ -16,6 +16,7 @@ namespace MonoGameTest.Client {
 			entity.Set((Group) packet.Group);
 			if (packet.SessionId > 0) {
 				entity.Set(new Player(packet.SessionId));
+				entity.Set(new Energy { Maximum = packet.EnergyMaximum, Amount = packet.EnergyAmount });
 			}
 			entity.Set(new Health { Maximum = packet.HealthMaximum, Amount = packet.HealthAmount });
 			var coord = new Coord(packet.X, packet.Y);

@@ -19,6 +19,7 @@ namespace MonoGameTest.Client {
 			processor.SubscribeReusable<SkillStartFixedPacket>(OnFixedSkill);
 			processor.SubscribeReusable<SkillStartPacket>(OnSkill);
 			processor.SubscribeReusable<HealthPacket>(OnHealth);
+			processor.SubscribeReusable<EnergyPacket>(OnEnergy);
 			processor.SubscribeReusable<TargetMobilePacket>(OnMobileTarget);
 			processor.SubscribeReusable<TargetFixedPacket>(OnFixedTarget);
 			processor.SubscribeReusable<TargetEmptyPacket>(OnEmptyTarget);
@@ -88,6 +89,12 @@ namespace MonoGameTest.Client {
 			health.Amount = packet.Amount;
 			hit.Start(Context);
 			bang.Start(packet.Delta);
+		}
+
+		void OnEnergy(EnergyPacket packet) {
+			if (Context.LocalPlayer == null) return;
+			ref var energy = ref Context.LocalPlayer.Value.Get<Energy>();
+			energy.Amount = packet.Amount;
 		}
 
 		void OnMobileTarget(TargetMobilePacket packet) {

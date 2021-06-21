@@ -65,6 +65,7 @@ namespace MonoGameTest.Server {
 			c.Set(group);
 			c.Set(new Attributes(sprite));
 			c.Set(new Health(100));
+			c.Set(new Energy(10));
 			c.Set(new Character(role));
 			c.Set(CharacterId.Create());
 			return c;

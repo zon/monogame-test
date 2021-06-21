@@ -17,8 +17,8 @@ namespace MonoGameTest.Test {
 		
 		[Fact]
 		public void Primary() {
-			ref var ac = ref A.Get<Character>();
-			var skill = ac.Role.PrimarySkill;
+			ref var character = ref A.Get<Character>();
+			var skill = character.Role.PrimarySkill;
 			SimulateCommand(A, skill, B);
 			AssertDamage(B, skill);
 		}
@@ -41,9 +41,9 @@ namespace MonoGameTest.Test {
 		[Fact]
 		public void Poison() {
 			var skill = Skill.GetByIcon("poison");
-			ref var c = ref A.Get<Character>();
+			ref var character = ref A.Get<Character>();
 			var command = Command.Targeting(B, skill);
-			c.EnqueueNext(A, command);
+			character.EnqueueNext(A, command);
 			SimulateCommandActivation(A, command);
 			AssertDamage(B, skill);
 			
@@ -64,6 +64,39 @@ namespace MonoGameTest.Test {
 			AssertDamage(B, skill.Buff.HealthPerSecond * skill.Buff.Duration, skill.Damage);
 
 			allBuffs.Dispose();
+		}
+
+		[Fact]
+		public void NoEnergy() {
+			ref var character = ref A.Get<Character>();
+			ref var energy = ref A.Get<Energy>();
+			energy.Amount = 0;
+			var skill = Skill.GetByIcon("fireball");
+			var command = Command.Targeting(B, skill);
+			character.EnqueueNext(A, command);
+			Assert.False(character.HasCommand);
+			Assert.Equal(CharacterState.Standby, character.State);
+		}
+
+		[Fact]
+		public void NoEnergyNext() {
+			ref var character = ref A.Get<Character>();
+			ref var energy = ref A.Get<Energy>();
+			energy.Amount = 0;
+			var skill = Skill.GetByIcon("fireball");
+			var command = Command.Targeting(B, skill);
+			var goal = new Coord(1, 2);
+			character.EnqueueNext(A, Command.Targeting(goal));
+			character.EnqueueNext(A, command);
+			Simulate(() => {
+				ref var c = ref A.Get<Character>();
+				return !c.HasCommand;
+			});
+			ref var position = ref A.Get<Position>();
+			Assert.Equal(goal, position.Coord);
+			character = ref A.Get<Character>();
+			Assert.False(character.HasCommand);
+			Assert.Equal(CharacterState.Cooldown, character.State);
 		}
 
 	}

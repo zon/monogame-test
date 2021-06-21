@@ -67,6 +67,7 @@ namespace MonoGameTest.Client {
 			ButtonListener = new ButtonListener(Context);
 
 			Behavior = new SequentialSystem<float>(
+				new EnergySystem(Context),
 				new CharacterSystem(Context),
 				new LocalInputSystem(Context),
 				new SkillInputSystem(Context)
@@ -86,6 +87,7 @@ namespace MonoGameTest.Client {
 				new EffectSystem(Context)
 			);
 			UIRendering = new SequentialSystem<float>(
+				new EnergyBarSystem(Context),
 				new ButtonSystem(Context)
 			);
 			

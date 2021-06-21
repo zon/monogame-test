@@ -6,6 +6,7 @@ namespace MonoGameTest.Common {
 	public class Skill : IEquatable<Skill> {
 		public readonly int Id;
 		public readonly Targeting Targeting;
+		public readonly int Energy;
 		public readonly int Range;
 		public readonly int Damage;
 		public readonly float Area;
@@ -32,6 +33,7 @@ namespace MonoGameTest.Common {
 
 		static readonly ImmutableArray<Skill> List = ImmutableArray.Create(
 			new Skill(
+				energy: 0,
 				damage: 5,
 				lead: Time.Frames(3),
 				follow: Time.Frames(3),
@@ -40,6 +42,7 @@ namespace MonoGameTest.Common {
 				repeating: true
 			),
 			new Skill(
+				energy: 0,
 				damage: 5,
 				lead: Time.Frames(6),
 				follow: Time.Frames(3),
@@ -51,6 +54,7 @@ namespace MonoGameTest.Common {
 				repeating: true
 			),
 			new Skill(
+				energy: 4,
 				damage: 5,
 				buff: new Buff(10, 1),
 				lead: Time.Frames(3),
@@ -60,6 +64,7 @@ namespace MonoGameTest.Common {
 				cooldown: 10
 			),
 			new Skill(
+				energy: 4,
 				damage: 10,
 				lead: Time.Frames(6),
 				follow: Time.Frames(3),
@@ -71,6 +76,7 @@ namespace MonoGameTest.Common {
 				cooldown: 15
 			),
 			new Skill(
+				energy: 6,
 				icon: "fireball",
 				range: 4,
 				damage: 15,
@@ -101,6 +107,7 @@ namespace MonoGameTest.Common {
 		}
 
 		public Skill(
+			int energy,
 			int damage,
 			float lead,
 			float follow,
@@ -120,6 +127,7 @@ namespace MonoGameTest.Common {
 			Buff buff = null
 		) {
 			Id = ++AutoId;
+			Energy = energy;
 			Damage = damage;
 			Lead = lead;
 			Follow = follow;

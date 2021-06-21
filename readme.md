@@ -1,7 +1,5 @@
 ## Features
 
-* AoE
-* DoTs(HoTs)
 * Energy
 * Healing
 * Stats
@@ -47,6 +45,8 @@
 * Missile - Ranged damage
 * Fireball - Ranged area effect damage
 * Concussion - Local area effect damage and stun
+* Cone of Fire - Cone area effect damage
+* Teleport - Instant multi tile movement
 
 ### Rouge
 
@@ -70,3 +70,4 @@
 
 * Heal - Heal an ally
 * Regenerate - Heal over time buff
+* Protection - Shield an ally
