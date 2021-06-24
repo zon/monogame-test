@@ -15,10 +15,10 @@ namespace MonoGameTest.Client {
 		public readonly Resources Resources;
 		public readonly Client Client;
 		public World World { get; private set; }
-		public EntityMap<CharacterId> Characters { get; private set; }
+		public EntityMap<CharacterId> CharacterIds { get; private set; }
 		public EntityMap<Position> Positions { get; private set; }
 		public readonly EntityMap<BuffEffectId> Buffs;
-		public readonly EntityMultiMap<CharacterId> CharacterBuffs; 
+		public EntityMultiMap<CharacterId> CharacterBuffs { get; private set; } 
 		public EntitySet Buttons { get; private set; }
 		public Entity? LocalPlayer { get; private set; }
 		public EntityCommandRecorder Recorder { get; private set; }
@@ -48,7 +48,7 @@ namespace MonoGameTest.Client {
 			GraphicsDevice = graphicsDevice;
 			Resources = resources;
 			World = world;
-			Characters = world.GetEntities().With<Character>().AsMap<CharacterId>();
+			CharacterIds = world.GetEntities().With<Character>().AsMap<CharacterId>();
 			Positions = world.GetEntities().With<Character>().With<CharacterId>().AsMap<Position>();
 			Buffs = world.GetEntities().With<BuffEffect>().AsMap<BuffEffectId>();
 			CharacterBuffs = world.GetEntities().With<BuffEffect>().AsMultiMap<CharacterId>();
@@ -63,7 +63,7 @@ namespace MonoGameTest.Client {
 		}
 
 		public void Dispose() {
-			Characters.Dispose();
+			CharacterIds.Dispose();
 			Positions.Dispose();
 			Buffs.Dispose();
 			CharacterBuffs.Dispose();
@@ -152,7 +152,7 @@ namespace MonoGameTest.Client {
 
 		public bool GetEntityByCharacterId(int characterId, out Entity entity) {
 			var character = new CharacterId(characterId);
-			return Characters.TryGetEntity(character, out entity);
+			return CharacterIds.TryGetEntity(character, out entity);
 		}
 
 		public bool GetEntityByPosition(Position position, out Entity entity) {

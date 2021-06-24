@@ -8,7 +8,7 @@ namespace MonoGameTest.Common {
 		public readonly Targeting Targeting;
 		public readonly int Energy;
 		public readonly int Range;
-		public readonly int Damage;
+		public readonly float DamageMultiplier;
 		public readonly float Area;
 		public readonly float Charge;
 		public readonly float Lead;
@@ -34,7 +34,7 @@ namespace MonoGameTest.Common {
 		static readonly ImmutableArray<Skill> List = ImmutableArray.Create(
 			new Skill(
 				energy: 0,
-				damage: 5,
+				damageMultiplier: 1,
 				lead: Time.Frames(3),
 				follow: Time.Frames(3),
 				icon: "sword",
@@ -43,7 +43,7 @@ namespace MonoGameTest.Common {
 			),
 			new Skill(
 				energy: 0,
-				damage: 5,
+				damageMultiplier: 1,
 				lead: Time.Frames(6),
 				follow: Time.Frames(3),
 				icon: "bow",
@@ -55,8 +55,8 @@ namespace MonoGameTest.Common {
 			),
 			new Skill(
 				energy: 4,
-				damage: 5,
-				buff: new Buff(10, 1),
+				damageMultiplier: 1,
+				buff: Buff.DamageOverTime(10, 1),
 				lead: Time.Frames(3),
 				follow: Time.Frames(3),
 				icon: "poison",
@@ -65,7 +65,7 @@ namespace MonoGameTest.Common {
 			),
 			new Skill(
 				energy: 4,
-				damage: 10,
+				damageMultiplier: 2,
 				lead: Time.Frames(6),
 				follow: Time.Frames(3),
 				icon: "bow",
@@ -79,7 +79,7 @@ namespace MonoGameTest.Common {
 				energy: 6,
 				icon: "fireball",
 				range: 4,
-				damage: 15,
+				damageMultiplier: 3,
 				area: 1,
 				charge: 2,
 				lead: Time.Frames(6),
@@ -108,7 +108,7 @@ namespace MonoGameTest.Common {
 
 		public Skill(
 			int energy,
-			int damage,
+			int damageMultiplier,
 			float lead,
 			float follow,
 			string icon,
@@ -128,7 +128,7 @@ namespace MonoGameTest.Common {
 		) {
 			Id = ++AutoId;
 			Energy = energy;
-			Damage = damage;
+			DamageMultiplier = damageMultiplier;
 			Lead = lead;
 			Follow = follow;
 			Icon = icon;
@@ -176,6 +176,10 @@ namespace MonoGameTest.Common {
 				position != target &&
 				InRange(position, target)
 			);
+		}
+
+		public int GetDamage(in Attributes attributes) {
+			return Calc.Floor(attributes.Power * DamageMultiplier);
 		}
 
 		public override int GetHashCode() => Id;

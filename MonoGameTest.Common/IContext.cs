@@ -9,6 +9,8 @@ namespace MonoGameTest.Common {
 		World World { get; }
 		EntityCommandRecorder Recorder { get; }
 		EntityMap<Position> Positions { get; }
+		EntityMap<CharacterId> CharacterIds { get; }
+		EntityMultiMap<CharacterId> CharacterBuffs { get; }
 		bool IsReady { get; }
 	}
 

@@ -8,8 +8,7 @@ using MonoGameTest.Common;
 using TiledCS;
 
 namespace MonoGameTest.Server {
-
-	public class Context : IContext {
+ 	public class Context : IContext {
 		const string CONTENT_PATH = "../MonoGameTest.Client/Content";
 		
 		public readonly Server Server;
@@ -17,6 +16,7 @@ namespace MonoGameTest.Server {
 		public EntityCommandRecorder Recorder { get; private set; }
 		public EntitySet Characters { get; private set; }
 		public EntityMap<CharacterId> CharacterIds { get; private set; }
+		public EntityMultiMap<CharacterId> CharacterBuffs { get; private set; }
 		public EntityMap<Position> Positions { get; private set; }
 		public EntityMap<Player> PlayerIds { get; private set; }
 		public Grid Grid { get; private set; }
@@ -28,6 +28,7 @@ namespace MonoGameTest.Server {
 			Recorder = new EntityCommandRecorder();
 			Characters = World.GetEntities().With<Character>().AsSet();
 			CharacterIds = World.GetEntities().With<Character>().AsMap<CharacterId>();
+			CharacterBuffs = World.GetEntities().With<BuffEffect>().AsMultiMap<CharacterId>();
 			Positions = World.GetEntities().With<Character>().With<CharacterId>().AsMap<Position>();
 			PlayerIds = World.GetEntities().AsMap<Player>();
 		}
@@ -36,6 +37,7 @@ namespace MonoGameTest.Server {
 			Recorder.Dispose();
 			Characters.Dispose();
 			CharacterIds.Dispose();
+			CharacterBuffs.Dispose();
 			Positions.Dispose();
 			PlayerIds.Dispose();
 		}
@@ -72,14 +74,15 @@ namespace MonoGameTest.Server {
 				var y = Calc.Floor(i / map.Width);
 				var coord = new Coord(x, y);
 				
-				var sprite = gid - tileset.firstgid;
+				var tileId = gid - tileset.firstgid;
 
 				var group = getTileInt(tile, "group");
 				if (group != 0) {
-					spawns.Add(new Spawn(coord, (Group) group, sprite));
+					var roleId = getTileInt(tile, "role");
+					spawns.Add(Spawn.Mob(tileId, coord, (Group) group, roleId));
 
 				} else if (getTileBool(tile, "spawn")) {
-					spawns.Add(new Spawn(coord, Group.Player, sprite));
+					spawns.Add(Spawn.Player(tileId, coord));
 				}
 			}
 

@@ -22,6 +22,11 @@ namespace MonoGameTest.Common {
 			Amount = maximum;
 		}
 
+		public Energy(Attributes attributes) {
+			Maximum = attributes.Energy;
+			Amount = Maximum;
+		}
+
 		public bool CanAfford(Command command) {
 			if (!command.HasSkill) return true;
 			return command.Skill.Energy <= Amount;

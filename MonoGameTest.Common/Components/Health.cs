@@ -18,6 +18,11 @@ namespace MonoGameTest.Common {
 			Amount = maximum;
 		}
 
+		public Health(Attributes attributes) {
+			Maximum = attributes.Health;
+			Amount = Maximum;
+		}
+
 	}
 
 }

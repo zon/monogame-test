@@ -4,12 +4,12 @@ using MonoGameTest.Common;
 
 namespace MonoGameTest.Server {
 
-	public class BuffEffectListener : IDisposable {
+	public class BuffEffectServerListener : IDisposable {
 		readonly Server Server;
 		readonly IDisposable AddedListener;
 		readonly IDisposable RemoveListener;
 
-		public BuffEffectListener(Context context) {
+		public BuffEffectServerListener(Context context) {
 			Server = context.Server;
 			var world = context.World;
 			AddedListener = world.SubscribeComponentAdded<BuffEffect>(OnAdd);

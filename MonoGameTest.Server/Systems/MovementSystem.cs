@@ -21,6 +21,7 @@ namespace MonoGameTest.Server {
 
 		protected override void Update(float dt, in Entity entity) {
 			ref var character = ref entity.Get<Character>();
+			ref var attributes = ref entity.Get<Attributes>();
 			ref var position = ref entity.Get<Position>();
 
 			if (!character.HasCommand || character.State != CharacterState.Standby) return;
@@ -61,7 +62,7 @@ namespace MonoGameTest.Server {
 			// move
 			position.Coord = node.Coord;
 			entity.NotifyChanged<Position>();
-			character.RepeatCommand(Movement.ACTION_DURATION + character.Role.MoveCooldown);
+			character.RepeatCommand(Movement.ACTION_DURATION + attributes.MoveCoolown);
 
 			// clear at goal
 			if (command.IsMove && node == goal) {

@@ -4,8 +4,7 @@ namespace MonoGameTest.Common {
 
 	public class Role {
 		public readonly int Id;
-		public readonly int Sprite;
-		public readonly float MoveCooldown;
+		public readonly Attributes Attributes;
 		public readonly Skill PrimarySkill;
 		public readonly ImmutableArray<Skill> Skills;
 
@@ -13,14 +12,28 @@ namespace MonoGameTest.Common {
 
 		static readonly ImmutableArray<Role> Collection = ImmutableArray.Create(
 			new Role(
-				1,
+				new Attributes {
+					Sprite = 5,
+					Power = 5,
+					MoveCoolown = 1,
+					Health = 100,
+					Energy = 100,
+					EnergyGen = 5
+				},
 				Skill.Get(1),
 				Skill.Get(3),
 				Skill.Get(4),
 				Skill.Get(5)
 			),
 			new Role(
-				1,
+				new Attributes {
+					Sprite = 4,
+					Power = 4,
+					MoveCoolown = 1,
+					Health = 50,
+					Energy = 100,
+					EnergyGen = 5
+				},
 				Skill.Get(2)
 			)
 		);
@@ -31,9 +44,9 @@ namespace MonoGameTest.Common {
 			return Collection[index];
 		}
 
-		public Role(int moveCooldown, Skill primarySkill, params Skill[] skills) {
+		public Role(Attributes attributes, Skill primarySkill, params Skill[] skills) {
 			Id = ++AutoId;
-			MoveCooldown = moveCooldown;
+			Attributes = attributes;
 			PrimarySkill = primarySkill;
 			Skills = ImmutableArray.Create(skills);
 		}

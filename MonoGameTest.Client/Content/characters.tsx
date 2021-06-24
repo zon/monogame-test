@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.5" tiledversion="1.5.0" name="characters" tilewidth="16" tileheight="16" tilecount="7" columns="7" backgroundcolor="#1b1a1b">
+<tileset version="1.5" tiledversion="1.6.0" name="characters" tilewidth="16" tileheight="16" tilecount="7" columns="7" backgroundcolor="#1b1a1b">
  <image source="entities.png" width="112" height="16"/>
  <tile id="0">
   <properties>
@@ -9,11 +9,13 @@
  <tile id="3">
   <properties>
    <property name="group" value="2"/>
+   <property name="role" type="int" value="2"/>
   </properties>
  </tile>
  <tile id="4">
   <properties>
    <property name="group" value="1"/>
+   <property name="role" type="int" value="2"/>
   </properties>
  </tile>
  <tile id="5">

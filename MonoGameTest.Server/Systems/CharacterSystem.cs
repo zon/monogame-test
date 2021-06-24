@@ -89,11 +89,10 @@ namespace MonoGameTest.Server {
 					if (targetEntity.IsAlive) {
 
 						if (skill.IsMelee) {
-							Impact(Context, targetEntity, skill);
+							Impact(Context, entity, skill, targetEntity);
 
 						} else {
-							ref var position = ref entity.Get<Position>();
-							Factory.SpawnProjectile(Context, position.Coord, targetEntity, skill);
+							Factory.SpawnProjectile(Context, entity, skill, targetEntity);
 						}
 					}
 				}
@@ -103,10 +102,10 @@ namespace MonoGameTest.Server {
 			}
 		}
 
-		public static void Impact(Context context, in Entity target, Skill skill) {
+		public static void Impact(Context context, Attributes attributes, Skill skill, in Entity target) {
 			if (!target.IsAlive) return;
-
-			var damage = skill.Damage;
+			
+			var damage = skill.GetDamage(attributes);
 			if (damage > 0) {
 				ref var health = ref target.Get<Health>();
 				health.Amount = Calc.Max(health.Amount - damage, 0);
@@ -118,6 +117,11 @@ namespace MonoGameTest.Server {
 				var characterId = target.Get<CharacterId>();
 				BuffEffect.CreateEntity(context, characterId, buff);
 			}
+		}
+
+		public static void Impact(Context context, in Entity origin, Skill skill, in Entity target) {
+			ref var attributes = ref origin.Get<Attributes>();
+			Impact(context, attributes, skill, target);
 		}
 
 	}

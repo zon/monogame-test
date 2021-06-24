@@ -45,7 +45,7 @@ namespace MonoGameTest.Test {
 			var command = Command.Targeting(B, skill);
 			character.EnqueueNext(A, command);
 			SimulateCommandActivation(A, command);
-			AssertDamage(B, skill);
+			var damage = AssertDamage(B, skill);
 			
 			var allBuffs = Context.World.GetEntities().With<BuffEffect>().AsMultiMap<CharacterId>();
 			var bid = B.Get<CharacterId>();
@@ -61,7 +61,7 @@ namespace MonoGameTest.Test {
 			var elapsed = SimulateCommandCompletion(A, command);
 			elapsed += Simulate(() => !allBuffs.ContainsKey(bid), timeout: skill.Buff.Duration + 2);
 			Assert.Equal(skill.Buff.Duration, elapsed, 0);
-			AssertDamage(B, skill.Buff.HealthPerSecond * skill.Buff.Duration, skill.Damage);
+			AssertDamage(B, skill.Buff.HealthPerSecond * skill.Buff.Duration, damage);
 
 			allBuffs.Dispose();
 		}

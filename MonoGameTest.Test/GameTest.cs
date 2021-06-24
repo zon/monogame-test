@@ -133,13 +133,16 @@ namespace MonoGameTest.Test {
 			Assert.Equal(h.Maximum - previousDamage - damage, h.Amount);
 		}
 
-		public void AssertDamage(
+		public int AssertDamage(
 			in Entity entity,
 			Skill skill,
 			int previousDamage = 0
 		) {
-			Assert.NotEqual(0, skill.Damage);
-			AssertDamage(entity, skill.Damage, previousDamage);
+			ref var attributes = ref entity.Get<Attributes>();
+			var damage = skill.GetDamage(attributes);
+			Assert.NotEqual(0, damage);
+			AssertDamage(entity, damage, previousDamage);
+			return damage;
 		}
 
 		public void AssertCommand(in Character character, Command command) {

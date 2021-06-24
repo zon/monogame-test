@@ -1,9 +1,11 @@
 ## Features
-
-* Energy
+ 
 * Healing
 * Stats
 * Debuffs(Buffs)
+* Separate move cooldown
+* Global cooldown
+* Auras
 * Slows
 * Shields
 * Stuns
@@ -34,6 +36,7 @@
 * Shield - Adds a shield buff to self
 * Guard - Swap places with an ally and shield buff both
 * Knock - Damage an opponent and knock them backwards, stun opponent if there's no room
+* Protection - Defense aura
 
 ### Mage
 
