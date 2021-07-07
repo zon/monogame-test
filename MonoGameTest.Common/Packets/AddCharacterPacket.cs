@@ -6,7 +6,7 @@ namespace MonoGameTest.Common {
 		public int Id { get; set; }
 		public int RoleId { get; set; }
 		public int Group { get; set; }
-		public int Sprite { get; set; }
+		public string Sprite { get; set; }
 		public int SessionId { get; set; }
 		public int HealthMaximum { get; set; }
 		public int HealthAmount { get; set; }

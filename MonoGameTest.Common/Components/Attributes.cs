@@ -4,7 +4,7 @@ using DefaultEcs;
 namespace MonoGameTest.Common {
 
 	public struct Attributes {
-		public int Sprite;
+		public string Sprite;
 		public int Power;
 		public int MoveCoolown;
 		public int Health;
@@ -13,7 +13,25 @@ namespace MonoGameTest.Common {
 		public int Defense;
 
 		public static Attributes Zero = new Attributes();
-		
+
+		public Attributes(
+			string sprite = "mob",
+			int power = 5,
+			int moveCooldown = 1,
+			int health = 100,
+			int energy = 100,
+			float energyGen = 5,
+			int defense = 0
+		) {
+			Sprite = sprite;
+			Power = power;
+			MoveCoolown = moveCooldown;
+			Health = health;
+			Energy = energy;
+			EnergyGen = energyGen;
+			Defense = defense;
+		}
+
 		public bool Equals(Attributes other) => (
 			Sprite == other.Sprite &&
 			Power == other.Power &&
@@ -27,7 +45,7 @@ namespace MonoGameTest.Common {
 		public override bool Equals(object obj) => obj is Attributes other && Equals(other);
 
 		public override int GetHashCode() => (
-			Sprite * 10007 +
+			Sprite.GetHashCode() * 10007 +
 			Power * 10427 +
 			MoveCoolown * 10631 +
 			Health * 10883 +
@@ -66,6 +84,15 @@ namespace MonoGameTest.Common {
 			EnergyGen = other.EnergyGen;
 			Defense = other.Defense;
 		}
+
+		public int Attack(Attributes target) {
+			return Math.Max(Power - target.Defense, 0);
+		}
+
+		// TODO
+		// public Buff DamageOverTime(Attributes target) {
+			
+		// }
 
 		public static bool operator ==(Attributes a, Attributes b) => a.Equals(b);
 		public static bool operator !=(Attributes a, Attributes b) => !a.Equals(b);

@@ -13,7 +13,7 @@ namespace MonoGameTest.Common {
 		static readonly ImmutableArray<Role> Collection = ImmutableArray.Create(
 			new Role(
 				new Attributes {
-					Sprite = 5,
+					Sprite = "fighter",
 					Power = 5,
 					MoveCoolown = 1,
 					Health = 100,
@@ -27,7 +27,7 @@ namespace MonoGameTest.Common {
 			),
 			new Role(
 				new Attributes {
-					Sprite = 4,
+					Sprite = "mob",
 					Power = 4,
 					MoveCoolown = 1,
 					Health = 50,

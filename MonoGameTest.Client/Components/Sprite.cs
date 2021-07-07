@@ -24,8 +24,8 @@ namespace MonoGameTest.Client {
 			}
 		}
 
-		public static Sprite Create(AsepriteDocument document, int frame, Vector2 position) {
-			var f = document.Frames[frame];
+		public static Sprite Create(AsepriteDocument document, string tag, Vector2 position) {
+			var f = document.Frames[document.Tags[tag].From];
 			return new Sprite {
 				Document = document,
 				Rectangle = f.ToRectangle(),

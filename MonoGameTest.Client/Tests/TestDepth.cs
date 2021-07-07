@@ -32,8 +32,8 @@ namespace MonoGameTest.Client {
 
 			IsMouseVisible = true;
 
-			A = Sprite.Create(Resources.Characters, 3, new Vector2(8, 8));
-			B = Sprite.Create(Resources.Characters, 4, new Vector2(16, 16));
+			A = Sprite.Create(Resources.Characters, "fighter", new Vector2(8, 8));
+			B = Sprite.Create(Resources.Characters, "mob", new Vector2(16, 16));
 		}
 
 		protected override void Draw(GameTime gameTime) {
