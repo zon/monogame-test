@@ -27,9 +27,10 @@ namespace MonoGameTest.Client {
 		public Vector2 TileSize { get; private set; }
 		public Vector2 HalfTileSize { get; private set; }
 		public Grid Grid { get; private set; }
-		public readonly Camera Camera;
-		public readonly SpriteBatch Foreground;
-		public readonly SpriteBatch UI;
+		public readonly Camera WorldCamera;
+		public readonly SpriteBatch WorldBatch;
+		public readonly Camera UICamera;
+		public readonly SpriteBatch UIBatch;
 		public MouseStateExtended Mouse { get; private set; }
 		public bool IsReady { get; private set; }
 
@@ -41,9 +42,10 @@ namespace MonoGameTest.Client {
 			Resources resources,
 			World world,
 			Client client,
-			Camera camera,
-			SpriteBatch foreground,
-			SpriteBatch ui
+			Camera worldCamera,
+			SpriteBatch worldBatch,
+			Camera uiCamera,
+			SpriteBatch uiBatch
 		) {
 			GraphicsDevice = graphicsDevice;
 			Resources = resources;
@@ -57,9 +59,10 @@ namespace MonoGameTest.Client {
 			LocalPlayerRemovedListener = world.SubscribeComponentRemoved<LocalPlayer>(OnLocalPlayerRemoved);
 			Recorder = new EntityCommandRecorder();
 			Client = client;
-			Camera = camera;
-			Foreground = foreground;
-			UI = ui;
+			WorldCamera = worldCamera;
+			WorldBatch = worldBatch;
+			UICamera = uiCamera;
+			UIBatch = uiBatch;
 		}
 
 		public void Dispose() {
@@ -135,7 +138,7 @@ namespace MonoGameTest.Client {
 		}
 
 		public Coord ScreenToCoord(float x, float y) {
-			return VectorToCoord(Camera.ScreenToWorld(x, y));
+			return VectorToCoord(WorldCamera.ScreenToWorld(x, y));
 		}
 
 		public Coord ScreenToCoord(Vector2 v) {

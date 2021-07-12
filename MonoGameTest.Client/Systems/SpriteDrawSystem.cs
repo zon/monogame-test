@@ -7,8 +7,8 @@ namespace MonoGameTest.Client {
 	public class SpriteDrawSystem : AComponentSystem<float, Sprite> {
 		readonly Context Context;
 
-		SpriteBatch Batch => Context.Foreground;
-		Camera Camera => Context.Camera;
+		SpriteBatch Batch => Context.WorldBatch;
+		Camera Camera => Context.WorldCamera;
 
 		public SpriteDrawSystem(Context context) : base(context.World) {
 			Context = context;

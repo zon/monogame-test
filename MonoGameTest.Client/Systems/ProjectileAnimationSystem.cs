@@ -10,8 +10,8 @@ namespace MonoGameTest.Client {
 	public class ProjectileAnimationSystem : AEntitySetSystem<float> {
 		readonly Context Context;
 		
-		SpriteBatch Batch => Context.Foreground;
-		Camera Camera => Context.Camera;
+		SpriteBatch Batch => Context.WorldBatch;
+		Camera Camera => Context.WorldCamera;
 
 		public ProjectileAnimationSystem(Context context) : base(context.World
 			.GetEntities()

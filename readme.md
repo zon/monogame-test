@@ -1,5 +1,8 @@
 ## Features
- 
+
+* End condition
+* Role selection
+* Hosting
 * Healing
 * Stats
 * Debuffs(Buffs)

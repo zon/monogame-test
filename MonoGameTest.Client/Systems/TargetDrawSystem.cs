@@ -29,7 +29,7 @@ namespace MonoGameTest.Client {
 			if (other == null || !other.Value.IsAlive) return;
 
 			ref var sprite = ref other.Value.Get<Sprite>();
-			Context.Foreground.Draw(
+			Context.WorldBatch.Draw(
 				texture: Texture,
 				position: sprite.Position + Context.HalfTileSize,
 				sourceRectangle: Rectangle,
@@ -38,7 +38,7 @@ namespace MonoGameTest.Client {
 				origin: Origin,
 				scale: Vector2.One,
 				effects: SpriteEffects.None,
-				layerDepth: Context.Camera.Depth(sprite.Position, Depths.Shadow)
+				layerDepth: Context.WorldCamera.Depth(sprite.Position, Depths.Shadow)
 			);
 		}
 

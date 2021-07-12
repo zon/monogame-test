@@ -9,8 +9,8 @@ namespace MonoGameTest.Client {
 	public class EffectSystem : AEntitySetSystem<float> {
 		readonly Context Context;
 
-		SpriteBatch Batch => Context.Foreground;
-		Camera Camera => Context.Camera;
+		SpriteBatch Batch => Context.WorldBatch;
+		Camera Camera => Context.WorldCamera;
 
 		public EffectSystem(Context context) : base(context.World
 			.GetEntities()

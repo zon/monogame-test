@@ -20,9 +20,9 @@ namespace MonoGameTest.Client {
 
 		public bool IsEnabled { get; set; }
 		
-		Camera Camera => Context.Camera;
+		Camera Camera => Context.WorldCamera;
 		EntityMap<Position> Positions => Context.Positions;
-		SpriteBatch Batch => Context.Foreground;
+		SpriteBatch Batch => Context.WorldBatch;
 
 		public TestCastSystem(
 			SpriteBatch batch,
@@ -59,7 +59,7 @@ namespace MonoGameTest.Client {
 
 			var font = Context.Resources.Font;
 			Batch.Begin(
-				transformMatrix: Context.Camera.GetMatrix(),
+				transformMatrix: Context.WorldCamera.GetMatrix(),
 				samplerState: SamplerState.PointClamp
 			);
 

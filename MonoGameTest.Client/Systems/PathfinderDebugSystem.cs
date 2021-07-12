@@ -59,7 +59,7 @@ namespace MonoGameTest.Client {
 
 			var font = Context.Resources.Font;
 			Batch.Begin(
-				transformMatrix: Context.Camera.GetMatrix(),
+				transformMatrix: Context.WorldCamera.GetMatrix(),
 				samplerState: SamplerState.PointClamp
 			);
 

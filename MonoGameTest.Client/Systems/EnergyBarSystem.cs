@@ -10,7 +10,7 @@ namespace MonoGameTest.Client {
 	public class EnergyBarSystem : AEntitySetSystem<float> {
 		Context Context;
 
-		SpriteBatch Batch => Context.UI;
+		SpriteBatch Batch => Context.UIBatch;
 		
 		public EnergyBarSystem(Context context) : base(context.World
 			.GetEntities()
@@ -25,7 +25,7 @@ namespace MonoGameTest.Client {
 
 			var req = new RectangleF(
 				x: 0,
-				y: View.SCREEN_HEIGHT - View.ENERGY_BAR_HEIGHT,
+				y: View.HEIGHT - View.ENERGY_BAR_HEIGHT,
 				width: View.WIDTH,
 				height: View.ENERGY_BAR_HEIGHT
 			);

@@ -30,10 +30,10 @@ namespace MonoGameTest.Client {
 			var character = playerEntity?.Get<Character>();
 
 			var area = new Rectangle(
-				new Point(buttonResource.Size.X * button.Index, View.SCREEN_HEIGHT - View.ENERGY_BAR_HEIGHT - View.SKILL_BAR_HEIGHT),
+				new Point(buttonResource.Size.X * button.Index, View.HEIGHT - View.ENERGY_BAR_HEIGHT - View.SKILL_BAR_HEIGHT),
 				buttonResource.Size
 			);
-			var isHovered = area.Contains(Context.Camera.ScreenToUI(mouse.Position));
+			var isHovered = area.Contains(Context.UICamera.ScreenToWorld(mouse.Position.ToVector2()));
 			
 			var offset = Vector2.Zero;
 			Rectangle drawRect;
@@ -59,7 +59,7 @@ namespace MonoGameTest.Client {
 			}
 			
 			var position = area.Location.ToVector2() + offset;
-			Context.UI.Draw(
+			Context.UIBatch.Draw(
 				texture: buttonResource.Document.Texture,
 				position: position,
 				sourceRectangle: drawRect,
@@ -75,7 +75,7 @@ namespace MonoGameTest.Client {
 				(buttonResource.Size.X - button.IconRect.Width) / 2,
 				(buttonResource.Size.Y - button.IconRect.Height) / 2
 			);
-			Context.UI.Draw(
+			Context.UIBatch.Draw(
 				texture: iconsResource.Texture,
 				position: iconPosition,
 				sourceRectangle: button.IconRect,
@@ -95,7 +95,7 @@ namespace MonoGameTest.Client {
 			var h = Calc.Floor(buttonResource.Size.Y * p);
 			var y = buttonResource.Size.Y - h;
 
-			Context.UI.Draw(
+			Context.UIBatch.Draw(
 				texture: buttonResource.Document.Texture,
 				position: position + new Vector2(0, y),
 				sourceRectangle: new Rectangle(

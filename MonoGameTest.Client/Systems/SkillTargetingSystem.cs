@@ -14,7 +14,7 @@ namespace MonoGameTest.Client {
 		readonly Rectangle Valid;
 		readonly Rectangle Invalid;
 
-		SpriteBatch Batch => Context.Foreground;
+		SpriteBatch Batch => Context.WorldBatch;
 
 		public SkillTargetingSystem(Context context) : base(context.World
 			.GetEntities() 
@@ -35,7 +35,7 @@ namespace MonoGameTest.Client {
 			if (localPlayer.SelectedSkill == null) return;
 
 			var skill = localPlayer.SelectedSkill;
-			var mouseCoord = Context.ScreenToCoord(new Vector2(Context.Mouse.X, Context.Mouse.Y) / View.SCALE);
+			var mouseCoord = Context.ScreenToCoord(Context.Mouse.X, Context.Mouse.Y);
 			ref var position = ref entity.Get<Position>();
 			var pathfinder = Context.CreatePathfinder();
 			Rectangle sourceRect;

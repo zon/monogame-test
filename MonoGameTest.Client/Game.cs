@@ -20,10 +20,10 @@ namespace MonoGameTest.Client {
 		ISystem<float> UIRendering;
 		Resources Resources;
 		GraphicsDeviceManager Graphics;
-		RenderTarget2D RenderTarget;
-		Camera Camera;
-		SpriteBatch Foreground;
-		SpriteBatch UI;
+		Camera WorldCamera;
+		SpriteBatch WorldBatch;
+		Camera UICamera;
+		SpriteBatch UIBatch;
 		SpriteBatch Result;
 
 		public Game() {
@@ -46,27 +46,34 @@ namespace MonoGameTest.Client {
 			
 			World = new World();
 
-			RenderTarget = new RenderTarget2D(
-				graphicsDevice: GraphicsDevice,
-				width: View.SCREEN_WIDTH,
-				height: View.SCREEN_HEIGHT,
-				mipMap: false,
-				preferredFormat: GraphicsDevice.PresentationParameters.BackBufferFormat,
-				preferredDepthFormat: DepthFormat.Depth24
-			);
-			GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true }; 
+			GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true };
+			
+			Graphics.PreferredBackBufferWidth = View.SCREEN_WIDTH;
+			Graphics.PreferredBackBufferHeight = View.SCREEN_HEIGHT;
+			Graphics.ApplyChanges();
 
-			Camera = new Camera(Window, GraphicsDevice);
-			Foreground = new SpriteBatch(GraphicsDevice);
-			UI = new SpriteBatch(GraphicsDevice);
+			WorldCamera = new Camera(Window, GraphicsDevice);
+			WorldBatch = new SpriteBatch(GraphicsDevice);
+			UICamera = new Camera(Window, GraphicsDevice);
+			UIBatch = new SpriteBatch(GraphicsDevice);
 			Result = new SpriteBatch(GraphicsDevice);
 
-			Context = new Context(GraphicsDevice, Resources, World, Client, Camera, Foreground, UI);
+			Context = new Context(
+				GraphicsDevice,
+				Resources,
+				World,
+				Client,
+				WorldCamera,
+				WorldBatch,
+				UICamera,
+				UIBatch
+			);
 
 			PacketListener = new PacketListener(Context);
 			ButtonListener = new ButtonListener(Context);
 
 			Behavior = new SequentialSystem<float>(
+				new LocalPlayerCameraSystem(Context),
 				new EnergySystem(Context),
 				new CharacterSystem(Context),
 				new LocalInputSystem(Context),
@@ -90,8 +97,6 @@ namespace MonoGameTest.Client {
 				new EnergyBarSystem(Context),
 				new ButtonSystem(Context)
 			);
-			
-			Context.Camera.SetWindowSize(Graphics);
 
 			Client.Connect();
 		}
@@ -107,40 +112,60 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void Draw(GameTime gameTime) {
-			GraphicsDevice.Clear(Color.Black);
+			GraphicsDevice.Clear(Color.Green);
 			if (!Context.IsReady) return;
 
 			var dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-			GraphicsDevice.SetRenderTarget(RenderTarget);
+			GraphicsDevice.SetRenderTarget(WorldCamera.RenderTarget);
 			GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 			GraphicsDevice.Clear(Color.Black);
 
 			BackgroundRendering.Update(dt);
 
-			Foreground.Begin(
-				transformMatrix: Context.Camera.GetMatrix(),
+			var matrix = Context.WorldCamera.GetMatrix();
+			WorldBatch.Begin(
+				transformMatrix: Context.WorldCamera.GetMatrix(),
 				samplerState: SamplerState.PointClamp,
 				sortMode: SpriteSortMode.FrontToBack
 			);
 			ForegroundRendering.Update(dt);
-			Foreground.End();
+			WorldBatch.End();
 
-			UI.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+			GraphicsDevice.SetRenderTarget(UICamera.RenderTarget);
+			GraphicsDevice.Clear(new Color(0, 0, 0, 0));
+
+			matrix = Context.UICamera.GetMatrix();
+			UIBatch.Begin(
+				transformMatrix: matrix,
+				samplerState: SamplerState.PointClamp,
+				sortMode: SpriteSortMode.FrontToBack
+			);
 			UIRendering.Update(dt);
-			UI.End();
+			UIBatch.End();
 
 			GraphicsDevice.SetRenderTarget(null);
 
 			Result.Begin(samplerState: SamplerState.PointClamp);
 			Result.Draw(
-				texture: RenderTarget,
+				texture: WorldCamera.RenderTarget,
 				position: Vector2.Zero,
 				sourceRectangle: null,
 				color: Color.White,
 				rotation: 0,
 				origin: Vector2.Zero,
-				scale: Vector2.One * View.SCALE,
+				scale: Vector2.One,
+				effects: SpriteEffects.None,
+				layerDepth: 0
+			);
+			Result.Draw(
+				texture: UICamera.RenderTarget,
+				position: Vector2.Zero,
+				sourceRectangle: null,
+				color: Color.White,
+				rotation: 0,
+				origin: Vector2.Zero,
+				scale: Vector2.One,
 				effects: SpriteEffects.None,
 				layerDepth: 0
 			);

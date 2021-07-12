@@ -13,8 +13,8 @@ namespace MonoGameTest.Client {
 		const float MARGIN = 1;
 		const float HEIGHT = 2;
 
-		SpriteBatch Batch => Context.Foreground;
-		Camera Camera => Context.Camera;
+		SpriteBatch Batch => Context.WorldBatch;
+		Camera Camera => Context.WorldCamera;
 		
 		public HealthBarSystem(Context context) : base(context.World
 			.GetEntities()

@@ -28,7 +28,7 @@ namespace MonoGameTest.Client {
 				Renderer = new TiledMapRenderer(Context.GraphicsDevice, Context.TiledMap);
 			}
 			Context.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-			Renderer.Draw(Context.Camera.GetMatrix());
+			Renderer.Draw(Context.WorldCamera.GetMatrix());
 		}
 
 		public void Dispose() {
