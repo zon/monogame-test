@@ -1,24 +1,22 @@
 namespace MonoGameTest.Common {
 
 	public class Spawn {
-		public readonly int TileId;
 		public readonly Coord Coord;
 		public readonly Group Group;
 		public readonly int? RoleId;
 
-		public Spawn(int tileId, Coord coord, Group group, int? roleId) {
-			TileId = tileId;
+		public Spawn(Coord coord, Group group, int? roleId) {
 			Coord = coord;
 			Group = group;
 			RoleId = roleId;
 		}
 
-		public static Spawn Player(int tileId, Coord coord) {
-			return new Spawn(tileId, coord, Group.Player, null);
+		public static Spawn Player(Coord coord) {
+			return new Spawn(coord, Group.Player, null);
 		}
 
-		public static Spawn Mob(int tileId, Coord coord, Group group, int roleId) {
-			return new Spawn(tileId, coord, group, roleId);
+		public static Spawn Mob(Coord coord, Group group, int roleId) {
+			return new Spawn(coord, group, roleId);
 		}
 
 	}

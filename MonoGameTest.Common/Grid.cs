@@ -1,46 +1,40 @@
+using System.Collections.Immutable;
 using DefaultEcs;
 
 namespace MonoGameTest.Common {
 
 	public class Grid {
-		public readonly int Width;
-		public readonly int Height;
-		public readonly Node[] Nodes;
+		public readonly ImmutableDictionary<Coord, Node> Nodes;
 		public readonly Spawn[] Spawns;
 
-		public Grid(int width, int height, Node[] nodes, Spawn[] spawns = null) {
-			Width = width;
-			Height = height;
+		public Grid(ImmutableDictionary<Coord, Node> nodes, Spawn[] spawns = null) {
 			Nodes = nodes;
 			Spawns = (spawns != null) ? spawns : new Spawn[0];
 		}
 
-		public bool InBounds(int x, int y) {
-			return x >= 0 && x < Width && y >= 0 && y < Height;
-		}
-
-		public Node Get(int x, int y) {
-			if (!InBounds(x, y)) return null;
-			return Nodes[Index(x, y)];
+		public Node Get(long x, long y) {
+			return Get(new Coord(x, y));
 		}
 
 		public Node Get(Coord coord) {
-			return Get(coord.X, coord.Y);
+			Node res;
+			Nodes.TryGetValue(coord, out res);
+			return res;
 		}
 
-		public bool IsSolid(int x, int y) {
-			var node = Get(x, y);
+		public bool IsSolid(Coord coord) {
+			var node = Get(coord);
 			return node != null ? node.Solid : true;
 		}
 
 		// https://stackoverflow.com/a/3706260
-		public Node GetOpenNearby(EntityMap<Position> positions, int x, int y) {
-			var vx = 1;
-			var vy = 0;
-			var len = 1;
-			var ox = 0;
-			var oy = 0;
-			var p = 0;
+		public Node GetOpenNearby(EntityMap<Position> positions, long x, long y) {
+			long vx = 1;
+			long vy = 0;
+			long len = 1;
+			long ox = 0;
+			long oy = 0;
+			long p = 0;
 			for (var _ = 0; _ < 64; _++) {
 
 				var node = Get(x + ox, y + oy);
@@ -66,18 +60,6 @@ namespace MonoGameTest.Common {
 
 		public Node GetOpenNearby(EntityMap<Position> positions, Coord coord) {
 			return GetOpenNearby(positions, coord.X, coord.Y);
-		}
-
-		public int Index(int x, int y) {
-			return y * Width + x;
-		}
-
-		public int Index(Coord coord) {
-			return Index(coord.X, coord.Y);
-		}
-
-		public int Index(Node node) {
-			return Index(node.Position.Coord);
 		}
 
 	}

@@ -39,7 +39,7 @@ namespace MonoGameTest.Client {
 			ref var position = ref entity.Get<Position>();
 			var pathfinder = Context.CreatePathfinder();
 			Rectangle sourceRect;
-			foreach (var node in Context.Grid.Nodes) {
+			foreach (var node in Context.Grid.Nodes.Values) {
 				if (
 					node.Solid ||
 					node.Coord == mouseCoord ||

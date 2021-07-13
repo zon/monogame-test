@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using DefaultEcs;
@@ -9,9 +10,8 @@ using TiledCS;
 
 namespace MonoGameTest.Server {
  	public class Context : IContext {
-		const string CONTENT_PATH = "../MonoGameTest.Client/Content";
-		
 		public readonly Server Server;
+		public LdtkWorld Level { get; private set; }
 		public World World { get; private set; }
 		public EntityCommandRecorder Recorder { get; private set; }
 		public EntitySet Characters { get; private set; }
@@ -43,50 +43,10 @@ namespace MonoGameTest.Server {
 		}
 
 		public void Load(string name) {
-			var path = name;
-			if (!path.EndsWith(".tmx")) {
-				path = $"{CONTENT_PATH}/{name}.tmx";
-			}
-			var map = new TiledMap(path);
-			var tilesets = map.GetTiledTilesets(path);
-
-			var nodes = new Node[map.Width * map.Height];
-			var walls = map.Layers.First(l => l.name == "walls");
-			for (var y = 0; y < map.Height; y++) {
-				for (var x = 0; x < map.Width; x++) {
-					var i = map.Width * y + x;
-					var gid = walls.data[i];
-					var tileset = map.GetTiledMapTileset(gid);
-					var tile = map.GetTiledTile(tileset, tilesets[tileset.firstgid], gid);
-					var solid = getTileBool(tile, "solid");
-					nodes[i] = new Node(x, y, solid);
-				}
-			}
-
-			var spawns = new List<Spawn>();
-			var characters = map.Layers.First(l => l.name == "characters");
-			for (var i = 0; i < characters.data.Length; i++) {
-				var gid = characters.data[i];
-				var tileset = map.GetTiledMapTileset(gid);
-				var tile = map.GetTiledTile(tileset, tilesets[tileset.firstgid], gid);
-
-				var x = i % map.Width;
-				var y = Calc.Floor(i / map.Width);
-				var coord = new Coord(x, y);
-				
-				var tileId = gid - tileset.firstgid;
-
-				var group = getTileInt(tile, "group");
-				if (group != 0) {
-					var roleId = getTileInt(tile, "role");
-					spawns.Add(Spawn.Mob(tileId, coord, (Group) group, roleId));
-
-				} else if (getTileBool(tile, "spawn")) {
-					spawns.Add(Spawn.Player(tileId, coord));
-				}
-			}
-
-			Grid = new Grid(map.Width, map.Height, nodes, spawns.ToArray());
+			Level = new LdtkWorld(name);
+			var nodes = Level.GetNodes();
+			var spawns = Level.GetSpawns();
+			Grid = new Grid(nodes, spawns);
 			IsReady = true;
 		}
 

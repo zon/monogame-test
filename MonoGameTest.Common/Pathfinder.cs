@@ -12,7 +12,7 @@ namespace MonoGameTest.Common {
 		public readonly Grid Grid;
 		public readonly EntityMap<Position> Positions;
 		public readonly SimplePriorityQueue<Node, float> Frontier;
-		public readonly Dictionary<int, Note> Notes;
+		public readonly Dictionary<Coord, Note> Notes;
 
 		public const int LOOP_MAX = 1000;
 
@@ -20,7 +20,7 @@ namespace MonoGameTest.Common {
 			Grid = grid;
 			Positions = positions;
 			Frontier = new SimplePriorityQueue<Node, float>();
-			Notes = new Dictionary<int, Note>();
+			Notes = new Dictionary<Coord, Note>();
 		}
 
 		public Result MoveTo(Node start, Node goal) {
@@ -132,7 +132,7 @@ namespace MonoGameTest.Common {
 				Origin = null,
 				Heuristic = h
 			};
-			Notes[Grid.Index(start)] = note;
+			Notes[start.Coord] = note;
 
 			var best = start;
 			var bestNote = note;
@@ -147,7 +147,7 @@ namespace MonoGameTest.Common {
 					return CreatePath(current, true);
 				}
 
-				note = Notes[Grid.Index(current)];
+				note = Notes[current.Coord];
 				h = heuristic(current);
 				if (h < bestNote.Heuristic) {
 					best = current;
@@ -158,7 +158,7 @@ namespace MonoGameTest.Common {
 				var y = current.Y;
 				var neighbors = new Neighbors(x, y, Grid, Positions, isOpen);
 				foreach (var next in neighbors) {
-					var i = Grid.Index(next);
+					var k = next.Coord;
 					var dx = next.X - x;
 					var dy = next.Y - y;
 					var nextCost = note.Cost + Movement.COST;
@@ -166,14 +166,14 @@ namespace MonoGameTest.Common {
 						nextCost = note.Cost + Movement.DIAGONAL_COST;
 					}
 					Note prevNote;
-					var hasPrevCost = Notes.TryGetValue(i, out prevNote);
+					var hasPrevCost = Notes.TryGetValue(k, out prevNote);
 					if (!hasPrevCost || nextCost < prevNote.Cost) {
 						h = heuristic(next);
 						var p = nextCost + h;
 						if (!Frontier.EnqueueWithoutDuplicates(next, p)) {
 							Frontier.UpdatePriority(next, p);
 						}
-						Notes[i] = new Note {
+						Notes[k] = new Note {
 							Origin = current,
 							Cost = nextCost,
 							Heuristic = h
@@ -287,7 +287,7 @@ namespace MonoGameTest.Common {
 			var current = last;
 			while (current != null) {
 				Note note;
-				if (Notes.TryGetValue(Grid.Index(current), out note)) {
+				if (Notes.TryGetValue(current.Coord, out note)) {
 					if (note.Origin != null) {
 						path.Push(note.Origin);
 					}

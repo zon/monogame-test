@@ -80,7 +80,7 @@ namespace MonoGameTest.Client {
 				new SkillInputSystem(Context)
 			);
 
-			BackgroundRendering = new TilemapDrawSystem(Context);
+			BackgroundRendering = new LdtkDrawSystem(Context);
 			ForegroundRendering = new SequentialSystem<float>(
 				new SkillTargetingSystem(Context),
 				new MovementAnimationSystem(Context),
@@ -112,7 +112,7 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void Draw(GameTime gameTime) {
-			GraphicsDevice.Clear(Color.Green);
+			GraphicsDevice.Clear(Color.Black);
 			if (!Context.IsReady) return;
 
 			var dt = (float) gameTime.ElapsedGameTime.TotalSeconds;

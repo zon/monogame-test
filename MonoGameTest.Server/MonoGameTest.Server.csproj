@@ -13,4 +13,11 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None
+      Include="../MonoGameTest.Client/Resources/*"
+      CopyToOutputDirectory="PreserveNewest"
+      Link="Resources/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
 </Project>

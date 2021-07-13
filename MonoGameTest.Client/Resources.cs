@@ -5,15 +5,12 @@ using MonoGame.Aseprite.Documents;
 using MonoGame.Aseprite.Graphics;
 using MonoGame.Extended.BitmapFonts;
 using MonoGameTest.Common;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 
 namespace MonoGameTest.Client {
 
 	public class Resources {
-		public readonly LdtkWorld World;
-		public readonly ImmutableDictionary<long, AsepriteDocument> TilesetSprites;
 		public readonly AsepriteDocument Characters;
 		public readonly AsepriteDocument Attacks;
 		public readonly AsepriteDocument Effects;
@@ -27,15 +24,6 @@ namespace MonoGameTest.Client {
 		public readonly BitmapFont Font;
 
 		Resources(ContentManager content) {
-			World = new LdtkWorld("dungeon");
-
-			var builder = ImmutableDictionary.CreateBuilder<long, AsepriteDocument>();
-			foreach (var def in World.Json.Defs.Tilesets) {
-				var doc = content.Load<AsepriteDocument>(Path.GetFileNameWithoutExtension(def.RelPath));
-				builder.Add(def.Uid, doc);
-			}
-			TilesetSprites = builder.ToImmutable();
-
 			Characters = content.Load<AsepriteDocument>("entities");
 			Attacks = content.Load<AsepriteDocument>("attacks");
 			Effects = content.Load<AsepriteDocument>("effects-3x3");
@@ -69,10 +57,6 @@ namespace MonoGameTest.Client {
 
 		public AnimatedSprite GetAnimatedSprite(SpriteLocation? location) {
 			return GetAnimatedSprite(location?.File);
-		}
-
-		public AsepriteDocument GetTilesetSprite(TilesetDefinition tileset) {
-			return TilesetSprites[tileset.Uid];
 		}
 
 		public static Resources Load(ContentManager content) {

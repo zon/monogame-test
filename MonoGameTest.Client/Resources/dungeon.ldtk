@@ -9,7 +9,7 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "0.9.3",
-	"nextUid": 21,
+	"nextUid": 27,
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
@@ -50,25 +50,6 @@
 			"tilePivotY": 0
 		},
 		{
-			"__type": "Tiles",
-			"identifier": "Mobs",
-			"type": "Tiles",
-			"uid": 16,
-			"gridSize": 16,
-			"displayOpacity": 1,
-			"pxOffsetX": 0,
-			"pxOffsetY": 0,
-			"requiredTags": [],
-			"excludedTags": [],
-			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
-			"autoTilesetDefUid": null,
-			"autoRuleGroups": [],
-			"autoSourceLayerDefUid": null,
-			"tilesetDefUid": 12,
-			"tilePivotX": 0,
-			"tilePivotY": 0
-		},
-		{
 			"__type": "IntGrid",
 			"identifier": "Collisions",
 			"type": "IntGrid",
@@ -79,7 +60,7 @@
 			"pxOffsetY": 0,
 			"requiredTags": [],
 			"excludedTags": [],
-			"intGridValues": [{ "value": 1, "identifier": "solid", "color": "#000000" }],
+			"intGridValues": [{ "value": 1, "identifier": "Solid", "color": "#000000" }],
 			"autoTilesetDefUid": 1,
 			"autoRuleGroups": [{ "uid": 8, "name": "New group", "active": true, "collapsed": false, "isOptional": false, "rules": [
 				{
@@ -142,7 +123,7 @@
 			"resizableX": false,
 			"resizableY": false,
 			"keepAspectRatio": false,
-			"fillOpacity": 1,
+			"fillOpacity": 0.5,
 			"lineOpacity": 1,
 			"hollow": false,
 			"color": "#94D9B3",
@@ -152,25 +133,25 @@
 			"tileId": null,
 			"tileRenderMode": "FitInside",
 			"maxCount": 1,
-			"limitScope": "PerLevel",
+			"limitScope": "PerWorld",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
+			"pivotX": 0.5,
+			"pivotY": 0.5,
 			"fieldDefs": []
 		},
 		{
-			"identifier": "Trigger",
-			"uid": 13,
+			"identifier": "Mob",
+			"uid": 25,
 			"tags": [],
 			"width": 16,
 			"height": 16,
-			"resizableX": true,
-			"resizableY": true,
+			"resizableX": false,
+			"resizableY": false,
 			"keepAspectRatio": false,
 			"fillOpacity": 1,
 			"lineOpacity": 1,
-			"hollow": true,
-			"color": "#D9D794",
+			"hollow": false,
+			"color": "#D38740",
 			"renderMode": "Rectangle",
 			"showName": false,
 			"tilesetId": null,
@@ -179,9 +160,30 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0,
-			"pivotY": 0,
-			"fieldDefs": []
+			"pivotX": 0.5,
+			"pivotY": 0.5,
+			"fieldDefs": [
+				{
+					"identifier": "Mob",
+					"__type": "LocalEnum.Mob",
+					"uid": 26,
+					"type": { "id": "F_Enum", "params": [14] },
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "EntityTile",
+					"editorDisplayPos": "Center",
+					"editorAlwaysShow": false,
+					"editorCutLongValues": true,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null
+				}
+			]
 		}
 	], "tilesets": [
 		{
@@ -221,10 +223,10 @@
 			"savedSelections": [],
 			"cachedPixelData": { "opaqueTiles": "0000000000000000", "averageColors": "3eed1eed7eed8329875668548922797578877988792977569952887786356431" }
 		}
-	], "enums": [{ "identifier": "Mobs", "uid": 14, "values": [
-		{ "id": "Mobs0", "tileId": 7, "color": 10055516, "__tileSrcRect": [48,16,16,16] },
-		{ "id": "Mobs1", "tileId": 9, "color": 9602432, "__tileSrcRect": [16,32,16,16] },
-		{ "id": "Mobs2", "tileId": 8, "color": 8946303, "__tileSrcRect": [0,32,16,16] }
+	], "enums": [{ "identifier": "Mob", "uid": 14, "values": [
+		{ "id": "Mob0", "tileId": 7, "color": 10055516, "__tileSrcRect": [48,16,16,16] },
+		{ "id": "Mob1", "tileId": 9, "color": 9602432, "__tileSrcRect": [16,32,16,16] },
+		{ "id": "Mob2", "tileId": 8, "color": 8946303, "__tileSrcRect": [0,32,16,16] }
 	], "iconTilesetUid": 12, "externalRelPath": null, "externalFileChecksum": null }], "externalEnums": [], "levelFields": [] },
 	"levels": [
 		{
@@ -272,40 +274,15 @@
 						{
 							"__identifier": "Start",
 							"__grid": [3,6],
-							"__pivot": [0,0],
+							"__pivot": [0.5,0.5],
 							"__tile": null,
 							"width": 16,
 							"height": 16,
 							"defUid": 3,
-							"px": [48,96],
+							"px": [56,104],
 							"fieldInstances": []
 						}
 					]
-				},
-				{
-					"__identifier": "Mobs",
-					"__type": "Tiles",
-					"__cWid": 8,
-					"__cHei": 9,
-					"__gridSize": 16,
-					"__opacity": 1,
-					"__pxTotalOffsetX": 0,
-					"__pxTotalOffsetY": 0,
-					"__tilesetDefUid": 12,
-					"__tilesetRelPath": "../Content/entities.aseprite",
-					"levelId": 17,
-					"layerDefUid": 16,
-					"pxOffsetX": 0,
-					"pxOffsetY": 0,
-					"visible": true,
-					"optionalRules": [],
-					"intGrid": [],
-					"intGridCsv": [],
-					"autoLayerTiles": [],
-					"seed": 7945793,
-					"overrideTilesetUid": null,
-					"gridTiles": [],
-					"entityInstances": []
 				},
 				{
 					"__identifier": "Collisions",
@@ -565,32 +542,28 @@
 					"seed": 2713701,
 					"overrideTilesetUid": null,
 					"gridTiles": [],
-					"entityInstances": []
-				},
-				{
-					"__identifier": "Mobs",
-					"__type": "Tiles",
-					"__cWid": 8,
-					"__cHei": 11,
-					"__gridSize": 16,
-					"__opacity": 1,
-					"__pxTotalOffsetX": 0,
-					"__pxTotalOffsetY": 0,
-					"__tilesetDefUid": 12,
-					"__tilesetRelPath": "../Content/entities.aseprite",
-					"levelId": 18,
-					"layerDefUid": 16,
-					"pxOffsetX": 0,
-					"pxOffsetY": 0,
-					"visible": true,
-					"optionalRules": [],
-					"intGrid": [],
-					"intGridCsv": [],
-					"autoLayerTiles": [],
-					"seed": 1442543,
-					"overrideTilesetUid": null,
-					"gridTiles": [{ "px": [48,80], "src": [16,32], "f": 0, "t": 9, "d": [43] }],
-					"entityInstances": []
+					"entityInstances": [
+						{
+							"__identifier": "Mob",
+							"__grid": [3,5],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 12, "srcRect": [16,32,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 25,
+							"px": [56,88],
+							"fieldInstances": [{
+								"__identifier": "Mob",
+								"__value": "Mob1",
+								"__type": "LocalEnum.Mob",
+								"defUid": 26,
+								"realEditorValues": [{
+									"id": "V_String",
+									"params": ["Mob1"]
+								}]
+							}]
+						}
+					]
 				},
 				{
 					"__identifier": "Collisions",
@@ -805,35 +778,48 @@
 					"seed": 2872632,
 					"overrideTilesetUid": null,
 					"gridTiles": [],
-					"entityInstances": []
-				},
-				{
-					"__identifier": "Mobs",
-					"__type": "Tiles",
-					"__cWid": 8,
-					"__cHei": 12,
-					"__gridSize": 16,
-					"__opacity": 1,
-					"__pxTotalOffsetX": 0,
-					"__pxTotalOffsetY": 0,
-					"__tilesetDefUid": 12,
-					"__tilesetRelPath": "../Content/entities.aseprite",
-					"levelId": 19,
-					"layerDefUid": 16,
-					"pxOffsetX": 0,
-					"pxOffsetY": 0,
-					"visible": true,
-					"optionalRules": [],
-					"intGrid": [],
-					"intGridCsv": [],
-					"autoLayerTiles": [],
-					"seed": 714149,
-					"overrideTilesetUid": null,
-					"gridTiles": [
-						{ "px": [48,96], "src": [16,32], "f": 0, "t": 9, "d": [51] },
-						{ "px": [80,128], "src": [0,32], "f": 0, "t": 8, "d": [69] }
-					],
-					"entityInstances": []
+					"entityInstances": [
+						{
+							"__identifier": "Mob",
+							"__grid": [3,6],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 12, "srcRect": [16,32,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 25,
+							"px": [56,104],
+							"fieldInstances": [{
+								"__identifier": "Mob",
+								"__value": "Mob1",
+								"__type": "LocalEnum.Mob",
+								"defUid": 26,
+								"realEditorValues": [{
+									"id": "V_String",
+									"params": ["Mob1"]
+								}]
+							}]
+						},
+						{
+							"__identifier": "Mob",
+							"__grid": [5,8],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 12, "srcRect": [0,32,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 25,
+							"px": [88,136],
+							"fieldInstances": [{
+								"__identifier": "Mob",
+								"__value": "Mob2",
+								"__type": "LocalEnum.Mob",
+								"defUid": 26,
+								"realEditorValues": [{
+									"id": "V_String",
+									"params": ["Mob2"]
+								}]
+							}]
+						}
+					]
 				},
 				{
 					"__identifier": "Collisions",
@@ -1045,36 +1031,68 @@
 					"seed": 8741096,
 					"overrideTilesetUid": null,
 					"gridTiles": [],
-					"entityInstances": []
-				},
-				{
-					"__identifier": "Mobs",
-					"__type": "Tiles",
-					"__cWid": 8,
-					"__cHei": 8,
-					"__gridSize": 16,
-					"__opacity": 1,
-					"__pxTotalOffsetX": 0,
-					"__pxTotalOffsetY": 0,
-					"__tilesetDefUid": 12,
-					"__tilesetRelPath": "../Content/entities.aseprite",
-					"levelId": 20,
-					"layerDefUid": 16,
-					"pxOffsetX": 0,
-					"pxOffsetY": 0,
-					"visible": true,
-					"optionalRules": [],
-					"intGrid": [],
-					"intGridCsv": [],
-					"autoLayerTiles": [],
-					"seed": 4302156,
-					"overrideTilesetUid": null,
-					"gridTiles": [
-						{ "px": [80,48], "src": [16,32], "f": 0, "t": 9, "d": [29] },
-						{ "px": [48,64], "src": [16,32], "f": 0, "t": 9, "d": [35] },
-						{ "px": [64,64], "src": [48,16], "f": 0, "t": 7, "d": [36] }
-					],
-					"entityInstances": []
+					"entityInstances": [
+						{
+							"__identifier": "Mob",
+							"__grid": [5,3],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 12, "srcRect": [16,32,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 25,
+							"px": [88,56],
+							"fieldInstances": [{
+								"__identifier": "Mob",
+								"__value": "Mob1",
+								"__type": "LocalEnum.Mob",
+								"defUid": 26,
+								"realEditorValues": [{
+									"id": "V_String",
+									"params": ["Mob1"]
+								}]
+							}]
+						},
+						{
+							"__identifier": "Mob",
+							"__grid": [3,4],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 12, "srcRect": [16,32,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 25,
+							"px": [56,72],
+							"fieldInstances": [{
+								"__identifier": "Mob",
+								"__value": "Mob1",
+								"__type": "LocalEnum.Mob",
+								"defUid": 26,
+								"realEditorValues": [{
+									"id": "V_String",
+									"params": ["Mob1"]
+								}]
+							}]
+						},
+						{
+							"__identifier": "Mob",
+							"__grid": [4,4],
+							"__pivot": [0.5,0.5],
+							"__tile": { "tilesetUid": 12, "srcRect": [48,16,16,16] },
+							"width": 16,
+							"height": 16,
+							"defUid": 25,
+							"px": [72,72],
+							"fieldInstances": [{
+								"__identifier": "Mob",
+								"__value": "Mob0",
+								"__type": "LocalEnum.Mob",
+								"defUid": 26,
+								"realEditorValues": [{
+									"id": "V_String",
+									"params": ["Mob0"]
+								}]
+							}]
+						}
+					]
 				},
 				{
 					"__identifier": "Collisions",

@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ldtk;
-using MonoGameTest.Common;
 using Microsoft.Xna.Framework.Input;
 
 namespace MonoGameTest.Client {
@@ -63,29 +61,29 @@ namespace MonoGameTest.Client {
 			GraphicsDevice.SetRenderTarget(Camera.RenderTarget);
 			GraphicsDevice.Clear(Color.Black);
 
-			var matrix = Camera.GetMatrix();
-			Batch.Begin(transformMatrix: matrix, samplerState: SamplerState.PointClamp);
-			foreach (var level in Resources.World.Json.Levels) {
-				var offset = new Point((int) level.WorldX, (int) level.WorldY);
-				var layer = Resources.World.GetLayer(level.Uid, "Collisions");
-				var tileset = Resources.World.GetTileset(layer.TilesetDefUid.Value);
-				var tileSize = new Point((int) tileset.TileGridSize, (int) tileset.TileGridSize);
-				var texture = Resources.GetTilesetSprite(tileset).Texture;
-				foreach (var tile in layer.AutoLayerTiles) {
-					Batch.Draw(
-						texture: texture,
-						position: (View.ToPoint(tile.Px) + offset).ToVector2(),
-						sourceRectangle: new Rectangle(View.ToPoint(tile.Src), tileSize),
-						color: Color.White,
-						rotation: 0,
-						origin: Vector2.Zero,
-						scale: Vector2.One,
-						effects: SpriteEffects.None,
-						layerDepth: 0
-					);
-				}
-			}
-			Batch.End();
+			// var matrix = Camera.GetMatrix();
+			// Batch.Begin(transformMatrix: matrix, samplerState: SamplerState.PointClamp);
+			// foreach (var level in Resources.World.Json.Levels) {
+			// 	var offset = new Point((int) level.WorldX, (int) level.WorldY);
+			// 	var layer = Resources.World.GetLayer(level.Uid, "Collisions");
+			// 	var tileset = Resources.World.GetTileset(layer.TilesetDefUid.Value);
+			// 	var tileSize = new Point((int) tileset.TileGridSize, (int) tileset.TileGridSize);
+			// 	var texture = Resources.GetTilesetSprite(tileset).Texture;
+			// 	foreach (var tile in layer.AutoLayerTiles) {
+			// 		Batch.Draw(
+			// 			texture: texture,
+			// 			position: (View.ToPoint(tile.Px) + offset).ToVector2(),
+			// 			sourceRectangle: new Rectangle(View.ToPoint(tile.Src), tileSize),
+			// 			color: Color.White,
+			// 			rotation: 0,
+			// 			origin: Vector2.Zero,
+			// 			scale: Vector2.One,
+			// 			effects: SpriteEffects.None,
+			// 			layerDepth: 0
+			// 		);
+			// 	}
+			// }
+			// Batch.End();
 
 			GraphicsDevice.SetRenderTarget(null);
 

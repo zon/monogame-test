@@ -3,8 +3,8 @@ using System;
 namespace MonoGameTest.Common {
 
 	public struct Coord : IEquatable<Coord> {
-		public readonly int X;
-		public readonly int Y;
+		public readonly long X;
+		public readonly long Y;
 
 		public readonly static Coord Zero = new Coord(0, 0);
 		public readonly static Coord One = new Coord(1, 1);
@@ -13,12 +13,14 @@ namespace MonoGameTest.Common {
 		public readonly static Coord Up = new Coord(0, -1);
 		public readonly static Coord Down = new Coord(0, 1);
 
-		public Coord(int x, int y) {
+		public Coord(long x, long y) {
 			this.X = x;
 			this.Y = y;
 		}
 
-		public override int GetHashCode() => X * 6983 + Y * 4003;
+		public Coord(long[] pair) : this(pair[0], pair[1]) {}
+
+		public override int GetHashCode() => (int) (X * 6983 + Y * 4003);
 
 		public override bool Equals(object obj) => obj is Coord other && Equals(other);
 

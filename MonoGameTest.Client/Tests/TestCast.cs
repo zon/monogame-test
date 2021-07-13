@@ -41,7 +41,7 @@ namespace MonoGameTest.Client {
 			Context.Load(Content, "first");
 
 			Systems = new SequentialSystem<float>(
-				new TilemapDrawSystem(Context),
+				new LdtkDrawSystem(Context),
 				new TestCastSystem(Batch, Font, Context)
 			);
 		}

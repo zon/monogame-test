@@ -12,8 +12,8 @@ namespace MonoGameTest.Common {
 		public int HealthAmount { get; set; }
 		public int EnergyMaximum { get; set; }
 		public float EnergyAmount { get; set; }
-		public int X { get; set; }
-		public int Y { get; set; }
+		public long X { get; set; }
+		public long Y { get; set; }
 
 		public AddCharacterPacket() {}
 

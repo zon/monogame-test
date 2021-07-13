@@ -6,8 +6,8 @@ using DefaultEcs;
 namespace MonoGameTest.Common {
 
 	public struct Neighbors : IEnumerator<Node> {
-		readonly int X;
-		readonly int Y;
+		readonly long X;
+		readonly long Y;
 		readonly Grid Grid;
 		readonly EntityMap<Position> Positions;
 		readonly Func<Node, Nullable<Entity>, bool> Check;
@@ -20,8 +20,8 @@ namespace MonoGameTest.Common {
 		public Node Current { get; private set; }
 
 		public Neighbors(
-			int x,
-			int y,
+			long x,
+			long y,
 			Grid grid,
 			EntityMap<Position> positions,
 			Func<Node, Nullable<Entity>, bool> check
@@ -83,7 +83,7 @@ namespace MonoGameTest.Common {
 
 		public void Dispose() {}
 
-		bool CheckNode(int x, int y) {
+		bool CheckNode(long x, long y) {
 			var node = Grid.Get(x, y);
 			if (node == null) return false;
 			Entity entity;

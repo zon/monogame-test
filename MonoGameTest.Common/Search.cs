@@ -12,7 +12,7 @@ namespace MonoGameTest.Common {
 		public readonly Node Start;
 		public readonly Func<Entity, bool> Criteria;
 		public readonly SimplePriorityQueue<Node, float> Frontier;
-		public readonly Dictionary<int, float> Costs;
+		public readonly Dictionary<Coord, float> Costs;
 
 		public Entity Current { get; private set; }
 
@@ -22,7 +22,7 @@ namespace MonoGameTest.Common {
 			Start = start;
 			Criteria = criteria;
 			Frontier = new SimplePriorityQueue<Node, float>();
-			Costs = new Dictionary<int, float>();
+			Costs = new Dictionary<Coord, float>();
 			Reset();
 		}
 
@@ -40,7 +40,7 @@ namespace MonoGameTest.Common {
 			if (Start == null) return;
 
 			Frontier.EnqueueWithoutDuplicates(Start, 0);
-			Costs.Add(Grid.Index(Start), 0);
+			Costs.Add(Start.Coord, 0);
 		}
 
 		public bool MoveNext() {
@@ -61,9 +61,9 @@ namespace MonoGameTest.Common {
 				x, y, Grid, Positions,
 				(n, e) => !n.Solid && (!e.HasValue || (n.X == x || n.Y == y))
 			);
-			var baseCost = Costs[Grid.Index(node)];
+			var baseCost = Costs[node.Coord];
 			foreach (var next in neighbors) {
-				var i = Grid.Index(next);
+				var k = next.Coord;
 				var dx = next.X - x;
 				var dy = next.Y - y;
 				var nextCost = baseCost + Movement.COST;
@@ -71,10 +71,10 @@ namespace MonoGameTest.Common {
 					nextCost = baseCost + Movement.DIAGONAL_COST;
 				}
 				var prevCost = 0f;
-				var hasPrevCost = Costs.TryGetValue(i, out prevCost);
+				var hasPrevCost = Costs.TryGetValue(k, out prevCost);
 				if (!hasPrevCost || nextCost < prevCost) {
 					Frontier.EnqueueWithoutDuplicates(next, nextCost);
-					Costs.Add(i, nextCost);
+					Costs.Add(k, nextCost);
 				}
 			}
 			return true;

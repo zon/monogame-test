@@ -13,6 +13,7 @@ namespace MonoGameTest.Client {
 	public class Context : IContext {
 		public readonly GraphicsDevice GraphicsDevice;
 		public readonly Resources Resources;
+		public LevelResources LevelResources { get; private set; }
 		public readonly Client Client;
 		public World World { get; private set; }
 		public EntityMap<CharacterId> CharacterIds { get; private set; }
@@ -23,7 +24,6 @@ namespace MonoGameTest.Client {
 		public Entity? LocalPlayer { get; private set; }
 		public EntityCommandRecorder Recorder { get; private set; }
 		public int SessionId { get; private set; }
-		public TiledMap TiledMap { get; private set; }
 		public Vector2 TileSize { get; private set; }
 		public Vector2 HalfTileSize { get; private set; }
 		public Grid Grid { get; private set; }
@@ -86,12 +86,13 @@ namespace MonoGameTest.Client {
 
 		public void Load(
 			ContentManager content,
-			string tileMapName
+			string world
 		) {
-			TiledMap = Tiled.LoadMap(content, tileMapName);
-			TileSize = new Vector2(TiledMap.TileWidth, TiledMap.TileHeight);
+			LevelResources = LevelResources.Load(content, world);
+			TileSize = Vector2.One * LevelResources.World.Json.DefaultGridSize;
 			HalfTileSize = TileSize / 2;
-			Grid = Tiled.LoadGrid(TiledMap);
+			var nodes = LevelResources.World.GetNodes();
+			Grid = new Grid(nodes);
 			IsReady = true;
 		}
 
@@ -101,8 +102,8 @@ namespace MonoGameTest.Client {
 
 		public Coord VectorToCoord(float x, float y) {
 			return new Coord(
-				Calc.Floor(x / TiledMap.TileWidth),
-				Calc.Floor(y / TiledMap.TileHeight)
+				Calc.Floor(x / TileSize.X),
+				Calc.Floor(y / TileSize.Y)
 			);
 		}
 
@@ -110,10 +111,10 @@ namespace MonoGameTest.Client {
 			return VectorToCoord(vector.X, vector.Y);
 		}
 
-		public Vector2 CoordToVector(int x, int y) {
+		public Vector2 CoordToVector(long x, long y) {
 			return new Vector2(
-				x * TiledMap.TileWidth,
-				y * TiledMap.TileHeight
+				x * TileSize.X,
+				y * TileSize.Y
 			);
 		}
 
@@ -125,7 +126,7 @@ namespace MonoGameTest.Client {
 			return CoordToMidVector(coord.X, coord.Y);
 		}
 
-		public Vector2 CoordToMidVector(int x, int y) {
+		public Vector2 CoordToMidVector(long x, long y) {
 			return CoordToVector(x, y) + HalfTileSize;
 		}
 
@@ -176,7 +177,7 @@ namespace MonoGameTest.Client {
 
 		public void Unload() {
 			SessionId = 0;
-			TiledMap = null;
+			LevelResources = null;
 			Grid = null;
 			IsReady = false;
 		}

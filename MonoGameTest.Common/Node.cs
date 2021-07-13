@@ -10,20 +10,20 @@ namespace MonoGameTest.Common {
 			}
 		}
 
-		public int X {
+		public long X {
 			get {
 				return Position.Coord.X;
 			}
 		}
 
-		public int Y {
+		public long Y {
 			get {
 				return Position.Coord.Y;
 			}
 		}
 
-		public Node(int x, int y, bool solid) {
-			Position = new Position { Coord = new Coord(x, y) };
+		public Node(Coord coord, bool solid) {
+			Position = new Position { Coord = coord };
 			Solid = solid;
 		}
 
