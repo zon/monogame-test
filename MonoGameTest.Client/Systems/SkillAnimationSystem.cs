@@ -11,7 +11,7 @@ namespace MonoGameTest.Client {
 		const float FORWARD_STEP = 4;
 		
 		SpriteBatch Batch => Context.WorldBatch;
-		Camera Camera => Context.WorldCamera;
+		CameraView Camera => Context.WorldCameraView;
 
 		public SkillAnimationSystem(Context context) : base(context.World
 			.GetEntities()

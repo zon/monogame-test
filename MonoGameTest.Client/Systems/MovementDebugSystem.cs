@@ -15,7 +15,7 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void PreUpdate(float dt) {
-			Batch.Begin(transformMatrix: Context.WorldCamera.GetMatrix());
+			Batch.Begin(transformMatrix: Context.WorldCameraView.GetMatrix());
 		}
 
 		protected override void Update(float dt, ref Character movement) {

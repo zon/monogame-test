@@ -13,7 +13,7 @@ namespace MonoGameTest.Client {
 		const float DURATION = 1;
 
 		SpriteBatch Batch => Context.WorldBatch;
-		Camera Camera => Context.WorldCamera;
+		CameraView Camera => Context.WorldCameraView;
 
 		public BangSystem(Context context) : base(context.World
 			.GetEntities()

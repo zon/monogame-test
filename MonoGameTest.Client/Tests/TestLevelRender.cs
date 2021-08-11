@@ -8,7 +8,7 @@ namespace MonoGameTest.Client {
 		Resources Resources;
 		GraphicsDeviceManager Graphics;
 		SpriteBatch Batch;
-		Camera Camera;
+		CameraView Camera;
 
 		public TestLevelRender() {
 			Graphics = new GraphicsDeviceManager(this);
@@ -28,7 +28,7 @@ namespace MonoGameTest.Client {
 
 			Batch = new SpriteBatch(GraphicsDevice);
 
-			Camera = new Camera(Window, GraphicsDevice, View.WIDTH, View.HEIGHT);
+			Camera = new CameraView(Window, GraphicsDevice, View.WIDTH, View.HEIGHT);
 
 			IsMouseVisible = true;
 		}

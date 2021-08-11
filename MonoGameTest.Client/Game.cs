@@ -20,9 +20,9 @@ namespace MonoGameTest.Client {
 		ISystem<float> UIRendering;
 		Resources Resources;
 		GraphicsDeviceManager Graphics;
-		Camera WorldCamera;
+		CameraView WorldCamera;
 		SpriteBatch WorldBatch;
-		Camera UICamera;
+		CameraView UICamera;
 		SpriteBatch UIBatch;
 		SpriteBatch Result;
 
@@ -52,9 +52,9 @@ namespace MonoGameTest.Client {
 			Graphics.PreferredBackBufferHeight = View.SCREEN_HEIGHT;
 			Graphics.ApplyChanges();
 
-			WorldCamera = new Camera(Window, GraphicsDevice);
+			WorldCamera = new CameraView(Window, GraphicsDevice);
 			WorldBatch = new SpriteBatch(GraphicsDevice);
-			UICamera = new Camera(Window, GraphicsDevice);
+			UICamera = new CameraView(Window, GraphicsDevice);
 			UIBatch = new SpriteBatch(GraphicsDevice);
 			Result = new SpriteBatch(GraphicsDevice);
 
@@ -74,6 +74,7 @@ namespace MonoGameTest.Client {
 
 			Behavior = new SequentialSystem<float>(
 				new LocalPlayerCameraSystem(Context),
+				new CameraSystem(Context),
 				new EnergySystem(Context),
 				new CharacterSystem(Context),
 				new LocalInputSystem(Context),
@@ -123,9 +124,9 @@ namespace MonoGameTest.Client {
 
 			BackgroundRendering.Update(dt);
 
-			var matrix = Context.WorldCamera.GetMatrix();
+			var matrix = Context.WorldCameraView.GetMatrix();
 			WorldBatch.Begin(
-				transformMatrix: Context.WorldCamera.GetMatrix(),
+				transformMatrix: Context.WorldCameraView.GetMatrix(),
 				samplerState: SamplerState.PointClamp,
 				sortMode: SpriteSortMode.FrontToBack
 			);
@@ -135,7 +136,7 @@ namespace MonoGameTest.Client {
 			GraphicsDevice.SetRenderTarget(UICamera.RenderTarget);
 			GraphicsDevice.Clear(new Color(0, 0, 0, 0));
 
-			matrix = Context.UICamera.GetMatrix();
+			matrix = Context.UICameraView.GetMatrix();
 			UIBatch.Begin(
 				transformMatrix: matrix,
 				samplerState: SamplerState.PointClamp,

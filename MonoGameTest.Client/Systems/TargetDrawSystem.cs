@@ -38,7 +38,7 @@ namespace MonoGameTest.Client {
 				origin: Origin,
 				scale: Vector2.One,
 				effects: SpriteEffects.None,
-				layerDepth: Context.WorldCamera.Depth(sprite.Position, Depths.Shadow)
+				layerDepth: Context.WorldCameraView.Depth(sprite.Position, Depths.Shadow)
 			);
 		}
 

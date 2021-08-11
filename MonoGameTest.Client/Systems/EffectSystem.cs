@@ -10,7 +10,7 @@ namespace MonoGameTest.Client {
 		readonly Context Context;
 
 		SpriteBatch Batch => Context.WorldBatch;
-		Camera Camera => Context.WorldCamera;
+		CameraView Camera => Context.WorldCameraView;
 
 		public EffectSystem(Context context) : base(context.World
 			.GetEntities()

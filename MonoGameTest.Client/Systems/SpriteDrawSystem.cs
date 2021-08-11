@@ -8,7 +8,7 @@ namespace MonoGameTest.Client {
 		readonly Context Context;
 
 		SpriteBatch Batch => Context.WorldBatch;
-		Camera Camera => Context.WorldCamera;
+		CameraView Camera => Context.WorldCameraView;
 
 		public SpriteDrawSystem(Context context) : base(context.World) {
 			Context = context;

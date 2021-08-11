@@ -36,7 +36,7 @@ namespace MonoGameTest.Client {
 
 			World = new World();
 
-			var camera = new Camera(Window, GraphicsDevice);
+			var camera = new CameraView(Window, GraphicsDevice);
 			Context = new Context(GraphicsDevice, Resources, World, null, camera, Batch, null, null);
 			Context.Load(Content, "first");
 

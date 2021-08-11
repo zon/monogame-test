@@ -23,7 +23,7 @@ namespace MonoGameTest.Client {
 			if (!Context.IsReady) return;
 
 			var world = Context.LevelResources.World;
-			var matrix = Context.WorldCamera.GetMatrix();
+			var matrix = Context.WorldCameraView.GetMatrix();
 			var batch = Context.WorldBatch;
 
 			if (Collisions == null) Collisions = world.GetLayerDefinition("Collisions");

@@ -13,7 +13,7 @@ namespace MonoGameTest.Client {
 		const float MAGNITUDE = 1;
 
 		SpriteBatch Batch => Context.WorldBatch;
-		Camera Camera => Context.WorldCamera;
+		CameraView Camera => Context.WorldCameraView;
 
 		public HitAnimationSystem(Context context) : base(context.World
 			.GetEntities()

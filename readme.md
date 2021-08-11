@@ -1,5 +1,9 @@
 ## Features
 
+* One time spawns
+* Continual spawns
+* Line of sight agro
+* Consumables
 * End condition
 * Role selection
 * Hosting

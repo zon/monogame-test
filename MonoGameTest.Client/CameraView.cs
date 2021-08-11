@@ -6,7 +6,7 @@ using MonoGame.Extended.ViewportAdapters;
 
 namespace MonoGameTest.Client {
 
-	public class Camera : IDisposable {
+	public class CameraView : IDisposable {
 		public readonly ScalingViewportAdapter Viewport;
 		public readonly RenderTarget2D RenderTarget;
 		readonly GameWindow Window;
@@ -17,7 +17,7 @@ namespace MonoGameTest.Client {
 			set { Orthographic.Zoom = value; }
 		}
 
-		public Camera(GameWindow window, GraphicsDevice graphicsDevice, int width, int height) {
+		public CameraView(GameWindow window, GraphicsDevice graphicsDevice, int width, int height) {
 			Window = window;
 			Viewport = new ScalingViewportAdapter(graphicsDevice, width, height);
 			Orthographic = new OrthographicCamera(Viewport);
@@ -31,7 +31,7 @@ namespace MonoGameTest.Client {
 			);
 		}
 
-		public Camera(GameWindow window, GraphicsDevice graphicsDevice) : this(
+		public CameraView(GameWindow window, GraphicsDevice graphicsDevice) : this(
 			window,
 			graphicsDevice,
 			View.WIDTH,

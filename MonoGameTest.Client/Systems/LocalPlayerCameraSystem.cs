@@ -1,6 +1,6 @@
 using DefaultEcs;
 using DefaultEcs.System;
-using Microsoft.Xna.Framework;
+using MonoGameTest.Common;
 
 namespace MonoGameTest.Client {
 
@@ -16,13 +16,9 @@ namespace MonoGameTest.Client {
 		}
 
 		protected override void Update(float dt, in Entity entity) {
-			ref var sprite = ref entity.Get<Sprite>();
-			var center = (
-				sprite.Position +
-				sprite.Rectangle.Size.ToVector2() / 2 +
-				Vector2.UnitY * View.UI_HEIGHT / 2
-			);
-			Context.WorldCamera.LookAt(center);
+			ref var position = ref entity.Get<Position>();
+			ref var camera = ref Context.WorldCamera.Get<Camera>();
+			camera.Target = Context.CoordToMidVector(position);
 		}
 
 	}

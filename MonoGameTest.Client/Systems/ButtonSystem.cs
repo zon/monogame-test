@@ -33,7 +33,7 @@ namespace MonoGameTest.Client {
 				new Point(buttonResource.Size.X * button.Index, View.HEIGHT - View.ENERGY_BAR_HEIGHT - View.SKILL_BAR_HEIGHT),
 				buttonResource.Size
 			);
-			var isHovered = area.Contains(Context.UICamera.ScreenToWorld(mouse.Position.ToVector2()));
+			var isHovered = area.Contains(Context.UICameraView.ScreenToWorld(mouse.Position.ToVector2()));
 			
 			var offset = Vector2.Zero;
 			Rectangle drawRect;
