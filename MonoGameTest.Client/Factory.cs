@@ -1,6 +1,4 @@
-using System;
 using DefaultEcs;
-using Microsoft.Xna.Framework;
 using MonoGame.Aseprite.Documents;
 using MonoGameTest.Common;
 
@@ -35,6 +33,9 @@ namespace MonoGameTest.Client {
 
 			if (packet.SessionId == context.SessionId) {
 				entity.Set(new LocalPlayer());
+
+				ref var camera = ref context.WorldCamera.Get<Camera>();
+				camera.LookAt(context.CoordToMidVector(coord));
 
 				foreach (var be in context.Buttons.GetEntities()) {
 					be.Dispose();

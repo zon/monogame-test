@@ -8,6 +8,13 @@ namespace MonoGameTest.Client {
 		public Vector2 Offset;
 		public Vector2 Target;
 		public float Speed;
+
+		public void LookAt(Vector2 position) {
+			Center = position;
+			Target = position;
+			View.LookAt(Center + Offset);
+		}
+
 	}
 
 }

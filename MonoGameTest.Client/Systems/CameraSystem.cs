@@ -13,9 +13,6 @@ namespace MonoGameTest.Client {
 
 		protected override void Update(float dt, in Entity entity) {
 			ref var camera = ref entity.Get<Camera>();
-
-			if (camera.Center == camera.Target) return;
-
 			camera.Center = Vector.Move(camera.Center, camera.Target, camera.Speed * dt);
 			camera.View.LookAt(camera.Center + camera.Offset);
 		}
